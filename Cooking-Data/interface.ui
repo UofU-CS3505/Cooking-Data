@@ -145,7 +145,7 @@ QSlider::groove:vertical {
 }
 
 QSlider::add-page {
-	background-color: #808080; /* set the color of the unfilled part of the slider to a light gray */
+	background-color: #404040; /* set the color of the unfilled part of the slider to a light gray */
 	border-radius: 2px; /* sliders are thinner thus use a tighter radius */
 }
 
@@ -155,7 +155,7 @@ QSlider::sub-page {
 }
 
 QSlider::handle {
-	border: 2px solid #b0b0b0; /* set the border of the handle */
+	border: 2px solid #e0e0e0; /* set the border of the handle */
 	border-radius: 8px; /* make the handle a circle, this is 12 + 2 * 2 */
 	margin: -6px; /* allow the handle to extend out of the groove*/
 	background-color: #ff8000; /* set the color of the filled part of the slider to orange */
