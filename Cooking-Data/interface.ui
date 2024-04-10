@@ -13,7 +13,186 @@
   <property name="windowTitle">
    <string>Interface</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow {
+	background-color: #ffffff; /* set global background color */
+}
+
+QWidget {
+	color: #ffffff; /* set global text color to white */
+}
+
+QAbstractButton {
+	padding: 4px; /* Add padding between the text and the border */
+	border-radius: 4px;
+	background-color: #ff8000; /* make push buttons orange */
+}
+
+QAbstractButton:hover {
+	background-color: #ffa010; /* make push buttons a slightly brighter shade of orange when hovering over */
+}
+
+QAbstractButton:pressed {
+	background-color: #d07000; /* make push buttons a darker shade of orange when pressed */
+}
+
+QAbstractButton:disabled {
+	background-color: #303030; /* make push buttons a very dark shade of grey when disabled */
+	color: #808080 /* grey out the text */
+}
+
+QAbstractButton:checked {
+	background-color: #804000; /* make push buttons a darker shade of orange when checked */
+}
+
+QAbstractButton:checked:hover {
+	background-color: #994d00; /* make push buttons a darker shade of orange when checked and hovered */
+}
+
+QAbstractButton:checked:pressed {
+	background-color: #663300; /* make push buttons a darker shade of orange when checked and pressed */
+}
+
+
+QProgressBar {
+	border-radius: 2px; /* progress bars are thinner thus use a tighter radius */
+	background-color: #a0a0a0; /* progress bars are a light gray by default */
+}
+
+QProgressBar:chunk {
+	border-radius: 2px;
+	background-color: #ff8000; /* this assigns an orange color to the &quot;filled&quot; portion of a progress bar */
+}
+
+QSpinBox {
+	background-color: #ffffff; /* set the background of the QSpinBox to the same shade of dark gray as the globa background */
+	border: 1px solid #a0a0a0; /* a light gray border around three sides */
+	border-bottom-color: #808080; /* the bottom side is overriden by a slightly lighter gray */
+	border-radius: 4px;
+}
+
+QSpinBox:focus {
+	border-bottom-color: #ff8000; /* set the bottom border to orange when typing */
+}
+
+QSpinBox::up-button {
+	subcontrol-origin: border;
+	subcontrol-position: top right; /* position at the top right corner */
+
+	width: 16px; /* 16 + 2*1px border-width = 15px padding + 3px parent border */
+	margin: 1px; /* stop the up button from hiding the spin box's border */
+	border: none; /* no border */
+	border-top-right-radius: 4px;
+	image: url(:/arrows/assets/images/up-arrow.png);
+}
+
+QSpinBox::up-button:hover {
+	background-color: #f0f0f0; /* make the up button a lighter shade of gray when hovering over  */
+}
+
+QSpinBox::up-button:pressed {
+	background-color: #c0c0c0; /* make the up button a darker shade of gray when pressed down  */
+}
+
+QSpinBox::down-button {
+	subcontrol-origin: border;
+	subcontrol-position: bottom right; /* position at bottom right corner */
+
+	width: 16px;
+	margin: 1px; /* stop the down button from hiding the spin box's border */
+	border: none;  /* no border */
+	border-bottom-right-radius: 4px;
+	image: url(:/arrows/assets/images/down-arrow.png);
+}
+
+QSpinBox::down-button:hover {
+	background-color: #f0f0f0; /* make the down  button a lighter shade of gray when hovering over  */
+}
+
+QSpinBox::down-button:pressed {
+	background-color: #c0c0c0; /* make the up button a darker shade of gray when pressed down  */
+}
+
+QLineEdit {
+	background-color: #ffffff;; /* set the background of the QLineEdit to the same shade of dark gray as the globa background */
+	border: 1px solid #a0a0a0; /* a dark gray border around three sides */
+	border-bottom-color: #808080; /* the bottom side is overriden by a slightly lighter gray */
+	border-radius: 4px;
+}
+
+QLineEdit:focus {
+	border-bottom-color: #ff8000; /* set the bottom border to orange when typing */
+}
+
+QSlider {
+	margin: 8px; /* stop the handle from clipping the layout when at the ends */
+}
+
+QSlider::groove {
+	border: none; /* remove the border for the groove of the slider */
+}
+
+QSlider::groove:horizontal {
+	min-height: 4px; /* set the size of the horizontal groove */
+	max-height: 4px; /* set the size of the horizontal groove */
+	height: 4px; /* set the size of the horizontal groove */
+}
+
+QSlider::groove:vertical {
+	min-width: 4px; /* set the size of the vertical groove */
+	max-width: 4px; /* set the size of the vertical groove */
+	width: 4px; /* set the size of the vertical groove */
+}
+
+QSlider::add-page {
+	background-color: #808080; /* set the color of the unfilled part of the slider to a light gray */
+	border-radius: 2px; /* sliders are thinner thus use a tighter radius */
+}
+
+QSlider::sub-page {
+	background-color: #ff8000; /* set the color of the filled part of the slider to orange */
+	border-radius: 2px; /* sliders are thinner thus use a tighter radius */
+}
+
+QSlider::handle {
+	border: 2px solid #b0b0b0; /* set the border of the handle */
+	border-radius: 8px; /* make the handle a circle, this is 12 + 2 * 2 */
+	margin: -6px; /* allow the handle to extend out of the groove*/
+	background-color: #ff8000; /* set the color of the filled part of the slider to orange */
+	width: 12px; /* set the size of the handle */
+	height: 12px;
+}
+
+QInputDialog {
+	background-color: #ffffff;
+	padding: 4px;
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QSpinBox" name="spinBox">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>230</y>
+      <width>42</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QSlider" name="horizontalSlider">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>260</y>
+      <width>160</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
