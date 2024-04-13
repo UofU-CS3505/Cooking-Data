@@ -5,6 +5,7 @@
 #include <QLabel>
 
 #include "model.h"
+#include "rectangle.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -27,6 +28,11 @@ public slots:
 private:
     Ui::Interface *ui;
     Model model;
-    QVector<QLabel*> boxes;
+    QVector<QPair<QPixmap, Rectangle>> sprites;
+    QVector<QLabel*> bodyDisplays;
+
+    int const SCALE = 10;
+
+    void createBody(float x, float y, float halfWidth, float halfHeight, double angle);
 };
 #endif // INTERFACE_H

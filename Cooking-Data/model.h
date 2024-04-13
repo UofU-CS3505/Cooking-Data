@@ -5,6 +5,8 @@
 #include <QTimer>
 #include <QVector>
 
+#include "rectangle.h"
+
 class Model : public QObject
 {
     Q_OBJECT
@@ -33,7 +35,7 @@ private:
     QTimer timer;
     b2World world;
 
-    //modelUpdated(int index, const b2Body& rectangle);
+    void modelUpdated(int index, Rectangle rectangle);
 };
 
 #endif // MODEL_H

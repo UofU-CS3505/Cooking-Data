@@ -1,6 +1,7 @@
 #include "interface.h"
 #include "ui_interface.h"
 #include "model.h"
+#include <QLayout>
 
 Interface::Interface(QWidget *parent)
     : QMainWindow(parent),
@@ -8,19 +9,26 @@ Interface::Interface(QWidget *parent)
     model(Model()) {
     ui->setupUi(this);
 
-    // Just a test label
-    ui->test->setStyleSheet("QLabel { background-color : red; color : blue; }");
-    ui->test_2->setStyleSheet("QLabel { background-color : red; color : blue; }");
-
-    model.addObject(6.0f,0.0f, 1.0f, 1.0f);
-    model.addObject(1.0f,0.0f, 1.0f, 1.0f);
-
-    boxes.append(ui->test);
-    boxes.append(ui->test_2);
+    // Adding some text boxes
+    createBody(6.0f, 0.0f, 1.0f, 1.0f, 0);
+    createBody(1.5f, 1.0f, 2.0f, 1.0f, 0);
+    createBody(12.0f, -2.0f, 1.0f, 3.0f, 0);
+    createBody(25.0f, 0.0f, 10.0f, 10.0f, 0);
 
     // Connect game updates to the view
     connect(&model, &Model::makeGroundInView, this, &Interface::createGround);
     connect(&model, &Model::objectUpdated, this, &Interface::updateObject);
+}
+
+void Interface::createBody(float x, float y, float halfWidth, float halfHeight, double angle)
+{
+    model.addObject(x, y, halfWidth, halfHeight);
+    sprites.append(QPair<QPixmap, Rectangle>(QPixmap(), Rectangle(QPoint((x - halfWidth) * SCALE, (y - halfHeight) * SCALE),
+                                                        QSize(halfWidth * SCALE * 2, halfHeight * SCALE * 2),
+                                                        angle)));
+    QLabel* tempLabel = new QLabel(ui->centralwidget);
+    tempLabel->setStyleSheet("QLabel { background-color : red; color : blue; }");
+    bodyDisplays.append(tempLabel);
 }
 
 void Interface::updateObject(int index, const b2Body* source)
@@ -30,15 +38,17 @@ void Interface::updateObject(int index, const b2Body* source)
     // complicated to get a bodies size for some reason
     // So, we are making a different class to store a sprite's info right?
     // Put the size in there
-    boxes[index]->setGeometry(QRect(source->GetPosition().x * 10 - 15, source->GetPosition().y * 10 - 15,
-                                    30, 30));
+    QSize boxSize = sprites[sprites.size() - index - 1].second.getDimensions();
+    bodyDisplays[sprites.size() - index - 1]->setGeometry(QRect(source->GetPosition().x * SCALE - boxSize.width()/2,
+                                           source->GetPosition().y * SCALE - boxSize.height()/2,
+                                           boxSize.width(), boxSize.height()));
 }
 
 void Interface::createGround(b2Vec2 loc, int width, int height)
 {
     // Temp until we store other objects
     qDebug() << loc.x << " "  << loc.y << " " << width << " " << height;
-    ui->ground->setGeometry(loc.x * 10, loc.y*10 - height*10/2, width * 10, height * 10);
+    ui->ground->setGeometry(loc.x * SCALE, loc.y * SCALE - height * SCALE/2, width * SCALE, height * SCALE);
     ui->ground->setStyleSheet("QLabel { background-color : brown; color : black; }");
 }
 

@@ -6,7 +6,7 @@
 
 Model::Model()
     : timer(),
-    world(b2World(b2Vec2(0.0f, 10.0f))){
+    world(b2World(b2Vec2(0.0f, 15.0f))){
 
     // THIS IS TEST CODE, WE WILL EDIT THIS LATER AS NEEDED
     ////////////////////////////
@@ -15,7 +15,7 @@ Model::Model()
     b2BodyDef groundBodyDef;
     groundBodyDef.position.Set(0.0f, 60.0f);
 
-    b2Vec2 gravity(0.0f, 10.0f);
+    b2Vec2 gravity(0.0f, 15.0f);
     this->world.SetGravity(gravity);
 
     // Call the body factory which allocates memory for the ground body
@@ -65,7 +65,7 @@ void Model::addObject(float x, float y, float width, float height){
 
     // Override the default friction.
     fixtureDef.friction = 0.3f;
-    fixtureDef.restitution = 0.2f;
+    fixtureDef.restitution = 0.1f;
     // Add the shape to the body.
     body->CreateFixture(&fixtureDef);
     body->SetType(b2_dynamicBody);
@@ -96,5 +96,10 @@ void Model::updateWorld()
             dynamicCount++;
         }
     }
+}
+
+void Model::modelUpdated(int index, Rectangle rect)
+{
+    // idk what we are planning to use this for? is this a slot or a method?
 }
 
