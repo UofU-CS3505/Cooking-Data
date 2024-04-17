@@ -93,8 +93,38 @@ void Model::updateWorld() {
 
     // Instruct the world to perform a single step of simulation.
     // It is generally best to keep the time step and iterations fixed.
-    //if(selected != nullptr)
-        //body->ApplyForceToCenter(b2Vec2((x - body->GetPosition().x) * 100, (y - body->GetPosition().y) * 100), true);
+    if(selected != nullptr){
+        // SPRING
+        float distanceX = recentMouseLoc.x() - selected->GetPosition().x;
+        float distanceY = recentMouseLoc.y() - selected->GetPosition().y;
+        float velocityX = distanceX * selected->GetMass() * 2;
+        float velocityY = distanceY * selected->GetMass() * 2;
+        b2Vec2 force = b2Vec2(velocityX, velocityY);
+        selected->ApplyForceToCenter(force, true);
+
+        // float velocityX = distanceX / timeStep;
+        // float velocityY = distanceY / timeStep;
+        // float accelX = (velocityX - oldVX) / timeStep;
+        // float accelY = (velocityY - oldVY) / timeStep;
+        // b2Vec2 force = b2Vec2(accelX * selected->GetMass(), accelY * selected->GetMass());
+        // selected->ApplyForceToCenter(force, true);
+        // oldVX = velocityX;
+        // oldVX = velocityY;
+
+        // float distanceX = recentMouseLoc.x() - selected->GetPosition().x;
+        // float distanceY = recentMouseLoc.y() - selected->GetPosition().y;
+        // float velocityX = distanceX / timeStep;
+        // float velocityY = distanceY / timeStep;
+        // b2Vec2 force = b2Vec2(velocityX * selected->GetMass(), velocityY * selected->GetMass());
+        // selected->ApplyForceToCenter(force, true);
+
+        // float mass = selected->GetMass();
+        // qDebug() << velocityY;
+        // if(velocityY > world.GetGravity().y)
+        //     velocityY -= world.GetGravity().y;
+        //selected->SetLinearVelocity(b2Vec2(velocityX / selected->GetMass(), velocityY / selected->GetMass()));
+    }
+
     world.Step(timeStep, velocityIterations, positionIterations);
 
 
@@ -112,22 +142,26 @@ void Model::updateWorld() {
 
 void Model::objectClicked(int index, float x, float y) {
     int dynamicCount = 0;
-    qDebug() << index;
     for(b2Body* body = world.GetBodyList();
         dynamicCount <= index;
         body = body->GetNext()) {
         if(dynamicCount == index && body->GetType() == b2_dynamicBody) {
-            body->ApplyForceToCenter(
-                b2Vec2(
-                    (x - body->GetPosition().x) * body->GetMass(),
-                    (y - body->GetPosition().y) * body->GetMass()),
-                true);
+            // body->ApplyForceToCenter(
+            //     b2Vec2(
+            //         (x - body->GetPosition().x) * body->GetMass(),
+            //         (y - body->GetPosition().y) * body->GetMass()),
+            //     true);
+            recentMouseLoc = QPoint(x, y);
             selected = body;
             return;
         }
         else if(body->GetType() == b2_dynamicBody)
             dynamicCount++;
     }
+}
+
+void Model::objectReleased() {
+    selected = nullptr;
 }
 
 void Model::modelUpdated(int index, Rectangle rect) {

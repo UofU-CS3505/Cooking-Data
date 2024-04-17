@@ -16,6 +16,9 @@ private:
     QTimer timer;
     b2World world;
     b2Body* selected;
+    QPoint recentMouseLoc;
+    float oldVX;
+    float oldVY;
 
     void modelUpdated(int index, Rectangle rectangle);
 
@@ -32,6 +35,7 @@ public:
 public slots:
     void updateWorld();
     void objectClicked(int index, float x, float y);
+    void objectReleased();
 
 signals:
     void objectUpdated(int index, const b2Body* body);

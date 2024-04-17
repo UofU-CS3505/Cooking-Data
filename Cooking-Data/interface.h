@@ -42,6 +42,7 @@ public slots:
 
 signals:
     void draggableClicked(int index, int x, int y);
+    void draggableReleased();
 
 };
 #endif // INTERFACE_H

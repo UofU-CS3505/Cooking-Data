@@ -24,6 +24,8 @@ Interface::Interface(QWidget *parent)
     // Connect mouse updates to model
     connect(this, &Interface::draggableClicked,
             &model, &Model::objectClicked);
+    connect(this, &Interface::draggableReleased,
+            &model, &Model::objectReleased);
 }
 
 void Interface::createBody(float x, float y, float halfWidth, float halfHeight,
@@ -112,6 +114,7 @@ void Interface::mouseMoveEvent(QMouseEvent* event) {
 void Interface::mouseReleaseEvent(QMouseEvent* event) {
     mouseIsDown = false;
     selectedObjectIndex = -1;
+    emit draggableReleased();
 }
 
 Interface::~Interface() {
