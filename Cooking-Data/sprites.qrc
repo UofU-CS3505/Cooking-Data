@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/ingredients">
+        <file>assets/images/sprites/BoiledWaterPot.png</file>
+        <file>assets/images/sprites/BurningHot.png</file>
+        <file>assets/images/sprites/Cold.png</file>
+        <file>assets/images/sprites/EmptyBowl.png</file>
+        <file>assets/images/sprites/EmptyPot.png</file>
+        <file>assets/images/sprites/Hot.png</file>
+        <file>assets/images/sprites/Ladle.png</file>
+        <file>assets/images/sprites/OatmealBowl.png</file>
+        <file>assets/images/sprites/OatsBowl.png</file>
+        <file>assets/images/sprites/pixil-frame-0.png</file>
+        <file>assets/images/sprites/StoveTop.png</file>
+        <file>assets/images/sprites/WaterLadle.png</file>
+        <file>assets/images/sprites/WaterPitcher.png</file>
+        <file>assets/images/sprites/WaterPitcherPouring.png</file>
+        <file>assets/images/sprites/WaterPot.png</file>
+    </qresource>
+</RCC>

@@ -83,7 +83,7 @@ QSpinBox::up-button {
 	margin: 1px; /* stop the up button from hiding the spin box's border */
 	border: none; /* no border */
 	border-top-right-radius: 4px;
-	image: url(:/arrows/assets/images/up-arrow.png);
+	image: url(:/arrows/assets/images/widget-elements/up-arrow.png);
 }
 
 QSpinBox::up-button:hover {
@@ -102,7 +102,7 @@ QSpinBox::down-button {
 	margin: 1px; /* stop the down button from hiding the spin box's border */
 	border: none;  /* no border */
 	border-bottom-right-radius: 4px;
-	image: url(:/arrows/assets/images/down-arrow.png);
+	image: url(:/arrows/assets/images/widget-elements/down-arrow.png);
 }
 
 QSpinBox::down-button:hover {
@@ -169,27 +169,17 @@ QInputDialog {
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QSpinBox" name="spinBox">
+   <widget class="QLabel" name="ground">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>230</y>
-      <width>42</width>
-      <height>22</height>
+      <x>190</x>
+      <y>460</y>
+      <width>311</width>
+      <height>81</height>
      </rect>
     </property>
-   </widget>
-   <widget class="QSlider" name="horizontalSlider">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>260</y>
-      <width>160</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
+    <property name="text">
+     <string>Ground Label</string>
     </property>
    </widget>
   </widget>
@@ -199,7 +189,7 @@ QInputDialog {
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>17</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
