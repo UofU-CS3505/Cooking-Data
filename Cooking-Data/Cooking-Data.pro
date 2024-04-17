@@ -121,7 +121,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    widgetelements.qrc
+    sprites.qrc \
+    widget-elements.qrc
 
 DISTFILES += \
     Box2D/Box2DConfig.cmake \
