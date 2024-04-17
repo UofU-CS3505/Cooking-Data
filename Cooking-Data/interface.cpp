@@ -1,7 +1,8 @@
-#include "interface.h"
-#include "ui_interface.h"
-#include "model.h"
 #include <QLayout>
+
+#include "interface.h"
+#include "model.h"
+#include "ui_interface.h"
 
 Interface::Interface(QWidget *parent)
     : QMainWindow(parent),
@@ -41,7 +42,9 @@ void Interface::createBody(float x, float y, float halfWidth, float halfHeight,
             )
         );
     QLabel* tempLabel = new QLabel(ui->centralwidget);
-    tempLabel->setStyleSheet("QLabel { background-color : red; color : blue;}");
+    // Currently texture is being set in updateObject.
+    // tempLabel->setPixmap(QPixmap(":/ingredients/assets/images/sprites/EmptyBowl.png"));
+    // tempLabel->setStyleSheet("QLabel { background-color : red; color : blue;}");
     bodyDisplays.append(tempLabel);
 
     // connect(tempLabel, &PixelEditorLabel::pixelEditorLabelClicked,
@@ -60,6 +63,17 @@ void Interface::updateObject(int index, const b2Body* source) {
         QRect(source->GetPosition().x * SCALE - boxSize.width()/2,
         source->GetPosition().y * SCALE - boxSize.height()/2,
         boxSize.width(), boxSize.height()));
+
+    // Load the texture, scale it, then transform it using a QTransform that is
+    // set to the same angle as the source b2Body.
+    QPixmap texture = QPixmap(":/ingredients/assets/images/sprites/EmptyBowl.png");
+    texture = texture.scaled(boxSize.width(), boxSize.height(), Qt::KeepAspectRatio);
+    QTransform transform;
+    transform.rotate(qRadiansToDegrees(source->GetAngle()));
+    texture = texture.transformed(transform);
+    // Apply the tranform.
+    bodyDisplays[sprites.size() - index - 1]->setPixmap(texture);
+
     sprites[sprites.size() - index - 1].second.setPosition(
         QPoint(source->GetPosition().x * SCALE - boxSize.width()/2,
         source->GetPosition().y * SCALE - boxSize.height()/2));
