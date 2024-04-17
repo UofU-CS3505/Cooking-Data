@@ -50,11 +50,12 @@ Model::Model()
     QTimer::singleShot(40, this, [&](){emit makeGroundInView(b2Vec2(-10.0f, 30.0f), 10, 100);});
     QTimer::singleShot(40, this, [&](){emit makeGroundInView(b2Vec2(90.0f, 30.0f), 10, 100);});
 }
-Model::~Model(){
+
+Model::~Model() {
 
 }
 
-void Model::addObject(float x, float y, float width, float height){
+void Model::addObject(float x, float y, float width, float height) {
     // THIS IS A TEMP TO CREATE SIMPLE BOX
 
     // Define the dynamic body. We set its position and call the body factory.
@@ -80,12 +81,11 @@ void Model::addObject(float x, float y, float width, float height){
     body->CreateFixture(&fixtureDef);
     body->SetType(b2_dynamicBody);
 }
-void Model::removeObject(qsizetype index){
+void Model::removeObject(qsizetype index) {
     world.DestroyBody(&world.GetBodyList()[index]);
 }
 
-void Model::updateWorld()
-{
+void Model::updateWorld() {
     // About 60fps, 10 iterations per collision check
     float32 timeStep = 1.0f / 60.0f;
     int32 velocityIterations = 6;
@@ -100,24 +100,28 @@ void Model::updateWorld()
 
     // Loop through every body, send signal for any dynamic one
     int dynamicCount = 0;
-    for(b2Body* body = world.GetBodyList(); body != nullptr; body = body->GetNext())
-    {
-        if(body->GetType() == b2_dynamicBody)
-        {
+    for(b2Body* body = world.GetBodyList();
+        body != nullptr;
+        body = body->GetNext()) {
+        if(body->GetType() == b2_dynamicBody) {
             emit objectUpdated(dynamicCount, body);
             dynamicCount++;
         }
     }
 }
 
-void Model::objectClicked(int index, float x, float y){
+void Model::objectClicked(int index, float x, float y) {
     int dynamicCount = 0;
     qDebug() << index;
-    for(b2Body* body = world.GetBodyList(); dynamicCount <= index; body = body->GetNext())
-    {
-        if(dynamicCount == index && body->GetType() == b2_dynamicBody)
-        {
-            body->ApplyForceToCenter(b2Vec2((x - body->GetPosition().x) * body->GetMass(), (y - body->GetPosition().y) * body->GetMass()), true);
+    for(b2Body* body = world.GetBodyList();
+        dynamicCount <= index;
+        body = body->GetNext()) {
+        if(dynamicCount == index && body->GetType() == b2_dynamicBody) {
+            body->ApplyForceToCenter(
+                b2Vec2(
+                    (x - body->GetPosition().x) * body->GetMass(),
+                    (y - body->GetPosition().y) * body->GetMass()),
+                true);
             selected = body;
             return;
         }
@@ -126,8 +130,7 @@ void Model::objectClicked(int index, float x, float y){
     }
 }
 
-void Model::modelUpdated(int index, Rectangle rect)
-{
+void Model::modelUpdated(int index, Rectangle rect) {
     // idk what we are planning to use this for? is this a slot or a method?
 }
 

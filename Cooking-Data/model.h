@@ -7,11 +7,19 @@
 
 #include "rectangle.h"
 
-class Model : public QObject
-{
+class Model : public QObject {
     Q_OBJECT
-public:
+private:
+    ///
+    /// \brief timer - Used to execute the physics loop
+    ///
+    QTimer timer;
+    b2World world;
+    b2Body* selected;
 
+    void modelUpdated(int index, Rectangle rectangle);
+
+public:
     ///
     /// \brief Model - Create a new model to store a new world and new objects
     ///
@@ -29,15 +37,6 @@ signals:
     void objectUpdated(int index, const b2Body* body);
     void makeGroundInView(b2Vec2 loc, int width, int height);
 
-private:
-    ///
-    /// \brief timer - Used to execute the physics loop
-    ///
-    QTimer timer;
-    b2World world;
-    b2Body* selected;
-
-    void modelUpdated(int index, Rectangle rectangle);
 };
 
 #endif // MODEL_H

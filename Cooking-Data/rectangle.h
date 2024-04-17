@@ -5,8 +5,12 @@
 #include <QPoint>
 #include <QSize>
 
-class Rectangle
-{
+class Rectangle {
+private:
+    QPoint position;
+    QSize dimensions;
+    double orientation;
+
 public:
     Rectangle();
     Rectangle(QPoint pos, QSize size, double angle);
@@ -20,10 +24,6 @@ public:
     void setDimensions(QSize size);
     void setOrientation(double angle);
 
-private:
-    QPoint position;
-    QSize dimensions;
-    double orientation;
 };
 
 #endif // RECTANGLE_H

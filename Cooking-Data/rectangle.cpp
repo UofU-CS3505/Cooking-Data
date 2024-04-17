@@ -10,27 +10,30 @@ Rectangle::Rectangle(QPoint pos, QSize size, double angle):
     dimensions(size),
     orientation(angle){}
 
-Rectangle::~Rectangle(){
+Rectangle::~Rectangle() {
 
 }
-
 
 QPoint Rectangle::getPosition() {
     return position;
 }
-QSize Rectangle::getDimensions(){
+
+QSize Rectangle::getDimensions() {
     return dimensions;
 }
-double Rectangle::getOrientation(){
+
+double Rectangle::getOrientation() {
     return orientation;
 }
 
-void Rectangle::setPosition(QPoint location){
+void Rectangle::setPosition(QPoint location) {
     position = QPoint(location);
 }
-void Rectangle::setDimensions(QSize size){
+
+void Rectangle::setDimensions(QSize size) {
     dimensions = QSize(size);
 }
-void Rectangle::setOrientation(double angle){
+
+void Rectangle::setOrientation(double angle) {
     orientation = angle;
 }

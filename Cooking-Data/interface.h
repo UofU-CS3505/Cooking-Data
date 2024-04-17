@@ -10,13 +10,23 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class Interface;
+    class Interface;
 }
 QT_END_NAMESPACE
 
-class Interface : public QMainWindow
-{
+class Interface : public QMainWindow {
     Q_OBJECT
+private:
+    Ui::Interface *ui;
+    Model model;
+    QVector<QPair<QPixmap, Rectangle>> sprites;
+    QVector<QLabel*> bodyDisplays;
+    bool mouseIsDown;
+    int selectedObjectIndex;
+
+    float const SCALE = 10.0f;
+
+    void createBody(float x, float y, float halfWidth, float halfHeight, double angle);
 
 public:
     Interface(QWidget *parent = nullptr);
@@ -33,16 +43,5 @@ public slots:
 signals:
     void draggableClicked(int index, int x, int y);
 
-private:
-    Ui::Interface *ui;
-    Model model;
-    QVector<QPair<QPixmap, Rectangle>> sprites;
-    QVector<QLabel*> bodyDisplays;
-    bool mouseIsDown;
-    int selectedObjectIndex;
-
-    float const SCALE = 10.0f;
-
-    void createBody(float x, float y, float halfWidth, float halfHeight, double angle);
 };
 #endif // INTERFACE_H
