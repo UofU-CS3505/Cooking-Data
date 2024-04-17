@@ -42,9 +42,6 @@ void Interface::createBody(float x, float y, float halfWidth, float halfHeight,
             )
         );
     QLabel* tempLabel = new QLabel(ui->centralwidget);
-    // Currently texture is being set in updateObject.
-    // tempLabel->setPixmap(QPixmap(":/ingredients/assets/images/sprites/EmptyBowl.png"));
-    // tempLabel->setStyleSheet("QLabel { background-color : red; color : blue;}");
     bodyDisplays.append(tempLabel);
 
     // connect(tempLabel, &PixelEditorLabel::pixelEditorLabelClicked,
@@ -54,8 +51,8 @@ void Interface::createBody(float x, float y, float halfWidth, float halfHeight,
 
 void Interface::updateObject(int index, const b2Body* source) {
     //BELOW IS TEMP FOR A TEST, BUT MAY WORK AS A BASE
-    // Ok, so right now the box doesn't have the acurate size because it is impossibly
-    // complicated to get a bodies size for some reason
+    // Ok, so right now the box doesn't have the acurate size because it is
+    // impossibly complicated to get a bodies size for some reason
     // So, we are making a different class to store a sprite's info right?
     // Put the size in there
     QSize boxSize = sprites[sprites.size() - index - 1].second.getDimensions();
@@ -66,8 +63,10 @@ void Interface::updateObject(int index, const b2Body* source) {
 
     // Load the texture, scale it, then transform it using a QTransform that is
     // set to the same angle as the source b2Body.
-    QPixmap texture = QPixmap(":/ingredients/assets/images/sprites/EmptyBowl.png");
-    texture = texture.scaled(boxSize.width(), boxSize.height(), Qt::KeepAspectRatio);
+    QPixmap texture = QPixmap(
+        ":/ingredients/assets/images/sprites/EmptyBowl.png");
+    texture = texture.scaled(boxSize.width(), boxSize.height(),
+                             Qt::KeepAspectRatio);
     QTransform transform;
     transform.rotate(qRadiansToDegrees(source->GetAngle()));
     texture = texture.transformed(transform);

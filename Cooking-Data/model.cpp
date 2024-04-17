@@ -1,8 +1,7 @@
-#include "model.h"
-
 #include <QObject>
 #include <QDebug>
 
+#include "model.h"
 
 Model::Model()
     : timer(),
@@ -45,10 +44,17 @@ Model::Model()
 
     // Let view create the ground
 
-    QTimer::singleShot(50, this, [&](){emit makeGroundInView(b2Vec2(0.0f, 60.0f), 100, 20);});
-    // makeGroundInView isn't complete, rn we are only storing 1 static object named ground, change this so all walls paint
-    QTimer::singleShot(40, this, [&](){emit makeGroundInView(b2Vec2(-10.0f, 30.0f), 10, 100);});
-    QTimer::singleShot(40, this, [&](){emit makeGroundInView(b2Vec2(90.0f, 30.0f), 10, 100);});
+    QTimer::singleShot(50, this, [&] () {
+        emit makeGroundInView(b2Vec2(0.0f, 60.0f), 100, 20);
+    });
+    // makeGroundInView isn't complete, rn we are only storing 1 static object
+    // named ground, change this so all walls paint
+    QTimer::singleShot(40, this, [&] () {
+        emit makeGroundInView(b2Vec2(-10.0f, 30.0f), 10, 100);
+    });
+    QTimer::singleShot(40, this, [&] () {
+        emit makeGroundInView(b2Vec2(90.0f, 30.0f), 10, 100);
+    });
 }
 
 Model::~Model() {
