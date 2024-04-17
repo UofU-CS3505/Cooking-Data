@@ -23,6 +23,7 @@ public:
 
 public slots:
     void updateWorld();
+    void objectClicked(int index, float x, float y);
 
 signals:
     void objectUpdated(int index, const b2Body* body);
@@ -34,6 +35,7 @@ private:
     ///
     QTimer timer;
     b2World world;
+    b2Body* selected;
 
     void modelUpdated(int index, Rectangle rectangle);
 };
