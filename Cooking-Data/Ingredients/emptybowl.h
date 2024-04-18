@@ -5,7 +5,7 @@
 
 class EmptyBowl : public Ingredient {
 public:
-    EmptyBowl(QPoint pos);
+    EmptyBowl(QPointF newPosition, double angle);
 };
 
 #endif // EMPTYBOWL_H

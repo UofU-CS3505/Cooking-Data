@@ -16,10 +16,23 @@ private:
     QTimer timer;
     b2World world;
     b2Body* selected;
-    QPoint recentMouseLoc;
+    QVector<Ingredient> ingredients;
+    QPointF recentMouseLoc;
     float oldVX;
     float oldVY;
 
+    void addIngredient(QPointF position);
+
+    ///
+    /// \brief addBox2DObject Add a dynamic body to the world.
+    /// \param x the x position, 0 is top and positive is right
+    /// \param y the y position, 0 is top and positive is down
+    /// \param width the width
+    /// \param height the height
+    /// \param angle the angle in radians
+    ///
+    void addBox2DObject(float x, float y, float width, float height, float angle);
+    void removeBox2DObject(qsizetype index);
     void modelUpdated(int index, Ingredient rectangle);
 
 public:
@@ -29,25 +42,17 @@ public:
     Model();
     ~Model();
 
-    ///
-    /// \brief addObject Add a dynamic body to the world.
-    /// \param x the x position, 0 is top and positive is right
-    /// \param y the y position, 0 is top and positive is down
-    /// \param width the width
-    /// \param height the height
-    /// \param angle the angle in radians
-    ///
-    void addObject(float x, float y, float width, float height, float angle);
-    void removeObject(qsizetype index);
-
 public slots:
+    void createWorld();
     void updateWorld();
-    void objectClicked(int index, float x, float y);
-    void objectReleased();
+    void pointPressed(QPointF position);
+    void pointMoved(QPointF position);
+    void pointReleased();
     void pauseGame(bool pausedState);
 
 signals:
-    void objectUpdated(int index, const b2Body* body);
+    void worldCreated(QVector<Ingredient> ingredients);
+    void objectUpdated(int index, Ingredient ingredient);
     void makeGroundInView(b2Vec2 loc, int width, int height);
 
 };

@@ -7,7 +7,7 @@
 
 class Ingredient {
 private:
-    QPoint position;
+    QPointF position;
 
     ///
     /// \brief dimensions The dimension of the ingredient in inches. Should be
@@ -28,17 +28,22 @@ private:
 
 public:
     Ingredient();
-    Ingredient(QPoint pos, QSize size, double angle, QPixmap texture);
+    Ingredient(QPointF position, QSize dimension, double angle, QPixmap texture);
     ~Ingredient();
 
-    QPoint getPosition();
-    QSize getDimensions();
+    QPointF const getPosition();
+    QSize const getDimensions();
+
+    ///
+    /// \brief getOrientation Get the orientation in degrees.
+    /// \return the orientation in degrees
+    ///
     double getOrientation();
-    QPixmap getTexture();
+    QPixmap const getTexture();
     double getRadius();
 
-    void setPosition(QPoint location);
-    void setDimensions(QSize size);
+    void setPosition(QPointF newPositions);
+    void setDimensions(QSize newDimensions);
     void setOrientation(double angle);
 
 };

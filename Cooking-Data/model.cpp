@@ -2,6 +2,7 @@
 #include <QDebug>
 
 #include "model.h"
+#include "Ingredients/emptybowl.h"
 
 Model::Model()
     : timer(),
@@ -37,8 +38,7 @@ Model::Model()
     rightWallBox.SetAsBox(10.0f, 100.0f);
     rightBody->CreateFixture(&rightWallBox, 0.0f);
 
-
-
+    // Start the timer.
     connect(&timer, &QTimer::timeout, this, &Model::updateWorld);
     timer.start(16);
 
@@ -61,7 +61,17 @@ Model::~Model() {
 
 }
 
-void Model::addObject(float x, float y, float width, float height, float angle) {
+void Model::addIngredient(QPointF position) {
+    Ingredient emptyBowl = EmptyBowl(position, 0);
+    ingredients.append(emptyBowl);
+    addBox2DObject(position.x(), position.y(),
+              emptyBowl.getDimensions().width(),
+              emptyBowl.getDimensions().height(),
+              qDegreesToRadians(emptyBowl.getOrientation()));
+}
+
+
+void Model::addBox2DObject(float x, float y, float width, float height, float angle) {
     // THIS IS A TEMP TO CREATE SIMPLE BOX
 
     // Define the dynamic body. We set its position and call the body factory.
@@ -88,8 +98,18 @@ void Model::addObject(float x, float y, float width, float height, float angle) 
     body->CreateFixture(&fixtureDef);
     body->SetType(b2_dynamicBody);
 }
-void Model::removeObject(qsizetype index) {
+
+void Model::removeBox2DObject(qsizetype index) {
     world.DestroyBody(&world.GetBodyList()[index]);
+}
+
+void Model::createWorld() {
+    for (int i = 0; i < 10; i++)
+        addIngredient(QPointF(5, 0));
+
+    emit worldCreated(ingredients);
+
+    qDebug() << "world created";
 }
 
 void Model::updateWorld() {
@@ -134,37 +154,76 @@ void Model::updateWorld() {
 
     world.Step(timeStep, velocityIterations, positionIterations);
 
-
     // Loop through every body, send signal for any dynamic one
     int dynamicCount = 0;
     for(b2Body* body = world.GetBodyList();
         body != nullptr;
         body = body->GetNext()) {
         if(body->GetType() == b2_dynamicBody) {
-            emit objectUpdated(dynamicCount, body);
+            ingredients[dynamicCount].setPosition(QPointF(body->GetPosition().x,
+                                                          body->GetPosition().y));
+            ingredients[dynamicCount].setOrientation(qRadiansToDegrees(body->GetAngle()));
+            emit objectUpdated(dynamicCount, ingredients.at(dynamicCount));
             dynamicCount++;
         }
     }
 }
 
-void Model::objectClicked(int index, float x, float y) {
+void Model::pointPressed(QPointF position) {
+    // Iterate every object to find which one is selected.
+    // If nothing is selected, return.
+    int selectedIngredientIndex = -1;
+
+    for (int i = 0; i < ingredients.size(); i++){
+        auto item = ingredients[i];
+        double x1 = item.getPosition().x();
+        double y1 = item.getPosition().y();
+        double x2 = item.getPosition().x()
+                    + item.getDimensions().width();
+        double y2 = item.getPosition().y()
+                    + item.getDimensions().height();
+
+        qDebug() << "mouse x " << position.x() << " | mouse y " << position.y();
+        qDebug() << "x1 " << x1 << " | x2 " << x2;
+        qDebug() << "y1 " << y1 << " | y2 " << y2;
+        if (x1 <= position.x() && x2 >= position.x()
+            && y1 <= position.y() && y2 >= position.y()) {
+            selectedIngredientIndex = ingredients.size() - i - 1;
+            qDebug() << "Item " << selectedIngredientIndex << " selected.";
+            break;
+        }
+    }
+
+    // If the index is still -1, it means nothing was selected.
+    if (selectedIngredientIndex == -1) {
+        selected = nullptr;
+        return;
+    }
+
+    // Put the selected body into the selected variable.
+    ///
+    /// \brief dynamicCount counts all the dynamic objects in the world (excludes the static ones)
+    ///
     int dynamicCount = 0;
     for(b2Body* body = world.GetBodyList();
-        dynamicCount <= index;
+        dynamicCount <= selectedIngredientIndex;
         body = body->GetNext()) {
-        if(dynamicCount == index && body->GetType() == b2_dynamicBody) {
-            // body->ApplyForceToCenter(
-            //     b2Vec2(
-            //         (x - body->GetPosition().x) * body->GetMass(),
-            //         (y - body->GetPosition().y) * body->GetMass()),
-            //     true);
-            recentMouseLoc = QPoint(x, y);
+        if(dynamicCount == selectedIngredientIndex && body->GetType() == b2_dynamicBody) {
             selected = body;
             return;
-        }
-        else if(body->GetType() == b2_dynamicBody)
+        } else if(body->GetType() == b2_dynamicBody)
             dynamicCount++;
     }
+
+    pointMoved(position);
+}
+
+void Model::pointMoved(QPointF position) {
+    recentMouseLoc = position;
+}
+
+void Model::pointReleased() {
+    selected = nullptr;
 }
 
 void Model::pauseGame(bool pausedState){
@@ -173,10 +232,6 @@ void Model::pauseGame(bool pausedState){
         timer.stop();
     else
         timer.start(16);
-}
-
-void Model::objectReleased() {
-    selected = nullptr;
 }
 
 void Model::modelUpdated(int index, Ingredient rect) {

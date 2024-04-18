@@ -18,14 +18,11 @@ Interface::Interface(QWidget *parent)
     ui->quitButton->setVisible(false);
     ui->controlsButton->setVisible(false);
 
-    // Adding some text boxes
-    createBody(6.0f, 0.0f, 1.5f, 1.0f, 0);
-    createBody(1.5f, 0.0f, 3.0f, 2.0f, 0);
-    createBody(1.5f, 2.0f, 3.0f, 2.0f, 90);
-    createBody(1.5f, 4.0f, 3.0f, 2.0f, 180);
-    createBody(1.5f, 6.0f, 3.0f, 2.0f, 270);
-    createBody(12.0f, -2.0f, 4.5f, 3.0f, 0);
-    createBody(25.0f, 0.0f, 9.0f, 6.0f, 0);
+    // Connect world creation to the view.
+    connect(this, &Interface::createWorld,
+            &model, &Model::createWorld);
+    connect(&model, &Model::worldCreated,
+            this, &Interface::createLabels);
 
     // Connect game updates to the view
     connect(&model, &Model::makeGroundInView,
@@ -34,10 +31,12 @@ Interface::Interface(QWidget *parent)
             this, &Interface::updateObject);
 
     // Connect mouse updates to model
-    connect(this, &Interface::draggableClicked,
-            &model, &Model::objectClicked);
-    connect(this, &Interface::draggableReleased,
-            &model, &Model::objectReleased);
+    connect(this, &Interface::mousePressed,
+            &model, &Model::pointPressed);
+    connect(this, &Interface::mouseMoved,
+            &model, &Model::pointMoved);
+    connect(this, &Interface::mouseReleased,
+            &model, &Model::pointReleased);
 
     // Connect keyboard updates to model
     connect(this, &Interface::escPressed,
@@ -70,48 +69,56 @@ Interface::Interface(QWidget *parent)
     ui->escLabel->setVisible(false);
 }
 
-void Interface::createBody(float x, float y, float width, float height,
-                           float angle) {
-    model.addObject(x, y, width, height, qDegreesToRadians(angle));
-    sprites.append(
-        QPair<QPixmap, Ingredient>(
-            QPixmap(),
-            Ingredient(
-                QPoint((x - width / 2) * SCALE, (y - height / 2) * SCALE),
-                QSize(width * SCALE, height * SCALE),
-                angle,
-                QPixmap())
-            )
-        );
-    QLabel* tempLabel = new QLabel(ui->centralwidget);
-    // tempLabel->setStyleSheet("QLabel { background-color: rgba(255, 0, 0, 10) }");
-    tempLabel->setAlignment(Qt::AlignCenter);
-    bodyDisplays.append(tempLabel);
+// void Interface::createBody(float x, float y, float width, float height,
+//                            float angle) {
+//     model.addObject(x, y, width, height, qDegreesToRadians(angle));
+//     sprites.append(
+//         QPair<QPixmap, Ingredient>(
+//             QPixmap(),
+//             Ingredient(
+//                 QPoint((x - width / 2) * SCALE, (y - height / 2) * SCALE),
+//                 QSize(width * SCALE, height * SCALE),
+//                 angle,
+//                 QPixmap())
+//             )
+//         );
+//     QLabel* tempLabel = new QLabel(ui->centralwidget);
+//     // tempLabel->setStyleSheet("QLabel { background-color: rgba(255, 0, 0, 10) }");
+//     tempLabel->setAlignment(Qt::AlignCenter);
+//     bodyDisplays.append(tempLabel);
 
-    // connect(tempLabel, &PixelEditorLabel::pixelEditorLabelClicked,
-    //         this, &Interface::pixelEditorLabelClicked);
+//     // connect(tempLabel, &PixelEditorLabel::pixelEditorLabelClicked,
+//     //         this, &Interface::pixelEditorLabelClicked);
 
+// }
+
+void Interface::createLabels(QVector<Ingredient> ingredients) {
+    for (int i = 0; i < ingredients.size(); i++) {
+        QLabel* tempLabel = new QLabel(ui->centralwidget);
+        tempLabel->setStyleSheet("QLabel { background-color: rgba(255, 0, 0, 10) }");
+        tempLabel->setAlignment(Qt::AlignCenter);
+        tempLabel->setVisible(true);
+        bodyDisplays.append(tempLabel);
+        qDebug() << "Label created";
+    }
 }
 
-void Interface::updateObject(int index, const b2Body* source) {
+void Interface::updateObject(int index, Ingredient ingredient) {
     // BELOW IS TEMP FOR A TEST, BUT MAY WORK AS A BASE
     // Ok, so right now the box doesn't have the acurate size because it is
     // impossibly complicated to get a bodies size for some reason
     // So, we are making a different class to store a sprite's info right?
     // Put the size in there
-    QSize boxSize = sprites[sprites.size() - index - 1].second.getDimensions();
-    double width = boxSize.width();
-    double height = boxSize.height();
-    double x = source->GetPosition().x;
-    double y = source->GetPosition().y;
+    double width = ingredient.getDimensions().width() * SCALE;
+    double height = ingredient.getDimensions().height() * SCALE;
+    double x = ingredient.getPosition().x() * SCALE;
+    double y = ingredient.getPosition().y() * SCALE;
 
     double diameter = std::sqrt(std::pow(width, 2) + std::pow(height, 2));
-    double angle = qRadiansToDegrees(source->GetAngle());
+    double angle = ingredient.getOrientation();
 
-    bodyDisplays[sprites.size() - index - 1]->setGeometry(
-        QRect(x * SCALE - width / 2 - (diameter - width) / 2,
-              y * SCALE - height / 2 - (diameter - height) / 2,
-              diameter, diameter));
+    bodyDisplays[bodyDisplays.size() - index - 1]->setGeometry(
+        QRect(x - diameter / 2, y - diameter / 2, diameter, diameter));
 
     // Load the texture, scale it, then transform it using a QTransform that is
     // set to the same angle as the source b2Body.
@@ -122,11 +129,13 @@ void Interface::updateObject(int index, const b2Body* source) {
     transform.rotate(angle);
     texture = texture.transformed(transform);
     // Apply the tranform.
-    bodyDisplays[sprites.size() - index - 1]->setPixmap(texture);
+    bodyDisplays[bodyDisplays.size() - index - 1]->setPixmap(texture);
 
-    sprites[sprites.size() - index - 1].second.setPosition(
-        QPoint(x * SCALE - width / 2,
-               y * SCALE - height / 2));
+    // qDebug() << "Object at index" << index
+    //          << "updated at" << x << y
+    //          << "with dimensions" << width << height
+    //          << "and angle" << angle
+    //          << bodyDisplays[bodyDisplays.size() - index - 1]->isVisible();
 }
 
 void Interface::createGround(b2Vec2 loc, int width, int height) {
@@ -137,44 +146,6 @@ void Interface::createGround(b2Vec2 loc, int width, int height) {
         "QLabel { background-color : brown; color : black; }");
 }
 
-void Interface::mousePressEvent(QMouseEvent* event) {
-    QPoint mouseLoc = event->pos();
-    qDebug() << mouseLoc.x() << " | " << mouseLoc.y();
-
-    // Iterate every object, emit if mouse colliding with this
-    for (int i = 0; i < sprites.size(); i++){
-        auto item = sprites[i];
-        int x1 = item.second.getPosition().x();
-        int y1 = item.second.getPosition().y();
-        int x2 = item.second.getPosition().x()
-                 + item.second.getDimensions().width();
-        int y2 = item.second.getPosition().y()
-                 + item.second.getDimensions().height();
-
-        qDebug() << x1 << " x1 | x2 " << x2;
-        qDebug() << y1 << " y1 | y2 " << y2;
-        if(x1 <= mouseLoc.x() && x2 >= mouseLoc.x()
-           && y1 <= mouseLoc.y() && y2 >= mouseLoc.y()) {
-            // Mouse is selecting this One!
-            qDebug() << "Emit";
-            emit draggableClicked(
-                sprites.size() - i - 1,
-                mouseLoc.x() / SCALE,
-                mouseLoc.y() / SCALE);
-            selectedObjectIndex = sprites.size() - i - 1;
-            mouseIsDown = true;
-            return;
-        }
-    }
-}
-
-void Interface::mouseMoveEvent(QMouseEvent* event) {
-    if(mouseIsDown)
-        emit draggableClicked(selectedObjectIndex,
-                              event->pos().x() / SCALE,
-                              event->pos().y() / SCALE);
-}
-
 void Interface::startLevel() {
     emit escPressed(false);
     isStartMenu = false;
@@ -182,6 +153,8 @@ void Interface::startLevel() {
     ui->escLabel->raise();
     ui->startWidget->setEnabled(false);
     ui->startWidget->setVisible(false);
+
+    emit createWorld();
 }
 
 void Interface::openStartMenu() {
@@ -202,17 +175,33 @@ void Interface::openStartMenu() {
     ui->escLabel->setVisible(false);
 }
 
+void Interface::mouseMoveEvent(QMouseEvent* event) {
+    if(mouseIsDown)
+        emit mouseMoved(QPointF(event->pos().x() * 1.0 / SCALE,
+                                event->pos().y() * 1.0 / SCALE));
+}
+
+void Interface::mousePressEvent(QMouseEvent* event) {
+    QPoint mouseLoc = event->pos();
+    qDebug() << mouseLoc.x() << " | " << mouseLoc.y();
+
+    mouseIsDown = true;
+
+    emit mousePressed(QPointF(event->pos().x() * 1.0 / SCALE,
+                              event->pos().y() * 1.0 / SCALE));
+
+}
+
 void Interface::mouseReleaseEvent(QMouseEvent* event) {
     mouseIsDown = false;
     selectedObjectIndex = -1;
-    emit draggableReleased();
+    emit mouseReleased();
 }
 
 void Interface::keyPressEvent(QKeyEvent *event){
     if(isStartMenu)
         return;
-    if(event->key() == Qt::Key_Escape)
-    {
+    if(event->key() == Qt::Key_Escape) {
         isGamePaused = !isGamePaused;
         emit escPressed(isGamePaused);
         ui->pauseLabel->setVisible(isGamePaused);

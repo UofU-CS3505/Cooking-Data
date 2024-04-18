@@ -1,7 +1,7 @@
 #include "emptybowl.h"
 
-EmptyBowl::EmptyBowl(QPoint pos)
-    : Ingredient(pos, QSize(6, 4), 0,
+EmptyBowl::EmptyBowl(QPointF newPosition, double angle)
+    : Ingredient(newPosition, QSize(6, 4), angle,
                  QPixmap(":/ingredients/assets/images/sprites/EmptyBowl.png")) {
 
 }

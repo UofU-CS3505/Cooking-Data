@@ -21,7 +21,7 @@ class Interface : public QMainWindow {
 private:
     Ui::Interface *ui;
     Model model;
-    QVector<QPair<QPixmap, Ingredient>> sprites;
+    // QVector<QPair<QPixmap, Ingredient>> sprites;
     QVector<QLabel*> bodyDisplays;
     bool mouseIsDown;
     bool isGamePaused = false;
@@ -38,7 +38,7 @@ private:
     /// \param height the height
     /// \param angle the angle in degrees
     ///
-    void createBody(float x, float y, float width, float height, float angle);
+    // void createBody(float x, float y, float width, float height, float angle);
 
 public:
     Interface(QWidget *parent = nullptr);
@@ -48,7 +48,8 @@ private slots:
     void displayHelpPopup();
 
 public slots:
-    void updateObject(int index, const b2Body* source);
+    void createLabels(QVector<Ingredient> ingredients);
+    void updateObject(int index, Ingredient ingredient);
     void createGround(b2Vec2 loc, int width, int height);
     // WE WILL CHANGE THIS LATER
     void startLevel();
@@ -60,8 +61,10 @@ public slots:
     void mouseReleaseEvent(QMouseEvent* event) override;
 
 signals:
-    void draggableClicked(int index, int x, int y);
-    void draggableReleased();
+    void createWorld();
+    void mousePressed(QPointF position);
+    void mouseMoved(QPointF position);
+    void mouseReleased();
     void escPressed(bool pauseState);
 
 };

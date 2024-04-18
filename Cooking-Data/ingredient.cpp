@@ -1,13 +1,13 @@
 #include "ingredient.h"
 
 Ingredient::Ingredient():
-    position(QPoint(0,0)),
+    position(QPointF(0,0)),
     dimensions(QSize(10,10)),
     orientation(0) {}
 
-Ingredient::Ingredient(QPoint pos, QSize size, double angle, QPixmap texture):
-    position(pos),
-    dimensions(size),
+Ingredient::Ingredient(QPointF position, QSize dimension, double angle, QPixmap texture):
+    position(position),
+    dimensions(dimension),
     orientation(angle),
     texture(texture) {}
 
@@ -15,11 +15,11 @@ Ingredient::~Ingredient() {
 
 }
 
-QPoint Ingredient::getPosition() {
+QPointF const Ingredient::getPosition() {
     return position;
 }
 
-QSize Ingredient::getDimensions() {
+QSize const Ingredient::getDimensions() {
     return dimensions;
 }
 
@@ -27,7 +27,7 @@ double Ingredient::getOrientation() {
     return orientation;
 }
 
-QPixmap Ingredient::getTexture() {
+QPixmap const Ingredient::getTexture() {
     return texture;
 }
 
@@ -35,12 +35,12 @@ double Ingredient::getRadius() {
     return std::max(dimensions.width(), dimensions.height());
 }
 
-void Ingredient::setPosition(QPoint location) {
-    position = QPoint(location);
+void Ingredient::setPosition(QPointF newPositions) {
+    position = newPositions;
 }
 
-void Ingredient::setDimensions(QSize size) {
-    dimensions = QSize(size);
+void Ingredient::setDimensions(QSize newDimensions) {
+    dimensions = newDimensions;
 }
 
 void Ingredient::setOrientation(double angle) {
