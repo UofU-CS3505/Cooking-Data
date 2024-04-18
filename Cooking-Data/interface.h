@@ -25,6 +25,7 @@ private:
     QVector<QLabel*> bodyDisplays;
     bool mouseIsDown;
     bool isGamePaused = false;
+    bool isStartMenu = true;
     int selectedObjectIndex;
 
     float const SCALE = 10.0f;
@@ -41,6 +42,9 @@ private slots:
 public slots:
     void updateObject(int index, const b2Body* source);
     void createGround(b2Vec2 loc, int width, int height);
+    // WE WILL CHANGE THIS LATER
+    void startLevel();
+    void openStartMenu();
 
     void keyPressEvent(QKeyEvent *event) override;
     void mousePressEvent(QMouseEvent* event) override;

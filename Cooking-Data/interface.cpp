@@ -41,6 +41,28 @@ Interface::Interface(QWidget *parent)
     // Connect menu buttons
     connect(ui->controlsButton, &QPushButton::clicked,
             this, &Interface::displayHelpPopup);
+    connect(ui->tutorialButton, &QPushButton::clicked,
+            this, &Interface::displayHelpPopup);
+    connect(ui->level1, &QPushButton::clicked,
+            this, &Interface::startLevel);
+    connect(ui->quitButton, &QPushButton::clicked,
+            this, &Interface::openStartMenu);
+
+    QPixmap cookingData = QPixmap(
+        ":/ingredients/assets/images/sprites/CookingData.png");
+    cookingData = cookingData.scaled(ui->cookingDataLabel->width(), ui->cookingDataLabel->height(),
+                             Qt::KeepAspectRatio);
+    ui->cookingDataLabel->setPixmap(cookingData);
+    ui->startWidget->raise();
+    ui->level1->raise();
+    ui->startWidget->setStyleSheet("QWidget{background-color : rgba(200, 200, 200, 80); color : black;}"
+                                   "QAbstractButton {"
+                                   "padding: 4px;border-radius: 4px;background-color: #ff8000;}"
+                                   "QAbstractButton:hover {background-color: #ffa010;}"
+                                   "QAbstractButton:pressed {background-color: #d07000;}"
+                                   "QAbstractButton:disabled {background-color: #303030; color: #808080}");
+    emit escPressed(true);
+    ui->escLabel->setVisible(false);
 }
 
 void Interface::createBody(float x, float y, float halfWidth, float halfHeight,
@@ -139,6 +161,33 @@ void Interface::mouseMoveEvent(QMouseEvent* event) {
                               event->pos().y() / SCALE);
 }
 
+void Interface::startLevel() {
+    emit escPressed(false);
+    isStartMenu = false;
+    ui->escLabel->setVisible(true);
+    ui->escLabel->raise();
+    ui->startWidget->setEnabled(false);
+    ui->startWidget->setVisible(false);
+}
+
+void Interface::openStartMenu() {
+    isGamePaused = !isGamePaused;
+    ui->pauseLabel->setVisible(isGamePaused);
+    ui->quitButton->setVisible(isGamePaused);
+    ui->quitButton->setEnabled(isGamePaused);
+    ui->controlsButton->setVisible(isGamePaused);
+    ui->controlsButton->setEnabled(isGamePaused);
+    ui->escLabel->setVisible(!isGamePaused);
+    ui->escLabel->raise();
+
+    isStartMenu = true;
+    ui->startWidget->setEnabled(true);
+    ui->startWidget->setVisible(true);
+    ui->startWidget->raise();
+    ui->startWidget->raise();
+    ui->escLabel->setVisible(false);
+}
+
 void Interface::mouseReleaseEvent(QMouseEvent* event) {
     mouseIsDown = false;
     selectedObjectIndex = -1;
@@ -146,6 +195,8 @@ void Interface::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 void Interface::keyPressEvent(QKeyEvent *event){
+    if(isStartMenu)
+        return;
     if(event->key() == Qt::Key_Escape)
     {
         isGamePaused = !isGamePaused;
