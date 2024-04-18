@@ -35,6 +35,7 @@ public:
     QSize getDimensions();
     double getOrientation();
     QPixmap getTexture();
+    double getRadius();
 
     void setPosition(QPoint location);
     void setDimensions(QSize size);

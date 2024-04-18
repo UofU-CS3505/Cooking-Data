@@ -31,6 +31,10 @@ QPixmap Ingredient::getTexture() {
     return texture;
 }
 
+double Ingredient::getRadius() {
+    return std::min(dimensions.width(), dimensions.height());
+}
+
 void Ingredient::setPosition(QPoint location) {
     position = QPoint(location);
 }
