@@ -1,6 +1,8 @@
 #ifndef INGREDIENT_H
 #define INGREDIENT_H
 
+#include "IngredientType.h"
+
 #include <QLabel>
 #include <QPoint>
 #include <QSize>
@@ -27,15 +29,18 @@ private:
     QPixmap texture;
 
 public:
+
+    const IngredientType INGREDIENT_TYPE;
+
     Ingredient();
-    Ingredient(QPoint pos, QSize size, double angle, QPixmap texture);
+    Ingredient(IngredientType type, QPoint pos, QSize size, double angle, QPixmap texture);
     ~Ingredient();
 
-    QPoint getPosition();
-    QSize getDimensions();
-    double getOrientation();
-    QPixmap getTexture();
-    double getRadius();
+    QPoint getPosition() const;
+    QSize getDimensions() const;
+    double getOrientation() const;
+    QPixmap getTexture() const;
+    double getRadius() const;
 
     void setPosition(QPoint location);
     void setDimensions(QSize size);

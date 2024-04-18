@@ -1,6 +1,7 @@
 #include <QObject>
 #include <QDebug>
 
+#include "IngredientType.h"
 #include "model.h"
 
 Model::Model()
@@ -55,10 +56,42 @@ Model::Model()
     QTimer::singleShot(40, this, [&] () {
         emit makeGroundInView(b2Vec2(90.0f, 30.0f), 10, 100);
     });
+
+
+    // Define all valid combinations.
+    combinations.insert(qMakePair(WaterPitcher, EmptyPot), WaterPot);
 }
 
 Model::~Model() {
 
+}
+
+bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
+    if (!(activeIngredients.contains(i1) && activeIngredients.contains(i2)))
+        return false;
+
+    QPair<IngredientType, IngredientType> potential1 = qMakePair(i1.INGREDIENT_TYPE, i2.INGREDIENT_TYPE);
+    QPair<IngredientType, IngredientType> potential2 = qMakePair(i1.INGREDIENT_TYPE, i2.INGREDIENT_TYPE);
+
+    // TODO - what QSize, angle, Pixmap should we pass in?
+    if (combinations.contains(potential1)) {
+        activeIngredients.remove(i1);
+        activeIngredients.remove(i2);
+        Ingredient newIngredient(combinations[potential1], i1.getPosition(),
+                                 QSize(10, 10), 0.0, QPixmap());
+        return true;
+    }
+
+    // TODO - what QSize, angle, Pixmap should we pass in?
+    if (combinations.contains(potential2)) {
+        activeIngredients.remove(i1);
+        activeIngredients.remove(i2);
+        Ingredient newIngredient(combinations[potential2], i1.getPosition(),
+                                 QSize(10, 10), 0.0, QPixmap());
+        return true;
+    }
+
+    return false;
 }
 
 void Model::addObject(float x, float y, float width, float height, float angle) {

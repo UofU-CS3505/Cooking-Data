@@ -109,6 +109,7 @@ HEADERS += \
     Box2D/Dynamics/b2World.h \
     Box2D/Dynamics/b2WorldCallbacks.h \
     Box2D/Rope/b2Rope.h \
+    IngredientType.h \
     Ingredients/emptybowl.h \
     ingredient.h \
     interface.h \

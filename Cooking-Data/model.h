@@ -20,6 +20,9 @@ private:
     float oldVX;
     float oldVY;
 
+    QHash<QPair<IngredientType, IngredientType>, IngredientType> combinations;
+    QSet<Ingredient> activeIngredients;
+
     void modelUpdated(int index, Ingredient rectangle);
 
 public:
@@ -39,6 +42,18 @@ public:
     ///
     void addObject(float x, float y, float width, float height, float angle);
     void removeObject(qsizetype index);
+
+    ///
+    /// \brief combine Combines the two input ingredients, if possible. This
+    ///                method deletes the two inputs and replaces them with
+    ///                their associated outputs if the ingredients can be
+    ///                combined. When combined, the new ingredient will always
+    ///                snap to the position of i1.
+    /// \param i1 the first ingredient to combine
+    /// \param i2 the second ingredient to combine
+    /// \return true if the ingredients successfully combined, false otherwise
+    ///
+    bool combine(const Ingredient& i1, const Ingredient& i2);
 
 public slots:
     void updateWorld();
