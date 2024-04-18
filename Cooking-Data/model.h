@@ -5,7 +5,7 @@
 #include <QTimer>
 #include <QVector>
 
-#include "rectangle.h"
+#include "ingredient.h"
 
 class Model : public QObject {
     Q_OBJECT
@@ -20,7 +20,7 @@ private:
     float oldVX;
     float oldVY;
 
-    void modelUpdated(int index, Rectangle rectangle);
+    void modelUpdated(int index, Ingredient rectangle);
 
 public:
     ///

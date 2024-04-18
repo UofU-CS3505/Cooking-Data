@@ -1,20 +1,20 @@
-#ifndef RECTANGLE_H
-#define RECTANGLE_H
+#ifndef INGREDIENT_H
+#define INGREDIENT_H
 
 #include <QLabel>
 #include <QPoint>
 #include <QSize>
 
-class Rectangle {
+class Ingredient {
 private:
     QPoint position;
     QSize dimensions;
     double orientation;
 
 public:
-    Rectangle();
-    Rectangle(QPoint pos, QSize size, double angle);
-    ~Rectangle();
+    Ingredient();
+    Ingredient(QPoint pos, QSize size, double angle);
+    ~Ingredient();
 
     QPoint getPosition();
     QSize getDimensions();
@@ -26,4 +26,4 @@ public:
 
 };
 
-#endif // RECTANGLE_H
+#endif // INGREDIENT_H

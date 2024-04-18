@@ -33,9 +33,9 @@ void Interface::createBody(float x, float y, float halfWidth, float halfHeight,
                            double angle) {
     model.addObject(x, y, halfWidth, halfHeight);
     sprites.append(
-        QPair<QPixmap, Rectangle>(
+        QPair<QPixmap, Ingredient>(
             QPixmap(),
-            Rectangle(
+            Ingredient(
                 QPoint((x - halfWidth) * SCALE, (y - halfHeight) * SCALE),
                 QSize(halfWidth * SCALE * 2, halfHeight * SCALE * 2),
                 angle)

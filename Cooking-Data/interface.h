@@ -6,7 +6,7 @@
 #include <QMouseEvent>
 
 #include "model.h"
-#include "rectangle.h"
+#include "ingredient.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,7 +19,7 @@ class Interface : public QMainWindow {
 private:
     Ui::Interface *ui;
     Model model;
-    QVector<QPair<QPixmap, Rectangle>> sprites;
+    QVector<QPair<QPixmap, Ingredient>> sprites;
     QVector<QLabel*> bodyDisplays;
     bool mouseIsDown;
     int selectedObjectIndex;

@@ -55,10 +55,10 @@ SOURCES += \
     Box2D/Dynamics/b2World.cpp \
     Box2D/Dynamics/b2WorldCallbacks.cpp \
     Box2D/Rope/b2Rope.cpp \
+    ingredient.cpp \
     main.cpp \
     interface.cpp \
-    model.cpp \
-    rectangle.cpp
+    model.cpp
 
 HEADERS += \
     Box2D/Box2D.h \
@@ -108,9 +108,9 @@ HEADERS += \
     Box2D/Dynamics/b2World.h \
     Box2D/Dynamics/b2WorldCallbacks.h \
     Box2D/Rope/b2Rope.h \
+    ingredient.h \
     interface.h \
-    model.h \
-    rectangle.h
+    model.h
 
 FORMS += \
     interface.ui

@@ -170,7 +170,7 @@ void Model::objectReleased() {
     selected = nullptr;
 }
 
-void Model::modelUpdated(int index, Rectangle rect) {
+void Model::modelUpdated(int index, Ingredient rect) {
     // idk what we are planning to use this for? is this a slot or a method?
 }
 
