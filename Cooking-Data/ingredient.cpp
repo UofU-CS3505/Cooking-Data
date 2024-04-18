@@ -3,12 +3,13 @@
 Ingredient::Ingredient():
     position(QPoint(0,0)),
     dimensions(QSize(10,10)),
-    orientation(0){}
+    orientation(0) {}
 
-Ingredient::Ingredient(QPoint pos, QSize size, double angle):
+Ingredient::Ingredient(QPoint pos, QSize size, double angle, QPixmap texture):
     position(pos),
     dimensions(size),
-    orientation(angle){}
+    orientation(angle),
+    texture(texture) {}
 
 Ingredient::~Ingredient() {
 
@@ -24,6 +25,10 @@ QSize Ingredient::getDimensions() {
 
 double Ingredient::getOrientation() {
     return orientation;
+}
+
+QPixmap Ingredient::getTexture() {
+    return texture;
 }
 
 void Ingredient::setPosition(QPoint location) {

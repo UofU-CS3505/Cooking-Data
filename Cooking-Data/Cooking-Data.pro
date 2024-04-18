@@ -55,6 +55,7 @@ SOURCES += \
     Box2D/Dynamics/b2World.cpp \
     Box2D/Dynamics/b2WorldCallbacks.cpp \
     Box2D/Rope/b2Rope.cpp \
+    Ingredients/emptybowl.cpp \
     ingredient.cpp \
     main.cpp \
     interface.cpp \
@@ -108,6 +109,7 @@ HEADERS += \
     Box2D/Dynamics/b2World.h \
     Box2D/Dynamics/b2WorldCallbacks.h \
     Box2D/Rope/b2Rope.h \
+    Ingredients/emptybowl.h \
     ingredient.h \
     interface.h \
     model.h
