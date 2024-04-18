@@ -1,4 +1,6 @@
 #include <QLayout>
+#include <iostream>
+#include <ostream>
 
 #include "interface.h"
 #include "model.h"
@@ -11,10 +13,13 @@ Interface::Interface(QWidget *parent)
     ui->setupUi(this);
 
     // Adding some text boxes
-    createBody(6.0f, 0.0f, 1.0f, 1.0f, 0);
-    createBody(1.5f, 1.0f, 2.0f, 2.0f, 0);
-    createBody(12.0f, -2.0f, 3.0f, 3.0f, 0);
-    createBody(25.0f, 0.0f, 10.0f, 10.0f, 0);
+    createBody(6.0f, 0.0f, 1.5f, 1.0f, 0);
+    createBody(1.5f, 0.0f, 3.0f, 2.0f, 0);
+    createBody(1.5f, 2.0f, 3.0f, 2.0f, 90);
+    createBody(1.5f, 4.0f, 3.0f, 2.0f, 180);
+    createBody(1.5f, 6.0f, 3.0f, 2.0f, 270);
+    createBody(12.0f, -2.0f, 4.5f, 3.0f, 0);
+    createBody(25.0f, 0.0f, 9.0f, 6.0f, 0);
 
     // Connect game updates to the view
     connect(&model, &Model::makeGroundInView,
@@ -29,20 +34,22 @@ Interface::Interface(QWidget *parent)
             &model, &Model::objectReleased);
 }
 
-void Interface::createBody(float x, float y, float halfWidth, float halfHeight,
-                           double angle) {
-    model.addObject(x, y, halfWidth, halfHeight);
+void Interface::createBody(float x, float y, float width, float height,
+                           float angle) {
+    model.addObject(x, y, width, height, qDegreesToRadians(angle));
     sprites.append(
         QPair<QPixmap, Ingredient>(
             QPixmap(),
             Ingredient(
-                QPoint((x - halfWidth) * SCALE, (y - halfHeight) * SCALE),
-                QSize(halfWidth * SCALE * 2, halfHeight * SCALE * 2),
+                QPoint((x - width / 2) * SCALE, (y - height / 2) * SCALE),
+                QSize(width * SCALE, height * SCALE),
                 angle,
                 QPixmap())
             )
         );
     QLabel* tempLabel = new QLabel(ui->centralwidget);
+    // tempLabel->setStyleSheet("QLabel { background-color: rgba(255, 0, 0, 10) }");
+    tempLabel->setAlignment(Qt::AlignCenter);
     bodyDisplays.append(tempLabel);
 
     // connect(tempLabel, &PixelEditorLabel::pixelEditorLabelClicked,
@@ -51,32 +58,39 @@ void Interface::createBody(float x, float y, float halfWidth, float halfHeight,
 }
 
 void Interface::updateObject(int index, const b2Body* source) {
-    //BELOW IS TEMP FOR A TEST, BUT MAY WORK AS A BASE
+    // BELOW IS TEMP FOR A TEST, BUT MAY WORK AS A BASE
     // Ok, so right now the box doesn't have the acurate size because it is
     // impossibly complicated to get a bodies size for some reason
     // So, we are making a different class to store a sprite's info right?
     // Put the size in there
     QSize boxSize = sprites[sprites.size() - index - 1].second.getDimensions();
+    double width = boxSize.width();
+    double height = boxSize.height();
+    double x = source->GetPosition().x;
+    double y = source->GetPosition().y;
+
+    double diameter = std::sqrt(std::pow(width, 2) + std::pow(height, 2));
+    double angle = qRadiansToDegrees(source->GetAngle());
+
     bodyDisplays[sprites.size() - index - 1]->setGeometry(
-        QRect(source->GetPosition().x * SCALE - boxSize.width()/2,
-        source->GetPosition().y * SCALE - boxSize.height()/2,
-        boxSize.width(), boxSize.height()));
+        QRect(x * SCALE - width / 2 - (diameter - width) / 2,
+              y * SCALE - height / 2 - (diameter - height) / 2,
+              diameter, diameter));
 
     // Load the texture, scale it, then transform it using a QTransform that is
     // set to the same angle as the source b2Body.
     QPixmap texture = QPixmap(
         ":/ingredients/assets/images/sprites/EmptyBowl.png");
-    texture = texture.scaled(boxSize.width(), boxSize.height(),
-                             Qt::KeepAspectRatio);
+    texture = texture.scaled(width, height, Qt::KeepAspectRatio);
     QTransform transform;
-    transform.rotate(qRadiansToDegrees(source->GetAngle()));
+    transform.rotate(angle);
     texture = texture.transformed(transform);
     // Apply the tranform.
     bodyDisplays[sprites.size() - index - 1]->setPixmap(texture);
 
     sprites[sprites.size() - index - 1].second.setPosition(
-        QPoint(source->GetPosition().x * SCALE - boxSize.width()/2,
-        source->GetPosition().y * SCALE - boxSize.height()/2));
+        QPoint(x * SCALE - width / 2,
+               y * SCALE - height / 2));
 }
 
 void Interface::createGround(b2Vec2 loc, int width, int height) {

@@ -29,7 +29,15 @@ public:
     Model();
     ~Model();
 
-    void addObject(float x, float y, float width, float height);
+    ///
+    /// \brief addObject Add a dynamic body to the world.
+    /// \param x the x position, 0 is top and positive is right
+    /// \param y the y position, 0 is top and positive is down
+    /// \param width the width
+    /// \param height the height
+    /// \param angle the angle in radians
+    ///
+    void addObject(float x, float y, float width, float height, float angle);
     void removeObject(qsizetype index);
 
 public slots:

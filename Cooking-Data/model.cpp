@@ -61,17 +61,18 @@ Model::~Model() {
 
 }
 
-void Model::addObject(float x, float y, float width, float height) {
+void Model::addObject(float x, float y, float width, float height, float angle) {
     // THIS IS A TEMP TO CREATE SIMPLE BOX
 
     // Define the dynamic body. We set its position and call the body factory.
     b2BodyDef bodyDef;
     bodyDef.position.Set(x, y);
+    bodyDef.angle = angle;
     b2Body* body = this->world.CreateBody(&bodyDef);
 
     // Define another box shape for our dynamic body.
     b2PolygonShape dynamicBox;
-    dynamicBox.SetAsBox(width, height);
+    dynamicBox.SetAsBox(width / 2, height / 2);
 
     // Define the dynamic body fixture.
     b2FixtureDef fixtureDef;

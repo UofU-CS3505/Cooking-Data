@@ -26,7 +26,15 @@ private:
 
     float const SCALE = 10.0f;
 
-    void createBody(float x, float y, float halfWidth, float halfHeight, double angle);
+    ///
+    /// \brief createBody
+    /// \param x the x position, 0 is left and positive is right
+    /// \param y the y position, 0 is top and positive is down
+    /// \param width the width
+    /// \param height the height
+    /// \param angle the angle in degrees
+    ///
+    void createBody(float x, float y, float width, float height, float angle);
 
 public:
     Interface(QWidget *parent = nullptr);
