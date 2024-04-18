@@ -1,6 +1,4 @@
 #include <QLayout>
-#include <iostream>
-#include <ostream>
 
 #include "interface.h"
 #include "model.h"
@@ -27,7 +25,7 @@ Interface::Interface(QWidget *parent)
     // Connect game updates to the view
     connect(&model, &Model::makeGroundInView,
             this, &Interface::createGround);
-    connect(&model, &Model::objectUpdated,
+    connect(&model, &Model::ingredientUpdated,
             this, &Interface::updateObject);
 
     // Connect mouse updates to model
@@ -115,7 +113,7 @@ void Interface::updateObject(int index, Ingredient ingredient) {
     double y = ingredient.getPosition().y() * SCALE;
 
     double diameter = std::sqrt(std::pow(width, 2) + std::pow(height, 2));
-    double angle = ingredient.getOrientation();
+    double angle = ingredient.getAngle();
 
     bodyDisplays[bodyDisplays.size() - index - 1]->setGeometry(
         QRect(x - diameter / 2, y - diameter / 2, diameter, diameter));

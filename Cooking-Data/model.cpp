@@ -1,8 +1,8 @@
 #include <QObject>
 #include <QDebug>
 
+#include "ingredienttype.h"
 #include "model.h"
-#include "Ingredients/emptybowl.h"
 
 Model::Model()
     : timer(),
@@ -55,21 +55,27 @@ Model::Model()
     QTimer::singleShot(40, this, [&] () {
         emit makeGroundInView(b2Vec2(90.0f, 30.0f), 10, 100);
     });
+
+
+    // Define all valid combinations.
+    combinations.insert(qMakePair(WaterPitcher, EmptyPot), WaterPot);
 }
 
 Model::~Model() {
 
 }
 
-void Model::addIngredient(QPointF position) {
-    Ingredient emptyBowl = EmptyBowl(position, 0);
-    ingredients.append(emptyBowl);
-    addBox2DObject(position.x(), position.y(),
-              emptyBowl.getDimensions().width(),
-              emptyBowl.getDimensions().height(),
-              qDegreesToRadians(emptyBowl.getOrientation()));
-}
+void Model::addIngredient(IngredientType type, QPointF position) {
+    Ingredient ingredient;
+    if (type == EmptyBowl)
+        ingredient = createEmptyBowl(position, 0);
 
+    ingredients.append(ingredient);
+    addBox2DObject(position.x(), position.y(),
+                   ingredient.getDimensions().width(),
+                   ingredient.getDimensions().height(),
+                   qDegreesToRadians(ingredient.getAngle()));
+}
 
 void Model::addBox2DObject(float x, float y, float width, float height, float angle) {
     // THIS IS A TEMP TO CREATE SIMPLE BOX
@@ -103,9 +109,45 @@ void Model::removeBox2DObject(qsizetype index) {
     world.DestroyBody(&world.GetBodyList()[index]);
 }
 
+Ingredient Model::createEmptyBowl(QPointF position, double angle) {
+    return Ingredient(EmptyBowl, position, QSize(6, 4), angle,
+                      QPixmap(
+                          ":/ingredients/assets/images/sprites/EmptyBowl.png"));
+}
+
+bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
+    if (!(activeIngredients.contains(i1) && activeIngredients.contains(i2)))
+        return false;
+
+    QPair<IngredientType, IngredientType> potential1
+        = qMakePair(i1.getIngredientType(), i2.getIngredientType());
+    QPair<IngredientType, IngredientType> potential2
+        = qMakePair(i1.getIngredientType(), i2.getIngredientType());
+
+    // TODO - what QSize, angle, Pixmap should we pass in?
+    if (combinations.contains(potential1)) {
+        activeIngredients.remove(i1);
+        activeIngredients.remove(i2);
+        Ingredient newIngredient(combinations[potential1], i1.getPosition(),
+                                 QSize(10, 10), 0.0, QPixmap());
+        return true;
+    }
+
+    // TODO - what QSize, angle, Pixmap should we pass in?
+    if (combinations.contains(potential2)) {
+        activeIngredients.remove(i1);
+        activeIngredients.remove(i2);
+        Ingredient newIngredient(combinations[potential2], i1.getPosition(),
+                                 QSize(10, 10), 0.0, QPixmap());
+        return true;
+    }
+
+    return false;
+}
+
 void Model::createWorld() {
     for (int i = 0; i < 10; i++)
-        addIngredient(QPointF(5, 0));
+        addIngredient(EmptyBowl, QPointF(5, 0));
 
     emit worldCreated(ingredients);
 
@@ -162,8 +204,8 @@ void Model::updateWorld() {
         if(body->GetType() == b2_dynamicBody) {
             ingredients[dynamicCount].setPosition(QPointF(body->GetPosition().x,
                                                           body->GetPosition().y));
-            ingredients[dynamicCount].setOrientation(qRadiansToDegrees(body->GetAngle()));
-            emit objectUpdated(dynamicCount, ingredients.at(dynamicCount));
+            ingredients[dynamicCount].setAngle(qRadiansToDegrees(body->GetAngle()));
+            emit ingredientUpdated(dynamicCount, ingredients.at(dynamicCount));
             dynamicCount++;
         }
     }
@@ -233,8 +275,3 @@ void Model::pauseGame(bool pausedState){
     else
         timer.start(16);
 }
-
-void Model::modelUpdated(int index, Ingredient rect) {
-    // idk what we are planning to use this for? is this a slot or a method?
-}
-

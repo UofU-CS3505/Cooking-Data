@@ -1,48 +1,59 @@
 #include "ingredient.h"
+#include "ingredienttype.h"
+
+int Ingredient::globalLatestID = 0;
 
 Ingredient::Ingredient():
+    ID(++globalLatestID),
+    INGREDIENT_TYPE(None),
     position(QPointF(0,0)),
     dimensions(QSize(10,10)),
-    orientation(0) {}
+    angle(0) {
 
-Ingredient::Ingredient(QPointF position, QSize dimension, double angle, QPixmap texture):
+}
+
+Ingredient::Ingredient(IngredientType type, QPointF position, QSize dimension, double angle, QPixmap texture):
+    ID(++globalLatestID),
+    INGREDIENT_TYPE(type),
     position(position),
     dimensions(dimension),
-    orientation(angle),
-    texture(texture) {}
+    angle(angle),
+    texture(texture) {
+
+}
 
 Ingredient::~Ingredient() {
+    // QPixmap handles its own memory.
+}
+
+Ingredient::Ingredient(const Ingredient& rhs):
+    ID(++globalLatestID),
+    INGREDIENT_TYPE(rhs.INGREDIENT_TYPE),
+    position(rhs.position),
+    dimensions(rhs.dimensions),
+    angle(rhs.angle),
+    texture(rhs.texture) {
 
 }
 
-QPointF const Ingredient::getPosition() {
-    return position;
+Ingredient& Ingredient::operator=(const Ingredient& other) {
+    if (this != &other) { // protect against self-assignment
+        // Copy all fields.
+        ID = ++globalLatestID;
+        INGREDIENT_TYPE = other.INGREDIENT_TYPE;
+        position = other.position;
+        dimensions = other.dimensions;
+        angle = other.angle;
+        texture = other.texture; // QPixmap's assignment operator handles deep copy
+    }
+
+    return *this; // return this object by reference
 }
 
-QSize const Ingredient::getDimensions() {
-    return dimensions;
+bool Ingredient::operator==(const Ingredient& rhs) const {
+    return ID == rhs.ID;
 }
 
-double Ingredient::getOrientation() {
-    return orientation;
-}
-
-QPixmap const Ingredient::getTexture() {
-    return texture;
-}
-
-double Ingredient::getRadius() {
-    return std::max(dimensions.width(), dimensions.height());
-}
-
-void Ingredient::setPosition(QPointF newPositions) {
-    position = newPositions;
-}
-
-void Ingredient::setDimensions(QSize newDimensions) {
-    dimensions = newDimensions;
-}
-
-void Ingredient::setOrientation(double angle) {
-    orientation = angle;
+double Ingredient::getRadius() const {
+    return std::max(dimensions.width(), dimensions.height()) / 2.0;
 }

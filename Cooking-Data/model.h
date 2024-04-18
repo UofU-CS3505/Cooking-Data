@@ -21,7 +21,7 @@ private:
     float oldVX;
     float oldVY;
 
-    void addIngredient(QPointF position);
+    void addIngredient(IngredientType type, QPointF position);
 
     ///
     /// \brief addBox2DObject Add a dynamic body to the world.
@@ -33,7 +33,11 @@ private:
     ///
     void addBox2DObject(float x, float y, float width, float height, float angle);
     void removeBox2DObject(qsizetype index);
-    void modelUpdated(int index, Ingredient rectangle);
+
+    Ingredient createEmptyBowl(QPointF position, double angle);
+
+    QHash<QPair<IngredientType, IngredientType>, IngredientType> combinations;
+    QSet<Ingredient> activeIngredients;
 
 public:
     ///
@@ -41,6 +45,18 @@ public:
     ///
     Model();
     ~Model();
+
+    ///
+    /// \brief combine Combines the two input ingredients, if possible. This
+    ///                method deletes the two inputs and replaces them with
+    ///                their associated outputs if the ingredients can be
+    ///                combined. When combined, the new ingredient will always
+    ///                snap to the position of i1.
+    /// \param i1 the first ingredient to combine
+    /// \param i2 the second ingredient to combine
+    /// \return true if the ingredients successfully combined, false otherwise
+    ///
+    bool combine(const Ingredient& i1, const Ingredient& i2);
 
 public slots:
     void createWorld();
@@ -52,7 +68,7 @@ public slots:
 
 signals:
     void worldCreated(QVector<Ingredient> ingredients);
-    void objectUpdated(int index, Ingredient ingredient);
+    void ingredientUpdated(int index, Ingredient ingredient);
     void makeGroundInView(b2Vec2 loc, int width, int height);
 
 };
