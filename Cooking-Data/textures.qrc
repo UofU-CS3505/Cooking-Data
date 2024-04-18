@@ -15,5 +15,16 @@
         <file>assets/images/sprites/WaterPitcher.png</file>
         <file>assets/images/sprites/WaterPitcherPouring.png</file>
         <file>assets/images/sprites/WaterPot.png</file>
+        <file>assets/images/sprites/Background.png</file>
+        <file>assets/images/sprites/BoilingWaterPot.png</file>
+        <file>assets/images/sprites/CookingDaddy.png</file>
+        <file>assets/images/sprites/CookingData.png</file>
+        <file>assets/images/sprites/CounterTopCabinet.png</file>
+        <file>assets/images/sprites/Ladel.png</file>
+        <file>assets/images/sprites/StoveOff.png</file>
+        <file>assets/images/sprites/StoveOn.png</file>
+        <file>assets/images/sprites/Table.png</file>
+        <file>assets/images/sprites/WaterLadel.png</file>
+        <file>assets/images/sprites/Window.png</file>
     </qresource>
 </RCC>

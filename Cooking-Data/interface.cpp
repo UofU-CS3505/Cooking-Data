@@ -38,7 +38,8 @@ void Interface::createBody(float x, float y, float halfWidth, float halfHeight,
             Ingredient(
                 QPoint((x - halfWidth) * SCALE, (y - halfHeight) * SCALE),
                 QSize(halfWidth * SCALE * 2, halfHeight * SCALE * 2),
-                angle)
+                angle,
+                QPixmap())
             )
         );
     QLabel* tempLabel = new QLabel(ui->centralwidget);
