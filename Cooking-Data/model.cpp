@@ -166,6 +166,14 @@ void Model::objectClicked(int index, float x, float y) {
     }
 }
 
+void Model::pauseGame(bool pausedState){
+    // Pause game, stop timer to stop game loop
+    if(pausedState)
+        timer.stop();
+    else
+        timer.start(16);
+}
+
 void Model::objectReleased() {
     selected = nullptr;
 }

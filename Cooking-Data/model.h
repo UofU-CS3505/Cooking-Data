@@ -36,6 +36,7 @@ public slots:
     void updateWorld();
     void objectClicked(int index, float x, float y);
     void objectReleased();
+    void pauseGame(bool pausedState);
 
 signals:
     void objectUpdated(int index, const b2Body* body);

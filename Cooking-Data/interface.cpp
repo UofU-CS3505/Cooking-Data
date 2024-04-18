@@ -10,6 +10,12 @@ Interface::Interface(QWidget *parent)
     model(Model()) {
     ui->setupUi(this);
 
+    ui->pauseLabel->setStyleSheet("background-color : rgba(200, 200, 200, 150); color : black;");
+    ui->escLabel->setStyleSheet("color : black;");
+    ui->pauseLabel->setVisible(false);
+    ui->quitButton->setVisible(false);
+    ui->controlsButton->setVisible(false);
+
     // Adding some text boxes
     createBody(6.0f, 0.0f, 1.0f, 1.0f, 0);
     createBody(1.5f, 1.0f, 2.0f, 2.0f, 0);
@@ -27,6 +33,14 @@ Interface::Interface(QWidget *parent)
             &model, &Model::objectClicked);
     connect(this, &Interface::draggableReleased,
             &model, &Model::objectReleased);
+
+    // Connect keyboard updates to model
+    connect(this, &Interface::escPressed,
+            &model, &Model::pauseGame);
+
+    // Connect menu buttons
+    connect(ui->controlsButton, &QPushButton::clicked,
+            this, &Interface::displayHelpPopup);
 }
 
 void Interface::createBody(float x, float y, float halfWidth, float halfHeight,
@@ -129,6 +143,39 @@ void Interface::mouseReleaseEvent(QMouseEvent* event) {
     mouseIsDown = false;
     selectedObjectIndex = -1;
     emit draggableReleased();
+}
+
+void Interface::keyPressEvent(QKeyEvent *event){
+    if(event->key() == Qt::Key_Escape)
+    {
+        isGamePaused = !isGamePaused;
+        emit escPressed(isGamePaused);
+        ui->pauseLabel->setVisible(isGamePaused);
+        ui->pauseLabel->raise();
+        ui->quitButton->setVisible(isGamePaused);
+        ui->quitButton->setEnabled(isGamePaused);
+        ui->quitButton->raise();
+        ui->controlsButton->setVisible(isGamePaused);
+        ui->controlsButton->setEnabled(isGamePaused);
+        ui->controlsButton->raise();
+        ui->escLabel->setVisible(!isGamePaused);
+        ui->escLabel->raise();
+    }
+}
+
+void Interface::displayHelpPopup() {
+    QMessageBox brushHelp;
+    brushHelp.setWindowTitle("Tutorials");
+    brushHelp.setText("Drag objects around with your mouse to move them around the screen. \n"
+                      "Follow the recipe given to you to cook the meal and progress. \n"
+                      "Completing a recipe will give you a new recipe to cook. \n"
+                      "Click the pantry button to see available ingredients. \n"
+                      "The pot should go on the stove. Press dial to turn it on. \n"
+                      "You already know this, but press ESC to pause.");
+    brushHelp.setIcon(QMessageBox::Information);
+    brushHelp.setModal(true);
+    brushHelp.setDefaultButton(QMessageBox::Ok);
+    brushHelp.exec();
 }
 
 Interface::~Interface() {
