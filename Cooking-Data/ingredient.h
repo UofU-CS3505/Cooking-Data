@@ -26,7 +26,7 @@ private:
     /// \brief dimensions The dimension of the ingredient in inches. Should be
     ///                   half of the dimension of the texture.
     ///
-    QSize dimensions;
+    QSizeF dimensions;
 
     ///
     /// \brief angle The angle of the ingredient in degrees.
@@ -42,7 +42,7 @@ private:
 public:
 
     Ingredient();
-    Ingredient(IngredientType type, QPointF position, QSize dimension, double angle, QPixmap texture);
+    Ingredient(IngredientType type, QPointF position, QSizeF dimension, double angle, QPixmap texture);
     ~Ingredient();
 
     ///
@@ -67,7 +67,7 @@ public:
     int getID() const { return ID; }
     IngredientType getIngredientType() const { return INGREDIENT_TYPE; }
     QPointF getPosition() const { return position; }
-    QSize getDimensions() const { return dimensions; }
+    QSizeF getDimensions() const { return dimensions; }
 
     ///
     /// \brief getAngle Get the angle in degrees.
@@ -84,7 +84,7 @@ public:
     double getRadius() const;
 
     void setPosition(QPointF newPosition) { position = newPosition; }
-    void setDimensions(QSize newDimensions) { dimensions = newDimensions; }
+    void setDimensions(QSizeF newDimensions) { dimensions = newDimensions; }
     void setAngle(double newAngle) { angle = newAngle; }
 
 };

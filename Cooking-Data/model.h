@@ -16,8 +16,10 @@ private:
     QTimer timer;
     b2World world;
     b2Body* selected;
-    QVector<Ingredient> ingredients;
     QPointF recentMouseLoc;
+    QHash<QPair<IngredientType, IngredientType>, IngredientType> combinations;
+    QHash<Ingredient, b2Body*> ingredientToBody;
+    QSet<Ingredient> activeIngredients;
     float oldVX;
     float oldVY;
 
@@ -34,10 +36,7 @@ private:
     void addBox2DObject(float x, float y, float width, float height, float angle);
     void removeBox2DObject(qsizetype index);
 
-    Ingredient createEmptyBowl(QPointF position, double angle);
-
-    QHash<QPair<IngredientType, IngredientType>, IngredientType> combinations;
-    QSet<Ingredient> activeIngredients;
+    Ingredient createIngredient(IngredientType ingType, QPointF position, double angle);
 
 public:
     ///
@@ -67,7 +66,7 @@ public slots:
     void pauseGame(bool pausedState);
 
 signals:
-    void worldCreated(QVector<Ingredient> ingredients);
+    void worldCreated(QSet<Ingredient> ingredients);
     void ingredientUpdated(int index, Ingredient ingredient);
     void makeGroundInView(b2Vec2 loc, int width, int height);
 

@@ -12,7 +12,7 @@ Ingredient::Ingredient():
 
 }
 
-Ingredient::Ingredient(IngredientType type, QPointF position, QSize dimension, double angle, QPixmap texture):
+Ingredient::Ingredient(IngredientType type, QPointF position, QSizeF dimension, double angle, QPixmap texture):
     ID(++globalLatestID),
     INGREDIENT_TYPE(type),
     position(position),

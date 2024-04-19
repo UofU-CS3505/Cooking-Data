@@ -90,7 +90,7 @@ Interface::Interface(QWidget *parent)
 
 // }
 
-void Interface::createLabels(QVector<Ingredient> ingredients) {
+void Interface::createLabels(QSet<Ingredient> ingredients) {
     for (int i = 0; i < ingredients.size(); i++) {
         QLabel* tempLabel = new QLabel(ui->centralwidget);
         tempLabel->setStyleSheet("QLabel { background-color: rgba(255, 0, 0, 10) }");

@@ -66,11 +66,9 @@ Model::~Model() {
 }
 
 void Model::addIngredient(IngredientType type, QPointF position) {
-    Ingredient ingredient;
-    if (type == EmptyBowl)
-        ingredient = createEmptyBowl(position, 0);
+    Ingredient ingredient = createIngredient(type, position, 0);
 
-    ingredients.append(ingredient);
+    activeIngredients.insert(ingredient);
     addBox2DObject(position.x(), position.y(),
                    ingredient.getDimensions().width(),
                    ingredient.getDimensions().height(),
@@ -109,10 +107,33 @@ void Model::removeBox2DObject(qsizetype index) {
     world.DestroyBody(&world.GetBodyList()[index]);
 }
 
-Ingredient Model::createEmptyBowl(QPointF position, double angle) {
-    return Ingredient(EmptyBowl, position, QSize(6, 4), angle,
-                      QPixmap(
-                          ":/ingredients/assets/images/sprites/EmptyBowl.png"));
+Ingredient Model::createIngredient(IngredientType ingType, QPointF position, double angle) {
+
+    if (ingType == EmptyBowl)
+        return Ingredient(EmptyBowl, position, QSizeF(6, 4), angle,
+                          QPixmap(
+                              ":/ingredients/assets/images/sprites/EmptyBowl.png"
+                          ));
+
+    if (ingType == EmptyPot)
+        return Ingredient(EmptyPot, position, QSizeF(8, 5), angle,
+                          QPixmap(
+                              ":/ingredients/assets/images/sprites/EmptyPot.png"
+                              ));
+
+    if (ingType == WaterPitcher)
+        return Ingredient(WaterPitcher, position, QSizeF(7.5, 8.5), angle,
+                          QPixmap(
+                              ":/ingredients/assets/images/sprites/WaterPitcher.png"
+                              ));
+
+    if (ingType == WaterPot)
+        return Ingredient(WaterPot, position, QSizeF(6, 4), angle,
+                          QPixmap(
+                              ":/ingredients/assets/images/sprites/WaterPot.png"
+                              ));
+
+    return Ingredient();
 }
 
 bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
@@ -149,7 +170,7 @@ void Model::createWorld() {
     for (int i = 0; i < 10; i++)
         addIngredient(EmptyBowl, QPointF(5, 0));
 
-    emit worldCreated(ingredients);
+    emit worldCreated(activeIngredients);
 
     qDebug() << "world created";
 }
@@ -202,10 +223,18 @@ void Model::updateWorld() {
         body != nullptr;
         body = body->GetNext()) {
         if(body->GetType() == b2_dynamicBody) {
-            ingredients[dynamicCount].setPosition(QPointF(body->GetPosition().x,
+
+            Ingredient bodyIngredient;
+
+            for (Ingredient ingredient : activeIngredients) {
+                if (ingredientToBody[ingredient] == body)
+                    bodyIngredient = ingredient;
+            }
+
+            bodyIngredient.setPosition(QPointF(body->GetPosition().x,
                                                           body->GetPosition().y));
-            ingredients[dynamicCount].setAngle(qRadiansToDegrees(body->GetAngle()));
-            emit ingredientUpdated(dynamicCount, ingredients.at(dynamicCount));
+            bodyIngredient.setAngle(qRadiansToDegrees(body->GetAngle()));
+            emit ingredientUpdated(dynamicCount, bodyIngredient);
             dynamicCount++;
         }
     }
@@ -216,8 +245,7 @@ void Model::pointPressed(QPointF position) {
     // If nothing is selected, return.
     int selectedIngredientIndex = -1;
 
-    for (int i = 0; i < ingredients.size(); i++){
-        auto item = ingredients[i];
+    for (auto item : activeIngredients){
         double x1 = item.getPosition().x();
         double y1 = item.getPosition().y();
         double x2 = item.getPosition().x()
@@ -230,8 +258,7 @@ void Model::pointPressed(QPointF position) {
         qDebug() << "y1 " << y1 << " | y2 " << y2;
         if (x1 <= position.x() && x2 >= position.x()
             && y1 <= position.y() && y2 >= position.y()) {
-            selectedIngredientIndex = ingredients.size() - i - 1;
-            qDebug() << "Item " << selectedIngredientIndex << " selected.";
+            qDebug() << item.getIngredientType();
             break;
         }
     }
