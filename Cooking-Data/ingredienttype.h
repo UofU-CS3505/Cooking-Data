@@ -3,10 +3,15 @@
 
 enum IngredientType {
     None,
+    BoilingWaterPot,
     EmptyBowl,
     EmptyPot,
+    Ladel,
+    OatmealBowl,
+    OatsBowl,
+    WaterLadel,
     WaterPitcher,
-    WaterPot
+    WaterPot,
 };
 
 #endif // INGREDIENTTYPE_H

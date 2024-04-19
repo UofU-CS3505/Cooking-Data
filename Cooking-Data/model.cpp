@@ -108,17 +108,46 @@ void Model::removeBox2DObject(qsizetype index) {
 }
 
 Ingredient Model::createIngredient(IngredientType ingType, QPointF position, double angle) {
+    if (ingType == BoilingWaterPot)
+        return Ingredient(BoilingWaterPot, position, QSizeF(8, 7), angle,
+                          QPixmap(
+                              ":/ingredients/assets/images/sprites/BoilingWaterPot.png"
+                          ));
 
     if (ingType == EmptyBowl)
         return Ingredient(EmptyBowl, position, QSizeF(6, 4), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/EmptyBowl.png"
-                          ));
+                              ));
 
     if (ingType == EmptyPot)
         return Ingredient(EmptyPot, position, QSizeF(8, 5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/EmptyPot.png"
+                              ));
+
+    if (ingType == Ladel)
+        return Ingredient(Ladel, position, QSizeF(4, 6.5), angle,
+                          QPixmap(
+                              ":/ingredients/assets/images/sprites/Ladel.png"
+                              ));
+
+    if (ingType == OatmealBowl)
+        return Ingredient(OatmealBowl, position, QSizeF(6, 8.5), angle,
+                          QPixmap(
+                              ":/ingredients/assets/images/sprites/OatmealBowl.png"
+                              ));
+
+    if (ingType == OatsBowl)
+        return Ingredient(OatsBowl, position, QSizeF(6, 4), angle,
+                          QPixmap(
+                              ":/ingredients/assets/images/sprites/OatsBowl.png"
+                              ));
+
+    if (ingType == WaterLadel)
+        return Ingredient(WaterLadel, position, QSizeF(4, 6.5), angle,
+                          QPixmap(
+                              ":/ingredients/assets/images/sprites/WaterLadel.png"
                               ));
 
     if (ingType == WaterPitcher)
@@ -128,10 +157,11 @@ Ingredient Model::createIngredient(IngredientType ingType, QPointF position, dou
                               ));
 
     if (ingType == WaterPot)
-        return Ingredient(WaterPot, position, QSizeF(6, 4), angle,
+        return Ingredient(WaterPot, position, QSizeF(8, 5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/WaterPot.png"
                               ));
+
 
     return Ingredient();
 }
