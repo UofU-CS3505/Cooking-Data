@@ -181,6 +181,7 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
         activeIngredients.remove(i2);
         Ingredient newIngredient(combinations[potential1], i1.getPosition(),
                                  QSize(10, 10), 0.0, QPixmap());
+        activeIngredients.insert(newIngredient);
         return true;
     }
 
@@ -190,6 +191,7 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
         activeIngredients.remove(i2);
         Ingredient newIngredient(combinations[potential2], i1.getPosition(),
                                  QSize(10, 10), 0.0, QPixmap());
+        activeIngredients.insert(newIngredient);
         return true;
     }
 
@@ -256,7 +258,7 @@ void Model::updateWorld() {
 
             Ingredient bodyIngredient;
 
-            for (Ingredient ingredient : activeIngredients) {
+            for (const Ingredient& ingredient : activeIngredients) {
                 if (ingredientToBody[ingredient] == body)
                     bodyIngredient = ingredient;
             }
@@ -275,7 +277,7 @@ void Model::pointPressed(QPointF position) {
     // If nothing is selected, return.
     int selectedIngredientIndex = -1;
 
-    for (auto item : activeIngredients){
+    for (const Ingredient& item : activeIngredients){
         double x1 = item.getPosition().x();
         double y1 = item.getPosition().y();
         double x2 = item.getPosition().x()
