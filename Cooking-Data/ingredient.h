@@ -12,12 +12,12 @@ private:
     ///
     /// \brief ID an ID unique to this instance.
     ///
-    int ID;
+    int* ID;
 
     ///
     /// \brief globalLatestID the latest ID of all Ingredients.
     ///
-    static int globalLatestID;
+    //static int globalLatestID;
 
     IngredientType INGREDIENT_TYPE;
     QPointF position;
@@ -42,7 +42,7 @@ private:
 public:
 
     Ingredient();
-    Ingredient(IngredientType type, QPointF position, QSizeF dimension, double angle, QPixmap texture);
+    Ingredient(IngredientType type, QPointF position, QSizeF dimension, double angle, QPixmap texture, int* ID);
     ~Ingredient();
 
     ///
@@ -64,7 +64,7 @@ public:
     /// \return
     bool operator==(const Ingredient& rhs) const;
 
-    int getID() const { return ID; }
+    int* getID() const { return ID; }
     IngredientType getIngredientType() const { return INGREDIENT_TYPE; }
     QPointF getPosition() const { return position; }
     QSizeF getDimensions() const { return dimensions; }
@@ -86,7 +86,6 @@ public:
     void setPosition(QPointF newPosition) { position = newPosition; }
     void setDimensions(QSizeF newDimensions) { dimensions = newDimensions; }
     void setAngle(double newAngle) { angle = newAngle; }
-
 };
 
 // This had to be inline or it will not compile.
@@ -96,7 +95,7 @@ public:
 /// \return the hash
 ///
 inline size_t qHash(const Ingredient& ingredient) {
-    return ingredient.getID();
+    return *ingredient.getID();
 }
 
 #endif // INGREDIENT_H

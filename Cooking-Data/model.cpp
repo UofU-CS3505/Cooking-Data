@@ -66,16 +66,29 @@ Model::~Model() {
 }
 
 void Model::addIngredient(IngredientType type, QPointF position) {
-    Ingredient ingredient = createIngredient(type, position, 0);
-
-    activeIngredients.insert(ingredient);
+    qDebug() << "ID creating...";
+    int* ID = new int(latestIngredientID);
+    qDebug() << "ID made: " << *ID;
+    Ingredient ingredient = createIngredient(type, position, 0, ID);
+    qDebug() << "Ingredient made";
+    activeIngredients.append(ingredient);
+    qDebug() << "added to activeingreentsts";
     addBox2DObject(position.x(), position.y(),
                    ingredient.getDimensions().width(),
                    ingredient.getDimensions().height(),
-                   qDegreesToRadians(ingredient.getAngle()));
+                   qDegreesToRadians(ingredient.getAngle()), ID);
+    qDebug() << "box2d made";
+    latestIngredientID++;
+    qDebug() << "ID plus plus: " << latestIngredientID;
+
+    // ingredientToBody.insert(ingredient, addBox2DObject(position.x(), position.y(),
+    //                         ingredient.getDimensions().width(),
+    //                         ingredient.getDimensions().height(),
+    //                         qDegreesToRadians(ingredient.getAngle())));
+    // qDebug() << ingredientToBody[ingredient]->GetPosition().x;
 }
 
-void Model::addBox2DObject(float x, float y, float width, float height, float angle) {
+b2Body* Model::addBox2DObject(float x, float y, float width, float height, float angle, int* ingredientID) {
     // THIS IS A TEMP TO CREATE SIMPLE BOX
 
     // Define the dynamic body. We set its position and call the body factory.
@@ -101,66 +114,70 @@ void Model::addBox2DObject(float x, float y, float width, float height, float an
     // Add the shape to the body.
     body->CreateFixture(&fixtureDef);
     body->SetType(b2_dynamicBody);
+
+    // Set corresponding ingredient's ID
+    body->SetUserData(ingredientID);
+    return body;
 }
 
 void Model::removeBox2DObject(qsizetype index) {
     world.DestroyBody(&world.GetBodyList()[index]);
 }
 
-Ingredient Model::createIngredient(IngredientType ingType, QPointF position, double angle) {
+Ingredient Model::createIngredient(IngredientType ingType, QPointF position, double angle, int* ID) {
     if (ingType == BoilingWaterPot)
         return Ingredient(BoilingWaterPot, position, QSizeF(8, 7), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/BoilingWaterPot.png"
-                          ));
+                          ), ID);
 
     if (ingType == EmptyBowl)
         return Ingredient(EmptyBowl, position, QSizeF(6, 4), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/EmptyBowl.png"
-                              ));
+                              ), ID);
 
     if (ingType == EmptyPot)
         return Ingredient(EmptyPot, position, QSizeF(8, 5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/EmptyPot.png"
-                              ));
+                              ), ID);
 
     if (ingType == Ladel)
         return Ingredient(Ladel, position, QSizeF(4, 6.5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/Ladel.png"
-                              ));
+                              ), ID);
 
     if (ingType == OatmealBowl)
         return Ingredient(OatmealBowl, position, QSizeF(6, 8.5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/OatmealBowl.png"
-                              ));
+                              ), ID);
 
     if (ingType == OatsBowl)
         return Ingredient(OatsBowl, position, QSizeF(6, 4), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/OatsBowl.png"
-                              ));
+                              ), ID);
 
     if (ingType == WaterLadel)
         return Ingredient(WaterLadel, position, QSizeF(4, 6.5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/WaterLadel.png"
-                              ));
+                              ), ID);
 
     if (ingType == WaterPitcher)
         return Ingredient(WaterPitcher, position, QSizeF(7.5, 8.5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/WaterPitcher.png"
-                              ));
+                              ), ID);
 
     if (ingType == WaterPot)
         return Ingredient(WaterPot, position, QSizeF(8, 5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/WaterPot.png"
-                              ));
+                              ), ID);
 
 
     return Ingredient();
@@ -177,22 +194,26 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
 
     // TODO - what QSize, angle, Pixmap should we pass in?
     if (combinations.contains(potential1)) {
-        activeIngredients.remove(i1);
-        activeIngredients.remove(i2);
+        activeIngredients.remove(activeIngredients.indexOf(i1));
+        activeIngredients.remove(activeIngredients.indexOf(i2));
+        int* ID = new int(latestIngredientID);
         Ingredient newIngredient(combinations[potential1], i1.getPosition(),
-                                 QSize(10, 10), 0.0, QPixmap());
-        activeIngredients.insert(newIngredient);
+                                 QSize(10, 10), 0.0, QPixmap(), ID);
+        activeIngredients.append(newIngredient);
+        latestIngredientID++;
         return true;
     }
 
     // TODO - what QSize, angle, Pixmap should we pass in?
     if (combinations.contains(potential2)) {
-        activeIngredients.remove(i1);
-        activeIngredients.remove(i2);
+        activeIngredients.remove(activeIngredients.indexOf(i1));
+        activeIngredients.remove(activeIngredients.indexOf(i2));
+        int* ID = new int(latestIngredientID);
         Ingredient newIngredient(combinations[potential2], i1.getPosition(),
-                                 QSize(10, 10), 0.0, QPixmap());
-        activeIngredients.insert(newIngredient);
+                                 QSize(10, 10), 0.0, QPixmap(), ID);
+        activeIngredients.append(newIngredient);
         return true;
+        latestIngredientID++;
     }
 
     return false;
@@ -257,17 +278,27 @@ void Model::updateWorld() {
         if(body->GetType() == b2_dynamicBody) {
 
             Ingredient bodyIngredient;
-
-            for (const Ingredient& ingredient : activeIngredients) {
-                if (ingredientToBody[ingredient] == body)
-                    bodyIngredient = ingredient;
+            //QSet<Ingredient>::iterator ingredient;
+            for (Ingredient& ingredient : activeIngredients) {
+                if(body->GetUserData() == ingredient.getID())
+                {
+                    //bodyIngredient = ingredient;
+                    //qDebug() << "ingX " << ingredient.getPosition().x() << " | ingY " << ingredient.getPosition().y();
+                    ingredient.setPosition(QPointF(body->GetPosition().x,
+                                                       body->GetPosition().y));
+                    ingredient.setAngle(qRadiansToDegrees(body->GetAngle()));
+                    emit ingredientUpdated(dynamicCount, ingredient);
+                    dynamicCount++;
+                }
             }
 
-            bodyIngredient.setPosition(QPointF(body->GetPosition().x,
-                                                          body->GetPosition().y));
-            bodyIngredient.setAngle(qRadiansToDegrees(body->GetAngle()));
-            emit ingredientUpdated(dynamicCount, bodyIngredient);
-            dynamicCount++;
+            //qDebug() << "ingX " << bodyIngredient.getPosition().x() << " | ingY " << bodyIngredient.getPosition().y();
+            // qDebug() << "bodX " << body->GetPosition().x << " | bodY " << body->GetPosition().y;
+            // bodyIngredient.setPosition(QPointF(body->GetPosition().x,
+            //                                               body->GetPosition().y));
+            // bodyIngredient.setAngle(qRadiansToDegrees(body->GetAngle()));
+            // emit ingredientUpdated(dynamicCount, bodyIngredient);
+            // dynamicCount++;
         }
     }
 }
@@ -275,28 +306,31 @@ void Model::updateWorld() {
 void Model::pointPressed(QPointF position) {
     // Iterate every object to find which one is selected.
     // If nothing is selected, return.
-    int selectedIngredientIndex = -1;
+    int* selectedIngredientID = new int(-1);
 
     for (const Ingredient& item : activeIngredients){
-        double x1 = item.getPosition().x();
-        double y1 = item.getPosition().y();
+        double x1 = item.getPosition().x()
+                    - item.getDimensions().width()/2;
+        double y1 = item.getPosition().y()
+                    - item.getDimensions().height()/2;
         double x2 = item.getPosition().x()
-                    + item.getDimensions().width();
+                    + item.getDimensions().width()/2;
         double y2 = item.getPosition().y()
-                    + item.getDimensions().height();
+                    + item.getDimensions().height()/2;
 
-        qDebug() << "mouse x " << position.x() << " | mouse y " << position.y();
-        qDebug() << "x1 " << x1 << " | x2 " << x2;
-        qDebug() << "y1 " << y1 << " | y2 " << y2;
+         qDebug() << "mouse x " << position.x() << " | mouse y " << position.y();
+         qDebug() << "x1 " << x1 << " | x2 " << x2;
+         qDebug() << "y1 " << y1 << " | y2 " << y2;
         if (x1 <= position.x() && x2 >= position.x()
             && y1 <= position.y() && y2 >= position.y()) {
-            qDebug() << item.getIngredientType();
+            //qDebug() << item.getIngredientType();
+            selectedIngredientID = item.getID();
             break;
         }
     }
 
     // If the index is still -1, it means nothing was selected.
-    if (selectedIngredientIndex == -1) {
+    if (*selectedIngredientID == -1) {
         selected = nullptr;
         return;
     }
@@ -305,15 +339,14 @@ void Model::pointPressed(QPointF position) {
     ///
     /// \brief dynamicCount counts all the dynamic objects in the world (excludes the static ones)
     ///
-    int dynamicCount = 0;
     for(b2Body* body = world.GetBodyList();
-        dynamicCount <= selectedIngredientIndex;
-        body = body->GetNext()) {
-        if(dynamicCount == selectedIngredientIndex && body->GetType() == b2_dynamicBody) {
+         body != nullptr;
+         body = body->GetNext()) {
+        if(body->GetUserData() == selectedIngredientID && body->GetType() == b2_dynamicBody) {
             selected = body;
+            qDebug() << "Selected ingredient";
             return;
-        } else if(body->GetType() == b2_dynamicBody)
-            dynamicCount++;
+        }
     }
 
     pointMoved(position);
