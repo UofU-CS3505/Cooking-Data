@@ -120,20 +120,13 @@ void Interface::updateObject(int index, Ingredient ingredient) {
 
     // Load the texture, scale it, then transform it using a QTransform that is
     // set to the same angle as the source b2Body.
-    QPixmap texture = QPixmap(
-        ":/ingredients/assets/images/sprites/EmptyBowl.png");
+    QPixmap texture = ingredient.getTexture();
     texture = texture.scaled(width, height, Qt::KeepAspectRatio);
     QTransform transform;
     transform.rotate(angle);
     texture = texture.transformed(transform);
     // Apply the tranform.
     bodyDisplays[bodyDisplays.size() - index - 1]->setPixmap(texture);
-
-    // qDebug() << "Object at index" << index
-    //          << "updated at" << x << y
-    //          << "with dimensions" << width << height
-    //          << "and angle" << angle
-    //          << bodyDisplays[bodyDisplays.size() - index - 1]->isVisible();
 }
 
 void Interface::createGround(b2Vec2 loc, int width, int height) {

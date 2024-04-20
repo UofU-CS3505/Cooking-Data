@@ -21,7 +21,8 @@ private:
     QHash<Ingredient, b2Body*> ingredientToBody;
 
     //QSet<Ingredient> activeIngredients;
-    QVector<Ingredient> activeIngredients;
+    //QVector<Ingredient> activeIngredients;
+    QMap<void*, Ingredient> activeIngredients;
 
     float oldVX;
     float oldVY;

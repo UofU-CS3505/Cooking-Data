@@ -71,7 +71,7 @@ void Model::addIngredient(IngredientType type, QPointF position) {
     qDebug() << "ID made: " << *ID;
     Ingredient ingredient = createIngredient(type, position, 0, ID);
     qDebug() << "Ingredient made";
-    activeIngredients.append(ingredient);
+    activeIngredients.insert(ID, ingredient);
     qDebug() << "added to activeingreentsts";
     addBox2DObject(position.x(), position.y(),
                    ingredient.getDimensions().width(),
@@ -80,12 +80,6 @@ void Model::addIngredient(IngredientType type, QPointF position) {
     qDebug() << "box2d made";
     latestIngredientID++;
     qDebug() << "ID plus plus: " << latestIngredientID;
-
-    // ingredientToBody.insert(ingredient, addBox2DObject(position.x(), position.y(),
-    //                         ingredient.getDimensions().width(),
-    //                         ingredient.getDimensions().height(),
-    //                         qDegreesToRadians(ingredient.getAngle())));
-    // qDebug() << ingredientToBody[ingredient]->GetPosition().x;
 }
 
 b2Body* Model::addBox2DObject(float x, float y, float width, float height, float angle, int* ingredientID) {
@@ -184,7 +178,7 @@ Ingredient Model::createIngredient(IngredientType ingType, QPointF position, dou
 }
 
 bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
-    if (!(activeIngredients.contains(i1) && activeIngredients.contains(i2)))
+    if (!(activeIngredients.values().contains(i1) && activeIngredients.values().contains(i2)))
         return false;
 
     QPair<IngredientType, IngredientType> potential1
@@ -194,36 +188,59 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
 
     // TODO - what QSize, angle, Pixmap should we pass in?
     if (combinations.contains(potential1)) {
-        activeIngredients.remove(activeIngredients.indexOf(i1));
-        activeIngredients.remove(activeIngredients.indexOf(i2));
-        int* ID = new int(latestIngredientID);
-        Ingredient newIngredient(combinations[potential1], i1.getPosition(),
-                                 QSize(10, 10), 0.0, QPixmap(), ID);
-        activeIngredients.append(newIngredient);
-        latestIngredientID++;
+        activeIngredients.remove(i1.getID());
+        activeIngredients.remove(i2.getID());
+        // Destroy the body too
+        for(b2Body* body = world.GetBodyList();
+            body != nullptr;
+            body = body->GetNext()) {
+            if(body->GetUserData() == i1.getID())
+                world.DestroyBody(body);
+            if(body->GetUserData() == i2.getID())
+                world.DestroyBody(body);
+        }
+        addIngredient(combinations[potential1], i1.getPosition());
+        // int* ID = new int(latestIngredientID);
+        // Ingredient newIngredient(combinations[potential1], i1.getPosition(),
+        //                          QSize(10, 10), 0.0, QPixmap(), ID);
+        // activeIngredients.insert(ID, newIngredient);
+        // latestIngredientID++;
+        qDebug() << "COMBINED: Case1";
         return true;
     }
 
     // TODO - what QSize, angle, Pixmap should we pass in?
     if (combinations.contains(potential2)) {
-        activeIngredients.remove(activeIngredients.indexOf(i1));
-        activeIngredients.remove(activeIngredients.indexOf(i2));
-        int* ID = new int(latestIngredientID);
-        Ingredient newIngredient(combinations[potential2], i1.getPosition(),
-                                 QSize(10, 10), 0.0, QPixmap(), ID);
-        activeIngredients.append(newIngredient);
+        activeIngredients.remove(i1.getID());
+        activeIngredients.remove(i2.getID());
+        // Destroy the body too
+        for(b2Body* body = world.GetBodyList();
+             body != nullptr;
+             body = body->GetNext()) {
+            if(body->GetUserData() == i1.getID())
+                world.DestroyBody(body);
+            if(body->GetUserData() == i2.getID())
+                world.DestroyBody(body);
+        }
+        addIngredient(combinations[potential2], i1.getPosition());
+        // int* ID = new int(latestIngredientID);
+        // Ingredient newIngredient(combinations[potential2], i1.getPosition(),
+        //                          QSize(10, 10), 0.0, QPixmap(), ID);
+        // activeIngredients.insert(ID, newIngredient);
+        // latestIngredientID++;
+        qDebug() << "COMBINED: Case2";
         return true;
-        latestIngredientID++;
     }
-
     return false;
 }
 
 void Model::createWorld() {
-    for (int i = 0; i < 10; i++)
-        addIngredient(EmptyBowl, QPointF(5, 0));
+    // for (int i = 0; i < 10; i++)
+    //     addIngredient(EmptyBowl, QPointF(5, 0));
+    addIngredient(WaterPitcher, QPointF(5, 0));
+    addIngredient(EmptyPot, QPointF(15, 10));
 
-    emit worldCreated(activeIngredients);
+    emit worldCreated(activeIngredients.values());
 
     qDebug() << "world created";
 }
@@ -270,35 +287,30 @@ void Model::updateWorld() {
 
     world.Step(timeStep, velocityIterations, positionIterations);
 
+    // Check for combinations
+    for(b2Contact* collision = world.GetContactList();
+        collision != nullptr;
+        collision = collision->GetNext()) {
+        Ingredient ingA = activeIngredients.value(collision->GetFixtureA()->GetBody()->GetUserData());
+        Ingredient ingB = activeIngredients.value(collision->GetFixtureB()->GetBody()->GetUserData());
+        combine(ingA, ingB);
+    }
+
     // Loop through every body, send signal for any dynamic one
     int dynamicCount = 0;
     for(b2Body* body = world.GetBodyList();
         body != nullptr;
         body = body->GetNext()) {
         if(body->GetType() == b2_dynamicBody) {
-
-            Ingredient bodyIngredient;
-            //QSet<Ingredient>::iterator ingredient;
             for (Ingredient& ingredient : activeIngredients) {
-                if(body->GetUserData() == ingredient.getID())
-                {
-                    //bodyIngredient = ingredient;
-                    //qDebug() << "ingX " << ingredient.getPosition().x() << " | ingY " << ingredient.getPosition().y();
+                if(body->GetUserData() == ingredient.getID()){
                     ingredient.setPosition(QPointF(body->GetPosition().x,
-                                                       body->GetPosition().y));
+                                                   body->GetPosition().y));
                     ingredient.setAngle(qRadiansToDegrees(body->GetAngle()));
                     emit ingredientUpdated(dynamicCount, ingredient);
                     dynamicCount++;
                 }
             }
-
-            //qDebug() << "ingX " << bodyIngredient.getPosition().x() << " | ingY " << bodyIngredient.getPosition().y();
-            // qDebug() << "bodX " << body->GetPosition().x << " | bodY " << body->GetPosition().y;
-            // bodyIngredient.setPosition(QPointF(body->GetPosition().x,
-            //                                               body->GetPosition().y));
-            // bodyIngredient.setAngle(qRadiansToDegrees(body->GetAngle()));
-            // emit ingredientUpdated(dynamicCount, bodyIngredient);
-            // dynamicCount++;
         }
     }
 }
@@ -345,11 +357,10 @@ void Model::pointPressed(QPointF position) {
         if(body->GetUserData() == selectedIngredientID && body->GetType() == b2_dynamicBody) {
             selected = body;
             qDebug() << "Selected ingredient";
+            pointMoved(position);
             return;
         }
     }
-
-    pointMoved(position);
 }
 
 void Model::pointMoved(QPointF position) {
