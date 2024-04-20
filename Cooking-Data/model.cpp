@@ -200,11 +200,6 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
                 world.DestroyBody(body);
         }
         addIngredient(combinations[potential1], i1.getPosition());
-        // int* ID = new int(latestIngredientID);
-        // Ingredient newIngredient(combinations[potential1], i1.getPosition(),
-        //                          QSize(10, 10), 0.0, QPixmap(), ID);
-        // activeIngredients.insert(ID, newIngredient);
-        // latestIngredientID++;
         qDebug() << "COMBINED: Case1";
         return true;
     }
@@ -223,11 +218,6 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
                 world.DestroyBody(body);
         }
         addIngredient(combinations[potential2], i1.getPosition());
-        // int* ID = new int(latestIngredientID);
-        // Ingredient newIngredient(combinations[potential2], i1.getPosition(),
-        //                          QSize(10, 10), 0.0, QPixmap(), ID);
-        // activeIngredients.insert(ID, newIngredient);
-        // latestIngredientID++;
         qDebug() << "COMBINED: Case2";
         return true;
     }
@@ -236,7 +226,7 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
 
 void Model::createWorld() {
     // for (int i = 0; i < 10; i++)
-    //     addIngredient(EmptyBowl, QPointF(5, 0));
+    //      addIngredient(EmptyBowl, QPointF(22, 0));
     addIngredient(WaterPitcher, QPointF(5, 0));
     addIngredient(EmptyPot, QPointF(15, 10));
 
@@ -291,8 +281,8 @@ void Model::updateWorld() {
     for(b2Contact* collision = world.GetContactList();
         collision != nullptr;
         collision = collision->GetNext()) {
-        Ingredient ingA = activeIngredients.value(collision->GetFixtureA()->GetBody()->GetUserData());
-        Ingredient ingB = activeIngredients.value(collision->GetFixtureB()->GetBody()->GetUserData());
+        Ingredient& ingA = activeIngredients[collision->GetFixtureA()->GetBody()->GetUserData()];
+        Ingredient& ingB = activeIngredients[collision->GetFixtureB()->GetBody()->GetUserData()];
         combine(ingA, ingB);
     }
 
@@ -302,17 +292,25 @@ void Model::updateWorld() {
         body != nullptr;
         body = body->GetNext()) {
         if(body->GetType() == b2_dynamicBody) {
-            for (Ingredient& ingredient : activeIngredients) {
-                if(body->GetUserData() == ingredient.getID()){
-                    ingredient.setPosition(QPointF(body->GetPosition().x,
-                                                   body->GetPosition().y));
-                    ingredient.setAngle(qRadiansToDegrees(body->GetAngle()));
-                    emit ingredientUpdated(dynamicCount, ingredient);
-                    dynamicCount++;
-                }
-            }
+            Ingredient& ingredient = activeIngredients[body->GetUserData()];
+            ingredient.setPosition(QPointF(body->GetPosition().x,
+                                           body->GetPosition().y));
+            ingredient.setAngle(qRadiansToDegrees(body->GetAngle()));
+            emit ingredientUpdated(dynamicCount, ingredient);
+            dynamicCount++;
         }
     }
+}
+
+void Model::deleteWorld(){
+    for(b2Body* body = world.GetBodyList();
+         body != nullptr;
+         body = body->GetNext()) {
+        if(body->GetType() == b2_dynamicBody)
+            world.DestroyBody(body);
+    }
+    activeIngredients.clear();
+    latestIngredientID = 0;
 }
 
 void Model::pointPressed(QPointF position) {

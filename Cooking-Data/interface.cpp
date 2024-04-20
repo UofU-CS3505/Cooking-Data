@@ -21,6 +21,8 @@ Interface::Interface(QWidget *parent)
             &model, &Model::createWorld);
     connect(&model, &Model::worldCreated,
             this, &Interface::createLabels);
+    connect(this, &Interface::deleteWorld,
+            &model, &Model::deleteWorld);
 
     // Connect game updates to the view
     connect(&model, &Model::makeGroundInView,
@@ -157,6 +159,8 @@ void Interface::openStartMenu() {
     ui->controlsButton->setEnabled(isGamePaused);
     ui->escLabel->setVisible(!isGamePaused);
     ui->escLabel->raise();
+
+    emit deleteWorld();
 
     isStartMenu = true;
     ui->startWidget->setEnabled(true);

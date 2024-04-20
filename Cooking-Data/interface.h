@@ -62,6 +62,7 @@ public slots:
 
 signals:
     void createWorld();
+    void deleteWorld();
     void mousePressed(QPointF position);
     void mouseMoved(QPointF position);
     void mouseReleased();

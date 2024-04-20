@@ -65,6 +65,7 @@ public:
 public slots:
     void createWorld();
     void updateWorld();
+    void deleteWorld();
     void pointPressed(QPointF position);
     void pointMoved(QPointF position);
     void pointReleased();
