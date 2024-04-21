@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/soundEffects">
+        <file>combo.wav</file>
+        <file>noCombo.wav</file>
+    </qresource>
+</RCC>
