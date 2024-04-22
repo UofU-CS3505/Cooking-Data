@@ -30,18 +30,18 @@ private:
     void addIngredient(IngredientType type, QPointF position);
 
     ///
-    /// \brief addBox2DObject Add a dynamic body to the world.
-    /// \param x the x position, 0 is top and positive is right
+    /// \brief addIngredientToWorld Add a dynamic body to the world.
+    /// \param ingredient the ingredient position, 0 is top and positive is right
     /// \param y the y position, 0 is top and positive is down
     /// \param width the width
     /// \param height the height
     /// \param angle the angle in radians
     /// \return pointer to the b2Body
     ///
-    b2Body* addBox2DObject(float x, float y, float width, float height, float angle, int ingredientID);
+    b2Body* addIngredientToWorld(const Ingredient& ingredient);
     void removeBox2DObject(qsizetype index);
 
-    Ingredient* createIngredient(IngredientType ingType, QPointF position, double angle);
+    Ingredient* createIngredient(IngredientType type, QPointF position, double angle);
 
 public:
     ///

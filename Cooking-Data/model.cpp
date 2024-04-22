@@ -62,12 +62,14 @@ Model::Model()
                         QVector<IngredientType> { WaterPitcher, WaterPot });
     combinations.insert(qMakePair(WaterPot, Fire),
                         QVector<IngredientType> { BoilingWaterPot, Fire });
+    combinations.insert(qMakePair(BoilingWaterPot, Ladel),
+                        QVector<IngredientType> { BoilingWaterPot, WaterLadel });
     combinations.insert(qMakePair(EmptyBowl, EmptyBowl),
-                        QVector<IngredientType> { Fire }); // don't question it
-    combinations.insert(qMakePair(Fire, Fire),
-                        QVector<IngredientType> { Fire, Fire, EmptyBowl }); // don't question it
+                        QVector<IngredientType> { EmptyBowl, EmptyBowl, Fire }); // don't question it
     combinations.insert(qMakePair(EmptyBowl, Oatmeal),
-                        QVector<IngredientType> { OatsBowl });
+                        QVector<IngredientType> { OatsBowl, Oatmeal });
+    combinations.insert(qMakePair(OatsBowl, WaterLadel),
+                        QVector<IngredientType> { OatmealBowl, Ladel });
 }
 
 Model::~Model() {
@@ -82,33 +84,33 @@ void Model::addIngredient(IngredientType type, QPointF position) {
     qDebug() << "Ingredient made with ID" << ingredient->getID();
     ingredients.insert(ingredient->getID(), ingredient);
     qDebug() << "Inserted ingredient with ID" << ingredients[ingredient->getID()]->getID() << "into map with key" << ingredient->getID();
-    addBox2DObject(position.x(), position.y(),
-                   ingredient->getDimensions().width(),
-                   ingredient->getDimensions().height(),
-                   qDegreesToRadians(ingredient->getAngle()),
-                   ingredient->getID());
+    addIngredientToWorld(*ingredient);
     qDebug() << "box2d made";
 }
 
-b2Body* Model::addBox2DObject(float x, float y, float width, float height, float angle, int ingredientID) {
-    // THIS IS A TEMP TO CREATE SIMPLE BOX
+b2Body* Model::addIngredientToWorld(const Ingredient& ingredient) {
+
 
     // Define the dynamic body. We set its position and call the body factory.
     b2BodyDef bodyDef;
-    bodyDef.position.Set(x, y);
-    bodyDef.angle = angle;
+    bodyDef.position.Set(ingredient.getPosition().x(),
+                         ingredient.getPosition().y());
+    bodyDef.angle = ingredient.getAngle();
     b2Body* body = this->world.CreateBody(&bodyDef);
 
     // Define another box shape for our dynamic body.
     b2PolygonShape dynamicBox;
-    dynamicBox.SetAsBox(width / 2, height / 2);
+    dynamicBox.SetAsBox(ingredient.getDimensions().width() / 2,
+                        ingredient.getDimensions().height() / 2);
 
     // Define the dynamic body fixture.
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &dynamicBox;
 
     // Set the box density to be non-zero, so it will be dynamic.
-    fixtureDef.density = 1.0f;
+    fixtureDef.density = ingredient.getWeight()
+                         / ingredient.getDimensions().width()
+                         / ingredient.getDimensions().height();
 
     // Override the default friction.
     fixtureDef.friction = 0.8f;
@@ -121,7 +123,7 @@ b2Body* Model::addBox2DObject(float x, float y, float width, float height, float
     // This horrible piece of code converts the int to a void pointer and is from
     // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
     body->SetUserData(
-        reinterpret_cast<void *>(static_cast<intptr_t>(ingredientID)));
+        reinterpret_cast<void *>(static_cast<intptr_t>(ingredient.getID())));
     return body;
 }
 
@@ -129,72 +131,61 @@ void Model::removeBox2DObject(qsizetype index) {
     world.DestroyBody(&world.GetBodyList()[index]);
 }
 
-Ingredient* Model::createIngredient(IngredientType ingType, QPointF position, double angle) {
-    if (ingType == BoilingWaterPot)
-        return new Ingredient(BoilingWaterPot, position, QSizeF(8, 7), angle,
-                          QPixmap(
-                              ":/ingredients/assets/images/sprites/BoilingWaterPot.png"
-                                  ));
+Ingredient* Model::createIngredient(IngredientType type, QPointF position, double angle) {
+    if (type == BoilingWaterPot)
+        return new Ingredient(BoilingWaterPot, QSizeF(8, 7), 8,
+                              QPixmap(":/ingredients/assets/images/sprites/BoilingWaterPot.png"),
+                              position, angle);
 
-    if (ingType == EmptyBowl)
-        return new Ingredient(EmptyBowl, position, QSizeF(6, 4), angle,
-                          QPixmap(
-                              ":/ingredients/assets/images/sprites/EmptyBowl.png"
-                                  ));
+    if (type == EmptyBowl)
+        return new Ingredient(EmptyBowl, QSizeF(6, 4), 1,
+                              QPixmap(":/ingredients/assets/images/sprites/EmptyBowl.png"),
+                              position, angle);
 
-    if (ingType == EmptyPot)
-        return new Ingredient(EmptyPot, position, QSizeF(8, 5), angle,
-                          QPixmap(
-                              ":/ingredients/assets/images/sprites/EmptyPot.png"
-                                  ));
+    if (type == EmptyPot)
+        return new Ingredient(EmptyPot, QSizeF(8, 5), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/EmptyPot.png"),
+                              position, angle);
 
-    if (ingType == Ladel)
-        return new Ingredient(Ladel, position, QSizeF(4, 6.5), angle,
-                          QPixmap(
-                              ":/ingredients/assets/images/sprites/Ladel.png"
-                                  ));
+    if (type == Ladel)
+        return new Ingredient(Ladel, QSizeF(4, 6.5), 0.5,
+                              QPixmap(":/ingredients/assets/images/sprites/Ladel.png"),
+                              position, angle);
 
-    if (ingType == Oatmeal)
-        return new Ingredient(Oatmeal, position, QSizeF(16, 16), angle,
-                          QPixmap(
-                              ":/ingredients/assets/images/sprites/Oatmeal.png"
-                                  ));
+    if (type == Oatmeal)
+        return new Ingredient(Oatmeal, QSizeF(12, 12), 20,
+                              QPixmap(":/ingredients/assets/images/sprites/Oatmeal.png"),
+                              position, angle);
 
-    if (ingType == OatmealBowl)
-        return new Ingredient(OatmealBowl, position, QSizeF(6, 8.5), angle,
-                          QPixmap(
-                              ":/ingredients/assets/images/sprites/OatmealBowl.png"
-                                  ));
+    if (type == OatmealBowl)
+        return new Ingredient(OatmealBowl, QSizeF(6, 8.5), 5,
+                              QPixmap(":/ingredients/assets/images/sprites/OatmealBowl.png"),
+                              position, angle);
 
-    if (ingType == OatsBowl)
-        return new Ingredient(OatsBowl, position, QSizeF(6, 4), angle,
-                          QPixmap(
-                              ":/ingredients/assets/images/sprites/OatsBowl.png"
-                                  ));
+    if (type == OatsBowl)
+        return new Ingredient(OatsBowl, QSizeF(6, 4), 3,
+                              QPixmap(":/ingredients/assets/images/sprites/OatsBowl.png"),
+                              position, angle);
 
-    if (ingType == WaterLadel)
-        return new Ingredient(WaterLadel, position, QSizeF(4, 6.5), angle,
-                          QPixmap(
-                              ":/ingredients/assets/images/sprites/WaterLadel.png"
-                                  ));
+    if (type == WaterLadel)
+        return new Ingredient(WaterLadel, QSizeF(4, 6.5), 1,
+                              QPixmap(":/ingredients/assets/images/sprites/WaterLadel.png"),
+                              position, angle);
 
-    if (ingType == WaterPitcher)
-        return new Ingredient(WaterPitcher, position, QSizeF(7.5, 8.5), angle,
-                          QPixmap(
-                              ":/ingredients/assets/images/sprites/WaterPitcher.png"
-                                  ));
+    if (type == WaterPitcher)
+        return new Ingredient(WaterPitcher, QSizeF(7.5, 8.5), 10,
+                              QPixmap(":/ingredients/assets/images/sprites/WaterPitcher.png"),
+                              position, angle);
 
-    if (ingType == WaterPot)
-        return new Ingredient(WaterPot, position, QSizeF(8, 5), angle,
-                          QPixmap(
-                              ":/ingredients/assets/images/sprites/WaterPot.png"
-                                  ));
+    if (type == WaterPot)
+        return new Ingredient(WaterPot, QSizeF(8, 5), 8,
+                              QPixmap(":/ingredients/assets/images/sprites/WaterPot.png"),
+                              position, angle);
 
-    if (ingType == Fire)
-        return new Ingredient(Fire, position, QSizeF(4, 6), angle,
-                          QPixmap(
-                              ":/ingredients/assets/images/sprites/Fire.png"
-                                  ));
+    if (type == Fire)
+        return new Ingredient(Fire, QSizeF(4, 6), 0.1,
+                              QPixmap(":/ingredients/assets/images/sprites/Fire.png"),
+                              position, angle);
 
     return new Ingredient();
 }
@@ -229,7 +220,7 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
             }
 
             for (int i = 0; i < combinations[pair].size(); i++)
-                if ((i == 0 && pairType == 0) || (pairType == 1 && i != 0))
+                if ((i == 0 && pairType == 0) || (i != 0 && pairType == 1))
                     addIngredient(combinations[pair][i], i1.getPosition());
                 else
                     addIngredient(combinations[pair][i], i2.getPosition());
@@ -249,9 +240,10 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
 void Model::createWorld() {
     addIngredient(WaterPitcher, QPointF(5, 0));
     addIngredient(EmptyPot, QPointF(15, 10));
-    for (int i = 0; i < 4; i++)
-        addIngredient(EmptyBowl, QPointF(std::rand() % 20, 0));
     addIngredient(Oatmeal, QPointF(35, 0));
+    addIngredient(Ladel, QPointF(35, 0));
+    for (int i = 0; i < 4; i++)
+        addIngredient(EmptyBowl, QPointF(std::rand() % 50, 0));
 
     qDebug() << "World created";
 }
@@ -268,8 +260,8 @@ void Model::updateWorld() {
         // SPRING
         float distanceX = recentMouseLoc.x() - selected->GetPosition().x;
         float distanceY = recentMouseLoc.y() - selected->GetPosition().y;
-        float velocityX = distanceX * 100;
-        float velocityY = distanceY * 100;
+        float velocityX = distanceX * 50;
+        float velocityY = distanceY * 50;
         b2Vec2 force = b2Vec2(velocityX, velocityY);
         selected->ApplyForceToCenter(force, true);
     }

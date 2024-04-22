@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/ingredients">
-        <file>assets/images/sprites/BoiledWaterPot.png</file>
         <file>assets/images/sprites/BurningHot.png</file>
         <file>assets/images/sprites/Cold.png</file>
         <file>assets/images/sprites/EmptyBowl.png</file>

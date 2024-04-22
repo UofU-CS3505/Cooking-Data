@@ -20,7 +20,6 @@ private:
     static int globalLatestID;
 
     IngredientType INGREDIENT_TYPE;
-    QPointF position;
 
     ///
     /// \brief dimensions The dimension of the ingredient in inches. Should be
@@ -29,9 +28,9 @@ private:
     QSizeF dimensions;
 
     ///
-    /// \brief angle The angle of the ingredient in degrees.
+    /// \brief weight The weight of the Ingredient in... ?
     ///
-    double angle;
+    double weight;
 
     ///
     /// \brief texture The dimension of the texture should be double that of
@@ -39,11 +38,19 @@ private:
     ///
     QPixmap texture;
 
+    QPointF position;
+
+
+    ///
+    /// \brief angle The angle of the ingredient in degrees.
+    ///
+    double angle;
+
 public:
 
     Ingredient();
-    Ingredient(IngredientType type, QPointF position, QSizeF dimension,
-               double angle, QPixmap texture);
+    Ingredient(IngredientType type, QSizeF dimension, double weight,
+               QPixmap texture, QPointF position, double angle);
     ~Ingredient();
 
     ///
@@ -57,7 +64,7 @@ public:
     /// \brief operator = Assign other to the Ingredient with a new ID as these
     ///                   two Ingredients have different memory.
     /// \param other the other Ingredient
-    /// \return the
+    /// \return the Ingredient
     ///
     Ingredient& operator=(const Ingredient& other);
 
@@ -65,26 +72,21 @@ public:
     /// \brief operator == Evaluate whether the lhs and rhs are equivalent.
     /// \param rhs
     /// \return
+    ///
     bool operator==(const Ingredient& rhs) const;
 
     int getID() const { return ID; }
     IngredientType getIngredientType() const { return INGREDIENT_TYPE; }
-    QPointF getPosition() const { return position; }
     QSizeF getDimensions() const { return dimensions; }
+    double getWeight() const { return weight; }
+    QPixmap getTexture() const { return texture; }
+    QPointF getPosition() const { return position; }
 
     ///
     /// \brief getAngle Get the angle in degrees.
     /// \return the angle in degrees
     ///
     double getAngle() const { return angle; }
-    QPixmap getTexture() const { return texture; }
-
-    ///
-    /// \brief getRadius Get the radius of the Ingredient, which is half of the
-    ///                  larger value between width and height.
-    /// \return the radius
-    ///
-    double getRadius() const;
 
     void setPosition(QPointF newPosition) { position = newPosition; }
     void setDimensions(QSizeF newDimensions) { dimensions = newDimensions; }

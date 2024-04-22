@@ -6,19 +6,21 @@ int Ingredient::globalLatestID = 0;
 Ingredient::Ingredient():
     ID(++globalLatestID),
     INGREDIENT_TYPE(None),
-    position(QPointF(0,0)),
     dimensions(QSize(10,10)),
+    weight(10),
+    position(QPointF(0,0)),
     angle(0) {
 
 }
 
-Ingredient::Ingredient(IngredientType type, QPointF position, QSizeF dimension, double angle, QPixmap texture):
+Ingredient::Ingredient(IngredientType type, QSizeF dimension, double weight, QPixmap texture, QPointF position, double angle):
     ID(++globalLatestID),
     INGREDIENT_TYPE(type),
-    position(position),
     dimensions(dimension),
-    angle(angle),
-    texture(texture) {
+    weight(weight),
+    texture(texture),
+    position(position),
+    angle(angle) {
     qDebug() << "Creating Ingredient with ID" << ID;
 }
 
@@ -29,10 +31,11 @@ Ingredient::~Ingredient() {
 Ingredient::Ingredient(const Ingredient& rhs):
     ID(++globalLatestID),
     INGREDIENT_TYPE(rhs.INGREDIENT_TYPE),
-    position(rhs.position),
     dimensions(rhs.dimensions),
-    angle(rhs.angle),
-    texture(rhs.texture) {
+    weight(rhs.weight),
+    texture(rhs.texture),
+    position(rhs.position),
+    angle(rhs.angle) {
 
 }
 
@@ -43,10 +46,11 @@ Ingredient& Ingredient::operator=(const Ingredient& other) {
 
         // Copy all fields.
         INGREDIENT_TYPE = other.INGREDIENT_TYPE;
-        position = other.position;
         dimensions = other.dimensions;
-        angle = other.angle;
+        weight = other.weight;
         texture = other.texture; // QPixmap's assignment operator handles deep copy
+        position = other.position;
+        angle = other.angle;
     }
 
     return *this; // return this object by reference
@@ -54,8 +58,4 @@ Ingredient& Ingredient::operator=(const Ingredient& other) {
 
 bool Ingredient::operator==(const Ingredient& rhs) const {
     return ID == rhs.ID;
-}
-
-double Ingredient::getRadius() const {
-    return std::max(dimensions.width(), dimensions.height()) / 2.0;
 }
