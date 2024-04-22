@@ -12,12 +12,12 @@ private:
     ///
     /// \brief ID an ID unique to this instance.
     ///
-    int* ID;
+    int ID;
 
     ///
     /// \brief globalLatestID the latest ID of all Ingredients.
     ///
-    //static int globalLatestID;
+    static int globalLatestID;
 
     IngredientType INGREDIENT_TYPE;
     QPointF position;
@@ -42,17 +42,20 @@ private:
 public:
 
     Ingredient();
-    Ingredient(IngredientType type, QPointF position, QSizeF dimension, double angle, QPixmap texture, int* ID);
+    Ingredient(IngredientType type, QPointF position, QSizeF dimension,
+               double angle, QPixmap texture);
     ~Ingredient();
 
     ///
-    /// \brief Ingredient Create a copy of the Ingredient passed in with a new ID.
+    /// \brief Ingredient Create a copy of the Ingredient passed in with a new
+    ///                   ID.
     /// \param rhs
     ///
     Ingredient(const Ingredient& rhs);
 
     ///
-    /// \brief operator = Assign other to the Ingredient with a new ID.
+    /// \brief operator = Assign other to the Ingredient with a new ID as these
+    ///                   two Ingredients have different memory.
     /// \param other the other Ingredient
     /// \return the
     ///
@@ -64,7 +67,7 @@ public:
     /// \return
     bool operator==(const Ingredient& rhs) const;
 
-    int* getID() const { return ID; }
+    int getID() const { return ID; }
     IngredientType getIngredientType() const { return INGREDIENT_TYPE; }
     QPointF getPosition() const { return position; }
     QSizeF getDimensions() const { return dimensions; }
@@ -95,7 +98,7 @@ public:
 /// \return the hash
 ///
 inline size_t qHash(const Ingredient& ingredient) {
-    return *ingredient.getID();
+    return ingredient.getID();
 }
 
 #endif // INGREDIENT_H

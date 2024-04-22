@@ -48,8 +48,8 @@ private slots:
     void displayHelpPopup();
 
 public slots:
-    void createLabels(QVector<Ingredient> ingredients);
-    void updateObject(int index, Ingredient ingredient);
+    void createLabels(QVector<Ingredient*> ingredients);
+    void updateObject(int index, Ingredient& ingredient);
     void createGround(b2Vec2 loc, int width, int height);
     // WE WILL CHANGE THIS LATER
     void startLevel();

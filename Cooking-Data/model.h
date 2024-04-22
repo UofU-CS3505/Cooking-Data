@@ -17,16 +17,13 @@ private:
     b2World world;
     b2Body* selected;
     QPointF recentMouseLoc;
-    QHash<QPair<IngredientType, IngredientType>, IngredientType> combinations;
-    QHash<Ingredient, b2Body*> ingredientToBody;
 
-    //QSet<Ingredient> activeIngredients;
-    //QVector<Ingredient> activeIngredients;
-    QMap<void*, Ingredient> activeIngredients;
+    QMap<int, Ingredient*> ingredients;
+    QHash<QPair<IngredientType, IngredientType>, IngredientType> combinations;
+    QHash<Ingredient*, b2Body*> ingredientToBody;
 
     float oldVX;
     float oldVY;
-    int latestIngredientID = 0;
 
     void addIngredient(IngredientType type, QPointF position);
 
@@ -37,11 +34,12 @@ private:
     /// \param width the width
     /// \param height the height
     /// \param angle the angle in radians
+    /// \return pointer to the b2Body
     ///
-    b2Body* addBox2DObject(float x, float y, float width, float height, float angle, int* ingredientID);
+    b2Body* addBox2DObject(float x, float y, float width, float height, float angle, int ingredientID);
     void removeBox2DObject(qsizetype index);
 
-    Ingredient createIngredient(IngredientType ingType, QPointF position, double angle, int* ID);
+    Ingredient* createIngredient(IngredientType ingType, QPointF position, double angle);
 
 public:
     ///
@@ -72,8 +70,8 @@ public slots:
     void pauseGame(bool pausedState);
 
 signals:
-    void worldCreated(QVector<Ingredient> ingredients);
-    void ingredientUpdated(int index, Ingredient ingredient);
+    void worldCreated(QVector<Ingredient*> ingredients);
+    void ingredientUpdated(int index, Ingredient& ingredient);
     void makeGroundInView(b2Vec2 loc, int width, int height);
 
 };

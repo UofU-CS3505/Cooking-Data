@@ -62,27 +62,26 @@ Model::Model()
 }
 
 Model::~Model() {
-
+    // How to delete maps?
+    // qDeleteAll(ingredients);
+    // qDeleteAll(combinations);
+    // qDeleteAll(ingredientToBody);
 }
 
 void Model::addIngredient(IngredientType type, QPointF position) {
-    qDebug() << "ID creating...";
-    int* ID = new int(latestIngredientID);
-    qDebug() << "ID made: " << *ID;
-    Ingredient ingredient = createIngredient(type, position, 0, ID);
-    qDebug() << "Ingredient made";
-    activeIngredients.insert(ID, ingredient);
-    qDebug() << "added to activeingreentsts";
+    Ingredient* ingredient = createIngredient(type, position, 0);
+    qDebug() << "Ingredient made with ID" << ingredient->getID();
+    ingredients.insert(ingredient->getID(), ingredient);
+    qDebug() << "Inserted ingredient with ID" << ingredients[ingredient->getID()]->getID() << "into map with key" << ingredient->getID();
     addBox2DObject(position.x(), position.y(),
-                   ingredient.getDimensions().width(),
-                   ingredient.getDimensions().height(),
-                   qDegreesToRadians(ingredient.getAngle()), ID);
+                   ingredient->getDimensions().width(),
+                   ingredient->getDimensions().height(),
+                   qDegreesToRadians(ingredient->getAngle()),
+                   ingredient->getID());
     qDebug() << "box2d made";
-    latestIngredientID++;
-    qDebug() << "ID plus plus: " << latestIngredientID;
 }
 
-b2Body* Model::addBox2DObject(float x, float y, float width, float height, float angle, int* ingredientID) {
+b2Body* Model::addBox2DObject(float x, float y, float width, float height, float angle, int ingredientID) {
     // THIS IS A TEMP TO CREATE SIMPLE BOX
 
     // Define the dynamic body. We set its position and call the body factory.
@@ -110,7 +109,10 @@ b2Body* Model::addBox2DObject(float x, float y, float width, float height, float
     body->SetType(b2_dynamicBody);
 
     // Set corresponding ingredient's ID
-    body->SetUserData(ingredientID);
+    // This horrible piece of code converts the int to a void pointer and is from
+    // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
+    body->SetUserData(
+        reinterpret_cast<void *>(static_cast<intptr_t>(ingredientID)));
     return body;
 }
 
@@ -118,67 +120,68 @@ void Model::removeBox2DObject(qsizetype index) {
     world.DestroyBody(&world.GetBodyList()[index]);
 }
 
-Ingredient Model::createIngredient(IngredientType ingType, QPointF position, double angle, int* ID) {
+Ingredient* Model::createIngredient(IngredientType ingType, QPointF position, double angle) {
     if (ingType == BoilingWaterPot)
-        return Ingredient(BoilingWaterPot, position, QSizeF(8, 7), angle,
+        return new Ingredient(BoilingWaterPot, position, QSizeF(8, 7), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/BoilingWaterPot.png"
-                          ), ID);
+                                  ));
 
     if (ingType == EmptyBowl)
-        return Ingredient(EmptyBowl, position, QSizeF(6, 4), angle,
+        return new Ingredient(EmptyBowl, position, QSizeF(6, 4), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/EmptyBowl.png"
-                              ), ID);
+                                  ));
 
     if (ingType == EmptyPot)
-        return Ingredient(EmptyPot, position, QSizeF(8, 5), angle,
+        return new Ingredient(EmptyPot, position, QSizeF(8, 5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/EmptyPot.png"
-                              ), ID);
+                                  ));
 
     if (ingType == Ladel)
-        return Ingredient(Ladel, position, QSizeF(4, 6.5), angle,
+        return new Ingredient(Ladel, position, QSizeF(4, 6.5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/Ladel.png"
-                              ), ID);
+                                  ));
 
     if (ingType == OatmealBowl)
-        return Ingredient(OatmealBowl, position, QSizeF(6, 8.5), angle,
+        return new Ingredient(OatmealBowl, position, QSizeF(6, 8.5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/OatmealBowl.png"
-                              ), ID);
+                                  ));
 
     if (ingType == OatsBowl)
-        return Ingredient(OatsBowl, position, QSizeF(6, 4), angle,
+        return new Ingredient(OatsBowl, position, QSizeF(6, 4), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/OatsBowl.png"
-                              ), ID);
+                                  ));
 
     if (ingType == WaterLadel)
-        return Ingredient(WaterLadel, position, QSizeF(4, 6.5), angle,
+        return new Ingredient(WaterLadel, position, QSizeF(4, 6.5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/WaterLadel.png"
-                              ), ID);
+                                  ));
 
     if (ingType == WaterPitcher)
-        return Ingredient(WaterPitcher, position, QSizeF(7.5, 8.5), angle,
+        return new Ingredient(WaterPitcher, position, QSizeF(7.5, 8.5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/WaterPitcher.png"
-                              ), ID);
+                                  ));
 
     if (ingType == WaterPot)
-        return Ingredient(WaterPot, position, QSizeF(8, 5), angle,
+        return new Ingredient(WaterPot, position, QSizeF(8, 5), angle,
                           QPixmap(
                               ":/ingredients/assets/images/sprites/WaterPot.png"
-                              ), ID);
+                                  ));
 
 
-    return Ingredient();
+    return new Ingredient();
 }
 
 bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
-    if (!(activeIngredients.values().contains(i1) && activeIngredients.values().contains(i2)))
+    // Check if both ingredients are in the map of ingredients.
+    if (!(ingredients.contains(i1.getID()) && ingredients.contains(i2.getID())))
         return false;
 
     QPair<IngredientType, IngredientType> potential1
@@ -188,15 +191,21 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
 
     // TODO - what QSize, angle, Pixmap should we pass in?
     if (combinations.contains(potential1)) {
-        activeIngredients.remove(i1.getID());
-        activeIngredients.remove(i2.getID());
+        ingredients.remove(i1.getID());
+        ingredients.remove(i2.getID());
         // Destroy the body too
-        for(b2Body* body = world.GetBodyList();
-            body != nullptr;
-            body = body->GetNext()) {
-            if(body->GetUserData() == i1.getID())
+        for (b2Body* body = world.GetBodyList();
+             body != nullptr;
+             body = body->GetNext()) {
+            // This horrible piece of code converts the void pointer from
+            // b2Body::GetUserData() to an int
+            // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
+            int ingredientID = static_cast<int>(
+                reinterpret_cast<intptr_t>(body->GetUserData()));
+
+            if (ingredientID == i1.getID())
                 world.DestroyBody(body);
-            if(body->GetUserData() == i2.getID())
+            if (ingredientID == i2.getID())
                 world.DestroyBody(body);
         }
         addIngredient(combinations[potential1], i1.getPosition());
@@ -206,15 +215,21 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
 
     // TODO - what QSize, angle, Pixmap should we pass in?
     if (combinations.contains(potential2)) {
-        activeIngredients.remove(i1.getID());
-        activeIngredients.remove(i2.getID());
+        ingredients.remove(i1.getID());
+        ingredients.remove(i2.getID());
         // Destroy the body too
-        for(b2Body* body = world.GetBodyList();
+        for (b2Body* body = world.GetBodyList();
              body != nullptr;
              body = body->GetNext()) {
-            if(body->GetUserData() == i1.getID())
+            // This horrible piece of code converts the void pointer from
+            // b2Body::GetUserData() to an int
+            // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
+            int ingredientID = static_cast<int>(
+                reinterpret_cast<intptr_t>(body->GetUserData()));
+
+            if (ingredientID == i1.getID())
                 world.DestroyBody(body);
-            if(body->GetUserData() == i2.getID())
+            if (ingredientID == i2.getID())
                 world.DestroyBody(body);
         }
         addIngredient(combinations[potential2], i1.getPosition());
@@ -225,14 +240,12 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
 }
 
 void Model::createWorld() {
-    // for (int i = 0; i < 10; i++)
-    //      addIngredient(EmptyBowl, QPointF(22, 0));
     addIngredient(WaterPitcher, QPointF(5, 0));
     addIngredient(EmptyPot, QPointF(15, 10));
 
-    emit worldCreated(activeIngredients.values());
+    emit worldCreated(ingredients.values());
 
-    qDebug() << "world created";
+    qDebug() << "World created";
 }
 
 void Model::updateWorld() {
@@ -281,21 +294,46 @@ void Model::updateWorld() {
     for(b2Contact* collision = world.GetContactList();
         collision != nullptr;
         collision = collision->GetNext()) {
-        Ingredient& ingA = activeIngredients[collision->GetFixtureA()->GetBody()->GetUserData()];
-        Ingredient& ingB = activeIngredients[collision->GetFixtureB()->GetBody()->GetUserData()];
-        combine(ingA, ingB);
+        // This horrible piece of code converts the void pointer from
+        // b2Body::GetUserData() to an int
+        // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
+        int i1ID = static_cast<int>(
+            reinterpret_cast<intptr_t>(collision->GetFixtureA()->GetBody()->GetUserData()));
+        int i2ID = static_cast<int>(
+            reinterpret_cast<intptr_t>(collision->GetFixtureB()->GetBody()->GetUserData()));
+
+        // If the ingredient was not found in the map, continue the loop.
+        if (!(ingredients.contains(i1ID) && ingredients.contains(i2ID)))
+            continue;
+
+        Ingredient& i1 = *ingredients[i1ID];
+        Ingredient& i2 = *ingredients[i2ID];
+        combine(i1, i2);
     }
 
-    // Loop through every body, send signal for any dynamic one
+    // Loop through every body, update their position and angle, send signal for any dynamic one.
     int dynamicCount = 0;
     for(b2Body* body = world.GetBodyList();
         body != nullptr;
         body = body->GetNext()) {
         if(body->GetType() == b2_dynamicBody) {
-            Ingredient& ingredient = activeIngredients[body->GetUserData()];
+            // This horrible piece of code converts the void pointer from
+            // b2Body::GetUserData() to an int
+            // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
+            int ingredientID = static_cast<int>(
+                reinterpret_cast<intptr_t>(body->GetUserData()));
+
+            // qDebug() << "Checking if Ingredient" << ingredientID << "is in the map";
+            // If the ingredient was not found in the map, continue the loop.
+            if (!ingredients.contains(ingredientID))
+                continue;
+
+            Ingredient& ingredient = *ingredients[ingredientID];
+
             ingredient.setPosition(QPointF(body->GetPosition().x,
                                            body->GetPosition().y));
             ingredient.setAngle(qRadiansToDegrees(body->GetAngle()));
+
             emit ingredientUpdated(dynamicCount, ingredient);
             dynamicCount++;
         }
@@ -309,38 +347,38 @@ void Model::deleteWorld(){
         if(body->GetType() == b2_dynamicBody)
             world.DestroyBody(body);
     }
-    activeIngredients.clear();
-    latestIngredientID = 0;
+    ingredients.clear();
 }
 
 void Model::pointPressed(QPointF position) {
     // Iterate every object to find which one is selected.
     // If nothing is selected, return.
-    int* selectedIngredientID = new int(-1);
+    int selectedIngredientID = -1;
 
-    for (const Ingredient& item : activeIngredients){
-        double x1 = item.getPosition().x()
-                    - item.getDimensions().width()/2;
-        double y1 = item.getPosition().y()
-                    - item.getDimensions().height()/2;
-        double x2 = item.getPosition().x()
-                    + item.getDimensions().width()/2;
-        double y2 = item.getPosition().y()
-                    + item.getDimensions().height()/2;
-
-         qDebug() << "mouse x " << position.x() << " | mouse y " << position.y();
-         qDebug() << "x1 " << x1 << " | x2 " << x2;
-         qDebug() << "y1 " << y1 << " | y2 " << y2;
+    for (auto [key, value] : ingredients.asKeyValueRange()) {
+        double x1 = value->getPosition().x()
+                    - value->getDimensions().width() / 2;
+        double y1 = value->getPosition().y()
+                    - value->getDimensions().height() / 2;
+        double x2 = value->getPosition().x()
+                    + value->getDimensions().width() / 2;
+        double y2 = value->getPosition().y()
+                    + value->getDimensions().height() / 2;
+        
+        qDebug() << "mouse x " << position.x() << " | mouse y " << position.y();
+        qDebug() << "x1 " << x1 << " | x2 " << x2;
+        qDebug() << "y1 " << y1 << " | y2 " << y2;
         if (x1 <= position.x() && x2 >= position.x()
             && y1 <= position.y() && y2 >= position.y()) {
-            //qDebug() << item.getIngredientType();
-            selectedIngredientID = item.getID();
+            qDebug() << "ID" << key << "; actual ID" << value->getID();
+            selectedIngredientID = value->getID();
+            qDebug() << "Selected Ingredient ID:" << selectedIngredientID;
             break;
         }
     }
 
     // If the index is still -1, it means nothing was selected.
-    if (*selectedIngredientID == -1) {
+    if (selectedIngredientID == -1) {
         selected = nullptr;
         return;
     }
@@ -349,10 +387,18 @@ void Model::pointPressed(QPointF position) {
     ///
     /// \brief dynamicCount counts all the dynamic objects in the world (excludes the static ones)
     ///
-    for(b2Body* body = world.GetBodyList();
+    for (b2Body* body = world.GetBodyList();
          body != nullptr;
          body = body->GetNext()) {
-        if(body->GetUserData() == selectedIngredientID && body->GetType() == b2_dynamicBody) {
+        // This horrible piece of code converts the void pointer from
+        // b2Body::GetUserData() to an int
+        // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
+        int ingredientID = static_cast<int>(
+            reinterpret_cast<intptr_t>(body->GetUserData()));
+
+        qDebug() << "Comparing selected ingredient" << selectedIngredientID << "against" << ingredientID;
+
+        if(ingredientID == selectedIngredientID && body->GetType() == b2_dynamicBody) {
             selected = body;
             qDebug() << "Selected ingredient";
             pointMoved(position);

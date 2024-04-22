@@ -1,8 +1,10 @@
 #include "ingredient.h"
 #include "ingredienttype.h"
 
+int Ingredient::globalLatestID = 0;
+
 Ingredient::Ingredient():
-    ID(new int(0)),
+    ID(++globalLatestID),
     INGREDIENT_TYPE(None),
     position(QPointF(0,0)),
     dimensions(QSize(10,10)),
@@ -10,14 +12,14 @@ Ingredient::Ingredient():
 
 }
 
-Ingredient::Ingredient(IngredientType type, QPointF position, QSizeF dimension, double angle, QPixmap texture, int* ID):
-    ID(ID),
+Ingredient::Ingredient(IngredientType type, QPointF position, QSizeF dimension, double angle, QPixmap texture):
+    ID(++globalLatestID),
     INGREDIENT_TYPE(type),
     position(position),
     dimensions(dimension),
     angle(angle),
     texture(texture) {
-
+    qDebug() << "Creating Ingredient with ID" << ID;
 }
 
 Ingredient::~Ingredient() {
@@ -25,7 +27,7 @@ Ingredient::~Ingredient() {
 }
 
 Ingredient::Ingredient(const Ingredient& rhs):
-    ID(rhs.ID),
+    ID(++globalLatestID),
     INGREDIENT_TYPE(rhs.INGREDIENT_TYPE),
     position(rhs.position),
     dimensions(rhs.dimensions),
@@ -36,8 +38,10 @@ Ingredient::Ingredient(const Ingredient& rhs):
 
 Ingredient& Ingredient::operator=(const Ingredient& other) {
     if (this != &other) { // protect against self-assignment
+        // Use a new ID as these are two different Ingredient instances.
+        ID = ++globalLatestID;
+
         // Copy all fields.
-        ID = other.ID;
         INGREDIENT_TYPE = other.INGREDIENT_TYPE;
         position = other.position;
         dimensions = other.dimensions;

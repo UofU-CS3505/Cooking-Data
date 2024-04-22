@@ -92,7 +92,7 @@ Interface::Interface(QWidget *parent)
 
 // }
 
-void Interface::createLabels(QVector<Ingredient> ingredients) {
+void Interface::createLabels(QVector<Ingredient*> ingredients) {
     for (int i = 0; i < ingredients.size(); i++) {
         QLabel* tempLabel = new QLabel(ui->centralwidget);
         tempLabel->setStyleSheet("QLabel { background-color: rgba(255, 0, 0, 10) }");
@@ -103,12 +103,14 @@ void Interface::createLabels(QVector<Ingredient> ingredients) {
     }
 }
 
-void Interface::updateObject(int index, Ingredient ingredient) {
+void Interface::updateObject(int index, Ingredient& ingredient) {
     // BELOW IS TEMP FOR A TEST, BUT MAY WORK AS A BASE
     // Ok, so right now the box doesn't have the acurate size because it is
     // impossibly complicated to get a bodies size for some reason
     // So, we are making a different class to store a sprite's info right?
     // Put the size in there
+
+    // qDebug() << "Drawing ingredient ID" << ingredient.getID();
     double width = ingredient.getDimensions().width() * SCALE;
     double height = ingredient.getDimensions().height() * SCALE;
     double x = ingredient.getPosition().x() * SCALE;
