@@ -199,11 +199,11 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
     QPair<IngredientType, IngredientType> potential2
         = qMakePair(i1.getIngredientType(), i2.getIngredientType());
 
-    // TODO - what QSize, angle, Pixmap should we pass in?
     if (combinations.contains(potential1)) {
         ingredients.remove(i1.getID());
         ingredients.remove(i2.getID());
-        // Destroy the body too
+
+        // Destroy the body too.
         for (b2Body* body = world.GetBodyList();
              body != nullptr;
              body = body->GetNext()) {
@@ -229,11 +229,11 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
         return true;
     }
 
-    // TODO - what QSize, angle, Pixmap should we pass in?
     if (combinations.contains(potential2)) {
         ingredients.remove(i1.getID());
         ingredients.remove(i2.getID());
-        // Destroy the body too
+
+        // Destroy the body too.
         for (b2Body* body = world.GetBodyList();
              body != nullptr;
              body = body->GetNext()) {
@@ -258,6 +258,8 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
         qDebug() << "COMBINED: Case2";
         return true;
     }
+
+    // Not combined.
     return false;
 }
 
@@ -308,7 +310,10 @@ void Model::updateWorld() {
 
         Ingredient& i1 = *ingredients[i1ID];
         Ingredient& i2 = *ingredients[i2ID];
-        combine(i1, i2);
+
+        // Limit combines to once per frame... for reasons.
+        if (combine(i1, i2))
+            break;
     }
 
     emit frameBegan();
