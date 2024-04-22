@@ -21,7 +21,7 @@ private:
     QPointF recentMouseLoc;
 
     QMap<int, Ingredient*> ingredients;
-    QHash<QPair<IngredientType, IngredientType>, IngredientType> combinations;
+    QHash<QPair<IngredientType, IngredientType>, QVector<IngredientType>> combinations;
     QHash<Ingredient*, b2Body*> ingredientToBody;
 
     float oldVX;
@@ -54,8 +54,9 @@ public:
     /// \brief combine Combines the two input ingredients, if possible. This
     ///                method deletes the two inputs and replaces them with
     ///                their associated outputs if the ingredients can be
-    ///                combined. When combined, the new ingredient will always
-    ///                snap to the position of i1.
+    ///                combined. When combined, the first ingredient will always
+    ///                snap to the position of i1 and every subsequent one will
+    ///                snap to the position of i2.
     /// \param i1 the first ingredient to combine
     /// \param i2 the second ingredient to combine
     /// \return true if the ingredients successfully combined, false otherwise

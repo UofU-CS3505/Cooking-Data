@@ -58,7 +58,12 @@ Model::Model()
 
 
     // Define all valid combinations.
-    combinations.insert(qMakePair(WaterPitcher, EmptyPot), WaterPot);
+    combinations.insert(qMakePair(WaterPitcher, EmptyPot),
+                        QVector<IngredientType> { WaterPot });
+    combinations.insert(qMakePair(EmptyBowl, EmptyBowl),
+                        QVector<IngredientType> { Fire });
+    combinations.insert(qMakePair(Fire, Fire),
+                        QVector<IngredientType> { Fire, Fire, EmptyBowl });
 }
 
 Model::~Model() {
@@ -175,6 +180,11 @@ Ingredient* Model::createIngredient(IngredientType ingType, QPointF position, do
                               ":/ingredients/assets/images/sprites/WaterPot.png"
                                   ));
 
+    if (ingType == Fire)
+        return new Ingredient(Fire, position, QSizeF(4, 6), angle,
+                          QPixmap(
+                              ":/ingredients/assets/images/sprites/Fire.png"
+                                  ));
 
     return new Ingredient();
 }
@@ -208,7 +218,13 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
             if (ingredientID == i2.getID())
                 world.DestroyBody(body);
         }
-        addIngredient(combinations[potential1], i1.getPosition());
+
+        for (int i = 0; i < combinations[potential1].size(); i++)
+            if (i == 0)
+                addIngredient(combinations[potential1][i], i1.getPosition());
+            else
+                addIngredient(combinations[potential1][i], i2.getPosition());
+
         qDebug() << "COMBINED: Case1";
         return true;
     }
@@ -232,7 +248,13 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
             if (ingredientID == i2.getID())
                 world.DestroyBody(body);
         }
-        addIngredient(combinations[potential2], i1.getPosition());
+
+        for (int i = 0; i < combinations[potential2].size(); i++)
+            if (i == 0)
+                addIngredient(combinations[potential2][i], i1.getPosition());
+            else
+                addIngredient(combinations[potential2][i], i2.getPosition());
+
         qDebug() << "COMBINED: Case2";
         return true;
     }
@@ -242,8 +264,8 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
 void Model::createWorld() {
     addIngredient(WaterPitcher, QPointF(5, 0));
     addIngredient(EmptyPot, QPointF(15, 10));
-    for (int i = 0; i < 50; i++)
-        addIngredient(EmptyBowl, QPointF(5, 0));
+    for (int i = 0; i < 4; i++)
+        addIngredient(EmptyBowl, QPointF(std::rand() % 20, 0));
 
     qDebug() << "World created";
 }

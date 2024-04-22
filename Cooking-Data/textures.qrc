@@ -26,5 +26,6 @@
         <file>assets/images/sprites/Table.png</file>
         <file>assets/images/sprites/WaterLadel.png</file>
         <file>assets/images/sprites/Window.png</file>
+        <file>assets/images/sprites/Fire.png</file>
     </qresource>
 </RCC>
