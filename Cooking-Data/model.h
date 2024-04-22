@@ -10,6 +10,8 @@
 class Model : public QObject {
     Q_OBJECT
 private:
+    const double FRAME_TIME = 1000.0 / 60;
+
     ///
     /// \brief timer - Used to execute the physics loop
     ///
@@ -70,8 +72,9 @@ public slots:
     void pauseGame(bool pausedState);
 
 signals:
-    void worldCreated(QVector<Ingredient*> ingredients);
-    void ingredientUpdated(int index, Ingredient& ingredient);
+    void frameBegan();
+    void ingredientUpdated(Ingredient& ingredient);
+    void frameEnded();
     void makeGroundInView(b2Vec2 loc, int width, int height);
 
 };

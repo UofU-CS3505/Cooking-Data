@@ -1,14 +1,16 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-#include <QMainWindow>
-#include <QLabel>
-#include <QMouseEvent>
+#include <QGraphicsScene>
 #include <QKeyEvent>
+#include <QLabel>
+#include <QMainWindow>
 #include <QMessageBox>
+#include <QMouseEvent>
 
 #include "model.h"
 #include "ingredient.h"
+#include "qgraphicsscene.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -21,14 +23,13 @@ class Interface : public QMainWindow {
 private:
     Ui::Interface *ui;
     Model model;
-    // QVector<QPair<QPixmap, Ingredient>> sprites;
-    QVector<QLabel*> bodyDisplays;
+    QGraphicsScene graphicsScene = QGraphicsScene(0, 0, 790, 550);
+
     bool mouseIsDown;
     bool isGamePaused = false;
     bool isStartMenu = true;
-    int selectedObjectIndex;
 
-    float const SCALE = 10.0f;
+    const float SCALE = 10.0f;
 
     ///
     /// \brief createBody
@@ -48,18 +49,18 @@ private slots:
     void displayHelpPopup();
 
 public slots:
-    void createLabels(QVector<Ingredient*> ingredients);
-    void updateObject(int index, Ingredient& ingredient);
+    void beginFrame();
+    void addIngredientToFrame(Ingredient& ingredient);
+    void endFrame();
     void createGround(b2Vec2 loc, int width, int height);
     // WE WILL CHANGE THIS LATER
     void startLevel();
     void openStartMenu();
 
-    void keyPressEvent(QKeyEvent *event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
-
+    void keyPressEvent(QKeyEvent *event) override;
 signals:
     void createWorld();
     void deleteWorld();

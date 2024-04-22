@@ -40,7 +40,7 @@ Model::Model()
 
     // Start the timer.
     connect(&timer, &QTimer::timeout, this, &Model::updateWorld);
-    timer.start(16);
+    timer.start(FRAME_TIME);
 
     // Let view create the ground
 
@@ -242,58 +242,36 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
 void Model::createWorld() {
     addIngredient(WaterPitcher, QPointF(5, 0));
     addIngredient(EmptyPot, QPointF(15, 10));
-
-    emit worldCreated(ingredients.values());
+    for (int i = 0; i < 50; i++)
+        addIngredient(EmptyBowl, QPointF(5, 0));
 
     qDebug() << "World created";
 }
 
 void Model::updateWorld() {
     // About 60fps, 10 iterations per collision check
-    float32 timeStep = 1.0f / 60.0f;
+    float32 timeStep = FRAME_TIME / 1000;
     int32 velocityIterations = 6;
     int32 positionIterations = 2;
 
     // Instruct the world to perform a single step of simulation.
     // It is generally best to keep the time step and iterations fixed.
-    if(selected != nullptr){
+    if (selected != nullptr) {
         // SPRING
         float distanceX = recentMouseLoc.x() - selected->GetPosition().x;
         float distanceY = recentMouseLoc.y() - selected->GetPosition().y;
-        float velocityX = distanceX * selected->GetMass() * 2;
-        float velocityY = distanceY * selected->GetMass() * 2;
+        float velocityX = distanceX * 100;
+        float velocityY = distanceY * 100;
         b2Vec2 force = b2Vec2(velocityX, velocityY);
         selected->ApplyForceToCenter(force, true);
-
-        // float velocityX = distanceX / timeStep;
-        // float velocityY = distanceY / timeStep;
-        // float accelX = (velocityX - oldVX) / timeStep;
-        // float accelY = (velocityY - oldVY) / timeStep;
-        // b2Vec2 force = b2Vec2(accelX * selected->GetMass(), accelY * selected->GetMass());
-        // selected->ApplyForceToCenter(force, true);
-        // oldVX = velocityX;
-        // oldVX = velocityY;
-
-        // float distanceX = recentMouseLoc.x() - selected->GetPosition().x;
-        // float distanceY = recentMouseLoc.y() - selected->GetPosition().y;
-        // float velocityX = distanceX / timeStep;
-        // float velocityY = distanceY / timeStep;
-        // b2Vec2 force = b2Vec2(velocityX * selected->GetMass(), velocityY * selected->GetMass());
-        // selected->ApplyForceToCenter(force, true);
-
-        // float mass = selected->GetMass();
-        // qDebug() << velocityY;
-        // if(velocityY > world.GetGravity().y)
-        //     velocityY -= world.GetGravity().y;
-        //selected->SetLinearVelocity(b2Vec2(velocityX / selected->GetMass(), velocityY / selected->GetMass()));
     }
 
     world.Step(timeStep, velocityIterations, positionIterations);
 
     // Check for combinations
-    for(b2Contact* collision = world.GetContactList();
-        collision != nullptr;
-        collision = collision->GetNext()) {
+    for (b2Contact* collision = world.GetContactList();
+         collision != nullptr;
+         collision = collision->GetNext()) {
         // This horrible piece of code converts the void pointer from
         // b2Body::GetUserData() to an int
         // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
@@ -311,11 +289,12 @@ void Model::updateWorld() {
         combine(i1, i2);
     }
 
+    emit frameBegan();
+
     // Loop through every body, update their position and angle, send signal for any dynamic one.
-    int dynamicCount = 0;
-    for(b2Body* body = world.GetBodyList();
-        body != nullptr;
-        body = body->GetNext()) {
+    for (b2Body* body = world.GetBodyList();
+         body != nullptr;
+         body = body->GetNext()) {
         if(body->GetType() == b2_dynamicBody) {
             // This horrible piece of code converts the void pointer from
             // b2Body::GetUserData() to an int
@@ -334,19 +313,20 @@ void Model::updateWorld() {
                                            body->GetPosition().y));
             ingredient.setAngle(qRadiansToDegrees(body->GetAngle()));
 
-            emit ingredientUpdated(dynamicCount, ingredient);
-            dynamicCount++;
+            emit ingredientUpdated(ingredient);
         }
     }
+
+    emit frameEnded();
 }
 
 void Model::deleteWorld(){
-    for(b2Body* body = world.GetBodyList();
+    for (b2Body* body = world.GetBodyList();
          body != nullptr;
-         body = body->GetNext()) {
-        if(body->GetType() == b2_dynamicBody)
+         body = body->GetNext())
+        if (body->GetType() == b2_dynamicBody)
             world.DestroyBody(body);
-    }
+
     ingredients.clear();
 }
 
@@ -355,6 +335,7 @@ void Model::pointPressed(QPointF position) {
     // If nothing is selected, return.
     int selectedIngredientID = -1;
 
+    // Find out which ingredient was selected.
     for (auto [key, value] : ingredients.asKeyValueRange()) {
         double x1 = value->getPosition().x()
                     - value->getDimensions().width() / 2;
@@ -384,9 +365,6 @@ void Model::pointPressed(QPointF position) {
     }
 
     // Put the selected body into the selected variable.
-    ///
-    /// \brief dynamicCount counts all the dynamic objects in the world (excludes the static ones)
-    ///
     for (b2Body* body = world.GetBodyList();
          body != nullptr;
          body = body->GetNext()) {
@@ -398,9 +376,10 @@ void Model::pointPressed(QPointF position) {
 
         qDebug() << "Comparing selected ingredient" << selectedIngredientID << "against" << ingredientID;
 
-        if(ingredientID == selectedIngredientID && body->GetType() == b2_dynamicBody) {
+        if (ingredientID == selectedIngredientID && body->GetType() == b2_dynamicBody) {
             selected = body;
             qDebug() << "Selected ingredient";
+            // Call pointMoved to set recent mouse location.
             pointMoved(position);
             return;
         }
@@ -417,8 +396,8 @@ void Model::pointReleased() {
 
 void Model::pauseGame(bool pausedState){
     // Pause game, stop timer to stop game loop
-    if(pausedState)
+    if (pausedState)
         timer.stop();
     else
-        timer.start(16);
+        timer.start(FRAME_TIME);
 }
