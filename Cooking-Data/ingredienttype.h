@@ -7,7 +7,7 @@ enum IngredientType {
     EmptyBowl,
     EmptyPot,
     Ladel,
-    Oatmeal,
+    OatPacket,
     OatmealBowl,
     OatsBowl,
     WaterLadel,
