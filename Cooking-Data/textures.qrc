@@ -9,7 +9,6 @@
         <file>assets/images/sprites/Ladle.png</file>
         <file>assets/images/sprites/OatmealBowl.png</file>
         <file>assets/images/sprites/OatsBowl.png</file>
-        <file>assets/images/sprites/pixil-frame-0.png</file>
         <file>assets/images/sprites/StoveTop.png</file>
         <file>assets/images/sprites/WaterLadle.png</file>
         <file>assets/images/sprites/WaterPitcher.png</file>
@@ -27,5 +26,6 @@
         <file>assets/images/sprites/WaterLadel.png</file>
         <file>assets/images/sprites/Window.png</file>
         <file>assets/images/sprites/Fire.png</file>
+        <file>assets/images/sprites/Oatmeal.png</file>
     </qresource>
 </RCC>

@@ -59,11 +59,15 @@ Model::Model()
 
     // Define all valid combinations.
     combinations.insert(qMakePair(WaterPitcher, EmptyPot),
-                        QVector<IngredientType> { WaterPot });
+                        QVector<IngredientType> { WaterPitcher, WaterPot });
+    combinations.insert(qMakePair(WaterPot, Fire),
+                        QVector<IngredientType> { BoilingWaterPot, Fire });
     combinations.insert(qMakePair(EmptyBowl, EmptyBowl),
-                        QVector<IngredientType> { Fire });
+                        QVector<IngredientType> { Fire }); // don't question it
     combinations.insert(qMakePair(Fire, Fire),
-                        QVector<IngredientType> { Fire, Fire, EmptyBowl });
+                        QVector<IngredientType> { Fire, Fire, EmptyBowl }); // don't question it
+    combinations.insert(qMakePair(EmptyBowl, Oatmeal),
+                        QVector<IngredientType> { OatsBowl });
 }
 
 Model::~Model() {
@@ -150,6 +154,12 @@ Ingredient* Model::createIngredient(IngredientType ingType, QPointF position, do
                               ":/ingredients/assets/images/sprites/Ladel.png"
                                   ));
 
+    if (ingType == Oatmeal)
+        return new Ingredient(Oatmeal, position, QSizeF(16, 16), angle,
+                          QPixmap(
+                              ":/ingredients/assets/images/sprites/Oatmeal.png"
+                                  ));
+
     if (ingType == OatmealBowl)
         return new Ingredient(OatmealBowl, position, QSizeF(6, 8.5), angle,
                           QPixmap(
@@ -194,69 +204,42 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
     if (!(ingredients.contains(i1.getID()) && ingredients.contains(i2.getID())))
         return false;
 
-    QPair<IngredientType, IngredientType> potential1
-        = qMakePair(i1.getIngredientType(), i2.getIngredientType());
-    QPair<IngredientType, IngredientType> potential2
+    QPair<IngredientType, IngredientType> pair
         = qMakePair(i1.getIngredientType(), i2.getIngredientType());
 
-    if (combinations.contains(potential1)) {
-        ingredients.remove(i1.getID());
-        ingredients.remove(i2.getID());
+    for (int pairType = 0; pairType < 2; pairType++) {
+        if (combinations.contains(pair)) {
+            ingredients.remove(i1.getID());
+            ingredients.remove(i2.getID());
 
-        // Destroy the body too.
-        for (b2Body* body = world.GetBodyList();
-             body != nullptr;
-             body = body->GetNext()) {
-            // This horrible piece of code converts the void pointer from
-            // b2Body::GetUserData() to an int
-            // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
-            int ingredientID = static_cast<int>(
-                reinterpret_cast<intptr_t>(body->GetUserData()));
+            // Destroy the body too.
+            for (b2Body* body = world.GetBodyList();
+                 body != nullptr;
+                 body = body->GetNext()) {
+                // This horrible piece of code converts the void pointer from
+                // b2Body::GetUserData() to an int
+                // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
+                int ingredientID = static_cast<int>(
+                    reinterpret_cast<intptr_t>(body->GetUserData()));
 
-            if (ingredientID == i1.getID())
-                world.DestroyBody(body);
-            if (ingredientID == i2.getID())
-                world.DestroyBody(body);
+                if (ingredientID == i1.getID())
+                    world.DestroyBody(body);
+                if (ingredientID == i2.getID())
+                    world.DestroyBody(body);
+            }
+
+            for (int i = 0; i < combinations[pair].size(); i++)
+                if ((i == 0 && pairType == 0) || (pairType == 1 && i != 0))
+                    addIngredient(combinations[pair][i], i1.getPosition());
+                else
+                    addIngredient(combinations[pair][i], i2.getPosition());
+
+            qDebug() << "Combined";
+            return true;
         }
 
-        for (int i = 0; i < combinations[potential1].size(); i++)
-            if (i == 0)
-                addIngredient(combinations[potential1][i], i1.getPosition());
-            else
-                addIngredient(combinations[potential1][i], i2.getPosition());
-
-        qDebug() << "COMBINED: Case1";
-        return true;
-    }
-
-    if (combinations.contains(potential2)) {
-        ingredients.remove(i1.getID());
-        ingredients.remove(i2.getID());
-
-        // Destroy the body too.
-        for (b2Body* body = world.GetBodyList();
-             body != nullptr;
-             body = body->GetNext()) {
-            // This horrible piece of code converts the void pointer from
-            // b2Body::GetUserData() to an int
-            // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
-            int ingredientID = static_cast<int>(
-                reinterpret_cast<intptr_t>(body->GetUserData()));
-
-            if (ingredientID == i1.getID())
-                world.DestroyBody(body);
-            if (ingredientID == i2.getID())
-                world.DestroyBody(body);
-        }
-
-        for (int i = 0; i < combinations[potential2].size(); i++)
-            if (i == 0)
-                addIngredient(combinations[potential2][i], i1.getPosition());
-            else
-                addIngredient(combinations[potential2][i], i2.getPosition());
-
-        qDebug() << "COMBINED: Case2";
-        return true;
+        // Invert pair in case the collision was detected in reverse.
+        pair = qMakePair(i2.getIngredientType(), i1.getIngredientType());
     }
 
     // Not combined.
@@ -268,6 +251,7 @@ void Model::createWorld() {
     addIngredient(EmptyPot, QPointF(15, 10));
     for (int i = 0; i < 4; i++)
         addIngredient(EmptyBowl, QPointF(std::rand() % 20, 0));
+    addIngredient(Oatmeal, QPointF(35, 0));
 
     qDebug() << "World created";
 }

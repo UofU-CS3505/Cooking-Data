@@ -18,7 +18,7 @@ Interface::Interface(QWidget *parent)
     ui->quitButton->setVisible(false);
     ui->controlsButton->setVisible(false);
 
-    // Connect world creation to the view.
+    // Connect world creation and deletion to the view.
     connect(this, &Interface::createWorld,
             &model, &Model::createWorld);
     connect(this, &Interface::deleteWorld,
@@ -185,7 +185,6 @@ void Interface::mousePressEvent(QMouseEvent* event) {
     // qDebug() << event->pos().x() << " | " << event->pos().y();
 
     mouseIsDown = true;
-
     emit mousePressed(QPointF(event->pos().x() * 1.0 / SCALE,
                               event->pos().y() * 1.0 / SCALE));
 
