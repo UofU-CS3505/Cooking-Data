@@ -317,6 +317,10 @@ void Model::updateWorld() {
     for (b2Contact* collision = world.GetContactList();
          collision != nullptr;
          collision = collision->GetNext()) {
+        // Ignore false positives.
+        if (!collision->IsTouching())
+            continue;
+
         // This horrible piece of code converts the void pointer from
         // b2Body::GetUserData() to an int
         // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c

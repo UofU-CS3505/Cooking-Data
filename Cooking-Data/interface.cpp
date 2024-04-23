@@ -138,7 +138,8 @@ void Interface::addIngredientToFrame(const Ingredient &ingredient) {
     item->setPos(x, y);
     // The Pixmaps are in the scale of 2 pixels per inch, but b2Body uses
     // meters as units.
-    item->setScale(SCALE / 70);
+    // I have no idea why this specific number works. It just does.
+    item->setScale(SCALE / 72);
     item->setRotation(angle);
 }
 
