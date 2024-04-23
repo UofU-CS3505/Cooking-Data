@@ -114,8 +114,12 @@ void Interface::beginFrame() {
     floor->setScale(tableWidth / table.width());
     floor->setRotation(0);
 
-    QPixmap window = QPixmap(
-        ":/ingredients/assets/images/sprites/Table.png");
+    QPixmap windowSprite = QPixmap(
+        ":/ingredients/assets/images/sprites/Window.png");
+    QGraphicsPixmapItem* window = graphicsScene.addPixmap(windowSprite);
+    window->setPos(50, 50);
+    window->setScale(8);
+    window->setRotation(0);
 }
 
 void Interface::addIngredientToFrame(Ingredient& ingredient) {
