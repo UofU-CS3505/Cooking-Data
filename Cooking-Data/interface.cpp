@@ -27,8 +27,6 @@ Interface::Interface(QWidget *parent)
             &model, &Model::deleteWorld);
 
     // Connect game updates to the view
-    connect(&model, &Model::makeGroundInView,
-            this, &Interface::createGround);
     connect(&model, &Model::frameBegan,
             this, &Interface::beginFrame);
     connect(&model, &Model::ingredientUpdated,
@@ -90,81 +88,8 @@ Interface::Interface(QWidget *parent)
     ui->escLabel->setVisible(false);
 }
 
-void Interface::displayHelpPopup() {
-    QMessageBox brushHelp;
-    brushHelp.setWindowTitle("Tutorials");
-    brushHelp.setText("Drag objects around with your mouse to move them around the screen. \n"
-                      "Follow the recipe given to you to cook the meal and progress. \n"
-                      "Completing a recipe will give you a new recipe to cook. \n"
-                      "Click the pantry button to see available ingredients. \n"
-                      "The pot should go on the stove. Press dial to turn it on. \n"
-                      "You already know this, but press ESC to pause.");
-    brushHelp.setIcon(QMessageBox::Information);
-    brushHelp.setModal(true);
-    brushHelp.setDefaultButton(QMessageBox::Ok);
-    brushHelp.exec();
-}
-
-void Interface::beginFrame() {
-    graphicsScene.clear();
-
-    // Rebuild background at frame reset
-    QPixmap wood = QPixmap(
-        ":/ingredients/assets/images/sprites/Background.png");
-    QGraphicsPixmapItem* bg = graphicsScene.addPixmap(wood);
-    bg->setPos(0, 0);
-    bg->setScale(13);
-    bg->setRotation(0);
-
-    QPixmap table = QPixmap(
-        ":/ingredients/assets/images/sprites/Table.png");
-    // 1/5 of the screen
-    float tableWidth = graphicsScene.width() / 5;
-    for (int i = 1; i <= 5; i++) {
-        QGraphicsPixmapItem* floor = graphicsScene.addPixmap(table);
-        floor->setPos(graphicsScene.width() - tableWidth * i, 500);
-        floor->setScale(tableWidth / table.width());
-        floor->setRotation(0);
-    }
-
-    QPixmap windowSprite = QPixmap(
-        ":/ingredients/assets/images/sprites/Window.png");
-    QGraphicsPixmapItem* window = graphicsScene.addPixmap(windowSprite);
-    window->setPos(50, 40);
-    window->setScale(8);
-    window->setRotation(0);
-}
-
-void Interface::addIngredientToFrame(const Ingredient &ingredient) {
-    // qDebug() << "Drawing ingredient ID" << ingredient.getID();
-    double x = ingredient.getPosition().x() * SCALE;
-    double y = ingredient.getPosition().y() * SCALE;
-
-    double angle = ingredient.getAngle();
-
-    QGraphicsPixmapItem* item = graphicsScene.addPixmap(ingredient.getTexture());
-    // Assumes the size of the Ingredient is half of its texture size.
-    item->setOffset(
-        -ingredient.getTexture().width() / 2,
-        -ingredient.getTexture().height() / 2);
-    item->setPos(x, y);
-    // The Pixmaps are in the scale of 2 pixels per inch, but b2Body uses
-    // meters as units.
-    // I have no idea why this specific number works. It just does.
-    item->setScale(SCALE / 72);
-    item->setRotation(angle);
-}
-
-void Interface::endFrame() {
-    ui->graphicsView->show();
-}
-
-void Interface::createGround(b2Vec2 loc, int width, int height) {
-    // Temp until we store other objects
-    // ui->ground->setGeometry(loc.x * SCALE, loc.y * SCALE - height * SCALE/2,
-    //                         width * SCALE, height * SCALE);
-    // ui->ground->setStyleSheet(
-    //     "QLabel { background-color : brown; color : black; }");
+Interface::~Interface() {
+    delete ui;
 }
 
 void Interface::startLevel() {
@@ -231,6 +156,21 @@ void Interface::openStartMenu() {
     ui->escLabel->setVisible(false);
 }
 
+void Interface::displayHelpPopup() {
+    QMessageBox brushHelp;
+    brushHelp.setWindowTitle("Tutorials");
+    brushHelp.setText("Drag objects around with your mouse to move them around the screen. \n"
+                      "Follow the recipe given to you to cook the meal and progress. \n"
+                      "Completing a recipe will give you a new recipe to cook. \n"
+                      "Click the pantry button to see available ingredients. \n"
+                      "The pot should go on the stove. Press dial to turn it on. \n"
+                      "You already know this, but press ESC to pause.");
+    brushHelp.setIcon(QMessageBox::Information);
+    brushHelp.setModal(true);
+    brushHelp.setDefaultButton(QMessageBox::Ok);
+    brushHelp.exec();
+}
+
 void Interface::mouseMoveEvent(QMouseEvent* event) {
     // qDebug() << event->pos().x() << " | " << event->pos().y();
 
@@ -245,7 +185,6 @@ void Interface::mousePressEvent(QMouseEvent* event) {
     mouseIsDown = true;
     emit mousePressed(QPointF(event->pos().x() * 1.0 / SCALE,
                               event->pos().y() * 1.0 / SCALE));
-
 }
 
 void Interface::mouseReleaseEvent(QMouseEvent* event) {
@@ -281,6 +220,56 @@ void Interface::keyPressEvent(QKeyEvent *event){
     }
 }
 
-Interface::~Interface() {
-    delete ui;
+void Interface::beginFrame() {
+    graphicsScene.clear();
+
+    // Rebuild background at frame reset
+    QPixmap wood = QPixmap(
+        ":/ingredients/assets/images/sprites/Background.png");
+    QGraphicsPixmapItem* bg = graphicsScene.addPixmap(wood);
+    bg->setPos(0, 0);
+    bg->setScale(13);
+    bg->setRotation(0);
+
+    QPixmap table = QPixmap(
+        ":/ingredients/assets/images/sprites/Table.png");
+    // 1/5 of the screen
+    float tableWidth = graphicsScene.width() / 5;
+    for (int i = 1; i <= 5; i++) {
+        QGraphicsPixmapItem* floor = graphicsScene.addPixmap(table);
+        floor->setPos(graphicsScene.width() - tableWidth * i, 500);
+        floor->setScale(tableWidth / table.width());
+        floor->setRotation(0);
+    }
+
+    QPixmap windowSprite = QPixmap(
+        ":/ingredients/assets/images/sprites/Window.png");
+    QGraphicsPixmapItem* window = graphicsScene.addPixmap(windowSprite);
+    window->setPos(50, 40);
+    window->setScale(8);
+    window->setRotation(0);
+}
+
+void Interface::addIngredientToFrame(const Ingredient &ingredient) {
+    // qDebug() << "Drawing ingredient ID" << ingredient.getID();
+    double x = ingredient.getPosition().x() * SCALE;
+    double y = ingredient.getPosition().y() * SCALE;
+
+    double angle = ingredient.getAngle();
+
+    QGraphicsPixmapItem* item = graphicsScene.addPixmap(ingredient.getTexture());
+    // Assumes the size of the Ingredient is half of its texture size.
+    item->setOffset(
+        -ingredient.getTexture().width() / 2,
+        -ingredient.getTexture().height() / 2);
+    item->setPos(x, y);
+    // The Pixmaps are in the scale of 2 pixels per inch, but b2Body uses
+    // meters as units.
+    // I have no idea why this specific number works. It just does.
+    item->setScale(SCALE / 72);
+    item->setRotation(angle);
+}
+
+void Interface::endFrame() {
+    ui->graphicsView->show();
 }

@@ -51,25 +51,44 @@ private:
     ///
     QMap<QPair<int, int>, long long> combinationTimers;
 
+    ///
+    /// \brief addIngredient Create an Ingredient object, insert it into the
+    ///                      map of all Ingredients, and create a b2Body that
+    ///                      corresponds to the Ingredient.
+    /// \param type the IngredientType to create
+    /// \param position the position of the Ingredient
+    /// \param angle the angle of the Ingredient in degrees
+    ///
     void addIngredient(IngredientType type, QPointF position, double angle);
+
+    ///
+    /// \brief addIngredient Create an Ingredient object, insert it into the
+    ///                      map of all Ingredients, and create a b2Body that
+    ///                      corresponds to the Ingredient.
+    /// \param type the IngredientType to create
+    /// \param position the position of the Ingredient
+    ///
     void addIngredient(IngredientType type, QPointF position);
 
+    ///
+    /// \brief createIngredient Create an Ingredient object and returns its
+    ///                         pointer. This is a factory function and does
+    ///                         not put the Ingredient inside any data
+    ///                         structure.
+    /// \param type the IngredientType to create
+    /// \param position the position of the Ingredient
+    /// \param angle the angle of the Ingredient in degrees
+    /// \return pointer to the created Ingredient
+    ///
     Ingredient* createIngredient(IngredientType type, QPointF position, double angle);
 
     ///
-    /// \brief addIngredientToWorld Add a dynamic body to the world.
-    /// \param ingredient the ingredient
-    /// \return pointer to the b2Body
+    /// \brief addIngredientToWorld Add a b2body that corresponds to the
+    ///                             provided Ingredient to the world.
+    /// \param ingredient the Ingredient
+    /// \return pointer to the created b2Body
     ///
     b2Body* addIngredientToWorld(const Ingredient& ingredient);
-
-    ///
-    /// \brief removeIngredient Remove the Ingredient with the ID. Returns true
-    ///                         if successful, false otherwise.
-    /// \param ingredientID the ID of the Ingredient to remove
-    /// \return is removal successful
-    ///
-    bool removeIngredient(int ingredientID);
 
     ///
     /// \brief tryCombine Tries to combine the two input Ingredients, if
@@ -126,6 +145,14 @@ private:
     ///
     bool combine(int i1, int i2);
 
+    ///
+    /// \brief removeIngredient Remove the Ingredient with the ID. Returns true
+    ///                         if successful, false otherwise.
+    /// \param ingredientID the ID of the Ingredient to remove
+    /// \return is removal successful
+    ///
+    bool removeIngredient(int ingredientID);
+
 public:
     ///
     /// \brief Model Create a new model to store a new world and new objects
@@ -133,9 +160,11 @@ public:
     Model();
     ~Model();
 
+private slots:
+    void updateWorld();
+
 public slots:
     void createWorld(int level);
-    void updateWorld();
     void deleteWorld();
     void pointPressed(QPointF position);
     void pointMoved(QPointF position);
@@ -146,7 +175,6 @@ signals:
     void frameBegan();
     void ingredientUpdated(const Ingredient& ingredient);
     void frameEnded();
-    void makeGroundInView(b2Vec2 loc, int width, int height);
     void winConditionMet();
 };
 
