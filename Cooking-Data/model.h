@@ -19,6 +19,7 @@ private:
     b2World world;
     b2Body* selected;
     QPointF recentMouseLoc;
+    IngredientType winCondition;
 
     QMap<int, Ingredient*> ingredients;
     QHash<QPair<IngredientType, IngredientType>, QVector<IngredientType>> combinations;
@@ -64,7 +65,7 @@ public:
     bool combine(const Ingredient& i1, const Ingredient& i2);
 
 public slots:
-    void createWorld();
+    void createWorld(int level);
     void updateWorld();
     void deleteWorld();
     void pointPressed(QPointF position);

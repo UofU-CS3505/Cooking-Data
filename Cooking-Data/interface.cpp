@@ -52,7 +52,8 @@ Interface::Interface(QWidget *parent)
     connect(ui->tutorialButton, &QPushButton::clicked,
             this, &Interface::displayHelpPopup);
     connect(ui->level1, &QPushButton::clicked,
-            this, &Interface::startLevel);
+            this, [&](){currentLevel = 1;
+                        startLevel();});
     connect(ui->quitButton, &QPushButton::clicked,
             this, &Interface::openStartMenu);
 
@@ -169,7 +170,7 @@ void Interface::startLevel() {
     // qGraphicsView/Scene takes all of it.
     this->grabMouse();
 
-    emit createWorld();
+    emit createWorld(currentLevel);
 }
 
 void Interface::openStartMenu() {

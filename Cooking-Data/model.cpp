@@ -219,11 +219,14 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
                     world.DestroyBody(body);
             }
 
-            for (int i = 0; i < combinations[pair].size(); i++)
+            for (int i = 0; i < combinations[pair].size(); i++){
                 if ((i == 0 && pairType == 0) || (i != 0 && pairType == 1))
                     addIngredient(combinations[pair][i], i1.getPosition());
                 else
                     addIngredient(combinations[pair][i], i2.getPosition());
+                if (combinations[pair][i] == winCondition)
+                    qDebug() << "VICTORY ROYALE";
+            }
 
             qDebug() << "Combined";
             return true;
@@ -237,7 +240,7 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
     return false;
 }
 
-void Model::createWorld() {
+void Model::createWorld(int level) {
     addIngredient(WaterPitcher, QPointF(5, 0));
     addIngredient(EmptyPot, QPointF(15, 10));
     addIngredient(OatPacket, QPointF(35, 0));
@@ -245,6 +248,14 @@ void Model::createWorld() {
     for (int i = 0; i < 4; i++)
         addIngredient(EmptyBowl, QPointF(std::rand() % 50, 0));
 
+    if (level == 2){
+
+    }else if (level == 3){
+
+    }else{
+        // Just else makes this a fail safe is something went wrong
+        winCondition = OatmealBowl;
+    }
     qDebug() << "World created";
 }
 
@@ -329,7 +340,6 @@ void Model::deleteWorld(){
          body = body->GetNext())
         if (body->GetType() == b2_dynamicBody)
             world.DestroyBody(body);
-
     ingredients.clear();
 }
 

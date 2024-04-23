@@ -28,6 +28,7 @@ private:
     bool mouseIsDown;
     bool isGamePaused = false;
     bool isStartMenu = true;
+    int currentLevel = 0;
 
     const float SCALE = 10.0f;
 
@@ -62,7 +63,7 @@ public slots:
     void mouseReleaseEvent(QMouseEvent* event) override;
     void keyPressEvent(QKeyEvent *event) override;
 signals:
-    void createWorld();
+    void createWorld(int level);
     void deleteWorld();
     void mousePressed(QPointF position);
     void mouseMoved(QPointF position);
