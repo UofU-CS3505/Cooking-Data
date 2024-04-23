@@ -13,8 +13,8 @@ enum IngredientType {
     WaterLadel,
     WaterPitcher,
     WaterPot,
-    StoveOn,
     StoveOff,
+    StoveOn,
     Fire,
 };
 

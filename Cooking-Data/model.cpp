@@ -1,4 +1,5 @@
 #include <QObject>
+#include <QDateTime>
 #include <QDebug>
 
 #include "ingredienttype.h"
@@ -11,28 +12,6 @@ Model::Model()
     // THIS IS TEST CODE, WE WILL EDIT THIS LATER AS NEEDED
     ////////////////////////////
 
-    // Define the ground body.
-    b2BodyDef groundBodyDef;
-    groundBodyDef.position.Set(0.0f, 1.1f);
-    b2Body* groundBody = this->world.CreateBody(&groundBodyDef);
-    b2PolygonShape groundBox;
-    groundBox.SetAsBox(2.0f, 0.1f);
-    groundBody->CreateFixture(&groundBox, 0.0f);
-
-    // Define static walls
-    b2BodyDef leftWallBodyDef;
-    leftWallBodyDef.position.Set(-0.1f, 0.5f);
-    b2Body* leftBody = this->world.CreateBody(&leftWallBodyDef);
-    b2PolygonShape leftWallBox;
-    leftWallBox.SetAsBox(0.1f, 1.0f);
-    leftBody->CreateFixture(&leftWallBox, 0.0f);
-
-    b2BodyDef rightWallBodyDef;
-    rightWallBodyDef.position.Set(1.7f, 0.5f);
-    b2Body* rightBody = this->world.CreateBody(&rightWallBodyDef);
-    b2PolygonShape rightWallBox;
-    rightWallBox.SetAsBox(0.1f, 1.0f);
-    rightBody->CreateFixture(&rightWallBox, 0.0f);
 
     // Start the timer.
     connect(&timer, &QTimer::timeout, this, &Model::updateWorld);
@@ -56,9 +35,12 @@ Model::Model()
     combinations.insert(
         qMakePair(WaterPitcher, EmptyPot),
         qMakePair(QVector<IngredientType> { WaterPitcher, WaterPot }, 0));
+    // combinations.insert(
+    //     qMakePair(WaterPot, Fire),
+    //     qMakePair(QVector<IngredientType> { BoilingWaterPot, Fire }, 0));
     combinations.insert(
-        qMakePair(WaterPot, Fire),
-        qMakePair(QVector<IngredientType> { BoilingWaterPot, Fire }, 0));
+        qMakePair(WaterPot, StoveOn),
+        qMakePair(QVector<IngredientType> { BoilingWaterPot, StoveOn }, 5000));
     combinations.insert(
         qMakePair(BoilingWaterPot, Ladel),
         qMakePair(QVector<IngredientType> { BoilingWaterPot, WaterLadel }, 0));
@@ -140,6 +122,16 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
                               QPixmap(":/ingredients/assets/images/sprites/WaterPot.png"),
                               position, angle);
 
+    if (type == StoveOff)
+        return new Ingredient(StoveOff, QSizeF(0.4, 0.2625), 0,
+                              QPixmap(":/ingredients/assets/images/sprites/StoveOff.png"),
+                              position, angle);
+
+    if (type == StoveOn)
+        return new Ingredient(StoveOn, QSizeF(0.4, 0.2625), 0,
+                              QPixmap(":/ingredients/assets/images/sprites/StoveOn.png"),
+                              position, angle);
+
     if (type == Fire)
         return new Ingredient(Fire, QSizeF(0.1, 0.15), 0.1,
                               QPixmap(":/ingredients/assets/images/sprites/Fire.png"),
@@ -165,7 +157,7 @@ b2Body* Model::addIngredientToWorld(const Ingredient& ingredient) {
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &dynamicBox;
 
-    // Set the box density to be non-zero, so it will be dynamic.
+    // Set the box density.
     fixtureDef.density = ingredient.getWeight()
                          / ingredient.getDimensions().width()
                          / ingredient.getDimensions().height();
@@ -175,9 +167,11 @@ b2Body* Model::addIngredientToWorld(const Ingredient& ingredient) {
     fixtureDef.restitution = 0.1f;
     // Add the shape to the body.
     body->CreateFixture(&fixtureDef);
-    body->SetType(b2_dynamicBody);
+    // If the weight is 0, don't set as dynamic body.
+    if (ingredient.getWeight() != 0)
+        body->SetType(b2_dynamicBody);
 
-    // Set corresponding ingredient's ID
+    // Set corresponding Ingredient's ID
     // This horrible piece of code converts the int to a void pointer and is from
     // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
     body->SetUserData(
@@ -201,11 +195,12 @@ bool Model::removeIngredient(int ingredientID) {
         int ingredientIDofBody = static_cast<int>(
             reinterpret_cast<intptr_t>(body->GetUserData()));
 
-        if (ingredientIDofBody == ingredientID) {
-            world.DestroyBody(body);
-            isBodyDestroyed = true;
-            break;
-        }
+        if (ingredientIDofBody != ingredientID)
+            continue;
+
+        world.DestroyBody(body);
+        isBodyDestroyed = true;
+        break;
     }
 
     // b2Body not found!
@@ -221,56 +216,125 @@ bool Model::removeIngredient(int ingredientID) {
     return true;
 }
 
-bool Model::combine(int i1, int i2) {
-    // Check if both ingredients are in the map of ingredients.
+bool Model::tryCombine(int i1, int i2) {
+    // Check if both Ingredients are in the map of ingredients.
     if (!(ingredients.contains(i1) && ingredients.contains(i2)))
         return false;
 
-    QPair<IngredientType, IngredientType> pair
+    QPair<IngredientType, IngredientType> typePair
         = qMakePair(ingredients[i1]->getIngredientType(),
                     ingredients[i2]->getIngredientType());
 
-    for (int pairType = 0; pairType < 2; pairType++) {
-        if (combinations.contains(pair)) {
-            // Spawn the resulting Ingredients.
-            for (int i = 0; i < combinations[pair].first.size(); i++) {
-                if ((i == 0 && pairType == 0) || (i != 0 && pairType == 1))
-                    addIngredient(combinations[pair].first[i],
-                                  ingredients[i1]->getPosition());
-                else
-                    addIngredient(combinations[pair].first[i],
-                                  ingredients[i2]->getPosition());
+    // Check if the combination is valid.
+    if (!combinations.contains(typePair))
+        return false;
 
-                if (combinations[pair].first[i] == winCondition)
-                    qDebug() << "VICTORY ROYALE";
-            }
+    // Check if the combination requires a waiting time.
+    if (combinations[typePair].second == 0)
+        // The combination does not require a waiting time.
+        return combine(i1, i2);
 
-            removeIngredient(i1);
-            removeIngredient(i2);
+    // The combination requires a waiting time.
+    QPair<int, int> IDPair = qMakePair(i1, i2);
 
-            qDebug() << "Combined";
-            return true;
-        }
-
-        // Invert pair in case the collision was detected in reverse.
-        pair = qMakePair(ingredients[i2]->getIngredientType(),
-                         ingredients[i1]->getIngredientType());
+    // Check if the pair is in the map of timers.
+    if (!combinationTimers.contains(IDPair)) {
+        // The timer is not in the map, add it to the map.
+        combinationTimers.insert(IDPair,
+                                 QDateTime::currentMSecsSinceEpoch()
+                                     + combinations[typePair].second);
+        qDebug() << "Added a timer"
+                 << (combinationTimers[IDPair] - QDateTime::currentMSecsSinceEpoch())
+                        / 1000.0
+                 << "seconds in the future for" << i1 << i2;
+        return false;
     }
 
-    // Not combined.
-    return false;
+    // qDebug() << "The timer for" << i1 << i2 << "has"
+    //          << (combinationTimers[IDPair] - QDateTime::currentMSecsSinceEpoch())
+    //                 / 1000.0 << "seconds to go";
+
+    // The timer is already in the map.
+    // Check if enough time has elapsed.
+    if (QDateTime::currentMSecsSinceEpoch()
+        < combinationTimers[IDPair])
+        return false;
+
+    // Enough time has passed.
+    // Check that it has not been too long.
+    if (QDateTime::currentMSecsSinceEpoch()
+        > combinationTimers[IDPair] + 1000) {
+        // It has been too long, remove the timer.
+        combinationTimers.remove(IDPair);
+        return false;
+    }
+
+    // It has not been too long, combining.
+    combinationTimers.remove(IDPair);
+    return combine(i1, i2);
+}
+
+bool Model::combine(int i1, int i2) {
+    QPair<IngredientType, IngredientType> typePair
+        = qMakePair(ingredients[i1]->getIngredientType(),
+                    ingredients[i2]->getIngredientType());
+
+    // Spawn the first Ingredient.
+    addIngredient(combinations[typePair].first[0],
+                  ingredients[i1]->getPosition());
+    // Check if the first Ingredient is a win condition.
+    if (combinations[typePair].first[0] == winCondition)
+        qDebug() << "VICTORY ROYALE";
+
+    // Spawn the remaining Ingredients.
+    for (int i = 1; i < combinations[typePair].first.size(); i++) {
+        addIngredient(combinations[typePair].first[i],
+                      ingredients[i2]->getPosition());
+
+        if (combinations[typePair].first[i] == winCondition)
+            qDebug() << "VICTORY ROYALE";
+    }
+
+    qDebug() << "Combined" << i1 << "and" << i2 << ", removing them.";
+    return removeIngredient(i1) && removeIngredient(i2);
 }
 
 void Model::createWorld(int level) {
-    addIngredient(WaterPitcher, QPointF(0.2, 0));
-    addIngredient(OatPacket, QPointF(0.4, 0));
-    addIngredient(EmptyPot, QPointF(0.6, 0));
-    addIngredient(Ladel, QPointF(0.8, 0));
-    addIngredient(Fire, QPointF(1.0, 0));
-    for (int i = 0; i < 4; i++)
-        addIngredient(EmptyBowl, QPointF((std::rand() % 200) / 100.0, 0));
+    // Define the ground body.
+    b2BodyDef groundBodyDef;
+    groundBodyDef.position.Set(0.0f, 1.1f);
+    b2Body* groundBody = this->world.CreateBody(&groundBodyDef);
+    b2PolygonShape groundBox;
+    groundBox.SetAsBox(2.0f, 0.1f);
+    groundBody->CreateFixture(&groundBox, 0.0f);
 
-    if (level == 2) {
+    // Define static walls
+    b2BodyDef leftWallBodyDef;
+    leftWallBodyDef.position.Set(-0.1f, 0.5f);
+    b2Body* leftBody = this->world.CreateBody(&leftWallBodyDef);
+    b2PolygonShape leftWallBox;
+    leftWallBox.SetAsBox(0.1f, 1.0f);
+    leftBody->CreateFixture(&leftWallBox, 0.0f);
+
+    b2BodyDef rightWallBodyDef;
+    rightWallBodyDef.position.Set(1.7f, 0.5f);
+    b2Body* rightBody = this->world.CreateBody(&rightWallBodyDef);
+    b2PolygonShape rightWallBox;
+    rightWallBox.SetAsBox(0.1f, 1.0f);
+    rightBody->CreateFixture(&rightWallBox, 0.0f);
+
+    // Add Ingredients.
+    if (level == 1) {
+        addIngredient(StoveOn, QPointF(1, 0.86875));
+        addIngredient(WaterPitcher, QPointF(0.2, 0));
+        addIngredient(OatPacket, QPointF(0.4, 0));
+        addIngredient(EmptyPot, QPointF(0.6, 0));
+        addIngredient(Ladel, QPointF(0.8, 0));
+        addIngredient(Fire, QPointF(1.0, 0));
+
+        for (int i = 0; i < 4; i++)
+            addIngredient(EmptyBowl, QPointF((std::rand() % 200) / 100.0, 0));
+    } else if (level == 2) {
 
     } else if (level == 3) {
 
@@ -333,37 +397,39 @@ void Model::updateWorld() {
         if (!(ingredients.contains(i1ID) && ingredients.contains(i2ID)))
             continue;
 
+        // Try both possible order of combinations in case the collision was
+        // detected in reverse.
         // Limit combines to once per frame... for reasons.
-        if (combine(i1ID, i2ID))
+        if (tryCombine(i1ID, i2ID) || tryCombine(i2ID, i1ID))
             break;
     }
 
     emit frameBegan();
 
-    // Loop through every body, update their position and angle, send signal for any dynamic one.
+    // Loop through every body, update their position and angle, send signal
+    // any valid Ingredient.
     for (b2Body* body = world.GetBodyList();
          body != nullptr;
          body = body->GetNext()) {
-        if(body->GetType() == b2_dynamicBody) {
-            // This horrible piece of code converts the void pointer from
-            // b2Body::GetUserData() to an int
-            // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
-            int ingredientID = static_cast<int>(
-                reinterpret_cast<intptr_t>(body->GetUserData()));
 
-            // qDebug() << "Checking if Ingredient" << ingredientID << "is in the map";
-            // If the ingredient was not found in the map, continue the loop.
-            if (!ingredients.contains(ingredientID))
-                continue;
+        // This horrible piece of code converts the void pointer from
+        // b2Body::GetUserData() to an int
+        // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
+        int ingredientID = static_cast<int>(
+            reinterpret_cast<intptr_t>(body->GetUserData()));
 
-            Ingredient& ingredient = *ingredients[ingredientID];
+        // qDebug() << "Checking if Ingredient" << ingredientID << "is in the map";
+        // If the ingredient was not found in the map, continue the loop.
+        if (!ingredients.contains(ingredientID))
+            continue;
 
-            ingredient.setPosition(QPointF(body->GetPosition().x,
-                                           body->GetPosition().y));
-            ingredient.setAngle(qRadiansToDegrees(body->GetAngle()));
+        Ingredient& ingredient = *ingredients[ingredientID];
 
-            emit ingredientUpdated(ingredient);
-        }
+        ingredient.setPosition(QPointF(body->GetPosition().x,
+                                       body->GetPosition().y));
+        ingredient.setAngle(qRadiansToDegrees(body->GetAngle()));
+
+        emit ingredientUpdated(ingredient);
     }
 
     emit frameEnded();
@@ -373,8 +439,7 @@ void Model::deleteWorld(){
     for (b2Body* body = world.GetBodyList();
          body != nullptr;
          body = body->GetNext())
-        if (body->GetType() == b2_dynamicBody)
-            world.DestroyBody(body);
+        world.DestroyBody(body);
     ingredients.clear();
 }
 
@@ -394,9 +459,9 @@ void Model::pointPressed(QPointF position) {
         double y2 = value->getPosition().y()
                     + value->getDimensions().height() / 2;
         
-        // qDebug() << "mouse x " << position.x() << " | mouse y " << position.y();
-        // qDebug() << "x1 " << x1 << " | x2 " << x2;
-        // qDebug() << "y1 " << y1 << " | y2 " << y2;
+        qDebug() << "mouse x " << position.x() << " | mouse y " << position.y();
+        qDebug() << "x1 " << x1 << " | x2 " << x2;
+        qDebug() << "y1 " << y1 << " | y2 " << y2;
         if (x1 <= position.x() && x2 >= position.x()
             && y1 <= position.y() && y2 >= position.y()) {
             // qDebug() << "ID" << key << "; actual ID" << value->getID();

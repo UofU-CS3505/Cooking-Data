@@ -13,7 +13,7 @@ private:
     const double FRAME_TIME = 1000.0 / 60;
 
     ///
-    /// \brief timer - Used to execute the physics loop
+    /// \brief timer Used to execute the physics loop
     ///
     QTimer timer;
     b2World world;
@@ -22,7 +22,7 @@ private:
     IngredientType winCondition;
 
     ///
-    /// \brief ingredients A map of all ingredients in the scene from their ID
+    /// \brief ingredients A map of all Ingredients in the scene from their ID
     ///                    to the Ingredient.
     ///
     QMap<int, Ingredient*> ingredients;
@@ -38,12 +38,13 @@ private:
           QPair<QVector<IngredientType>, int>> combinations;
 
     ///
-    /// \brief combinationTimers The timers for combinations where the first
-    ///                          QPair holds the IDs of the two Ingredients and
-    ///                          the second QPair holds the start time of the
-    ///                          combination and the length of the delay.
+    /// \brief combinationTimers The timers for combinations where the QPair
+    ///                          holds the IDs of the two Ingredients and the
+    ///                          long holds the system epoch time in ms when the
+    ///                          combination should complete if they are still
+    ///                          in contact.
     ///
-    QMap<QPair<int, int>, QPair<long, int>> combinationTimers;
+    QMap<QPair<int, int>, long long> combinationTimers;
 
     void addIngredient(IngredientType type, QPointF position);
 
@@ -57,32 +58,45 @@ private:
     b2Body* addIngredientToWorld(const Ingredient& ingredient);
 
     ///
-    /// \brief removeIngredient Remove the ingredient with the ID. Returns true of successful,
+    /// \brief removeIngredient Remove the Ingredient with the ID. Returns true of successful,
     ///                         false otherwise.
-    /// \param ingredientID the ID of the ingredient to remove
+    /// \param ingredientID the ID of the Ingredient to remove
     /// \return is removal successful
     ///
     bool removeIngredient(int ingredientID);
 
+    ///
+    /// \brief tryCombine Combines the two input Ingredients, if possible. This
+    ///                   function deletes the two inputs and replaces them with
+    ///                   their associated outputs if the Ingredients can be
+    ///                   combined. When combined, the first Ingredient will
+    ///                   always snap to the position of i1 and every subsequent
+    ///                   one will snap to the position of i2. This function
+    ///                   DOES NOT check if the reverse order can be combined!
+    /// \param i1 the ID of the first Ingredient to combine
+    /// \param i2 the ID of the second Ingredient to combine
+    /// \return true if the Ingredients successfully combined, false otherwise
+    ///
+    bool tryCombine(int i1, int i2);
+
+    ///
+    /// \brief combine Combines the two input Ingredients. This function deletes
+    ///                the two inputs and replaces with their associated
+    ///                outputs. When combined, the first Ingredient will always
+    ///                snap to the position of i1 and every subsequent one will
+    ///                will snap to the position of i2.
+    /// \param i1 the ID of the first Ingredient to combine
+    /// \param i2 the ID of the second Ingredient to combine
+    /// \return true if the existing Ingredients were successfully deleted.
+    ///
+    bool combine(int i1, int i2);
+
 public:
     ///
-    /// \brief Model - Create a new model to store a new world and new objects
+    /// \brief Model Create a new model to store a new world and new objects
     ///
     Model();
     ~Model();
-
-    ///
-    /// \brief combine Combines the two input ingredients, if possible. This
-    ///                method deletes the two inputs and replaces them with
-    ///                their associated outputs if the ingredients can be
-    ///                combined. When combined, the first ingredient will always
-    ///                snap to the position of i1 and every subsequent one will
-    ///                snap to the position of i2.
-    /// \param i1 the ID of the first ingredient to combine
-    /// \param i2 the ID of the second ingredient to combine
-    /// \return true if the ingredients successfully combined, false otherwise
-    ///
-    bool combine(int i1, int i2);
 
 public slots:
     void createWorld(int level);
