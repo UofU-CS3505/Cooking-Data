@@ -86,11 +86,11 @@ private:
     /// transformation instead, where there is only one input Ingredient and all
     /// outputs snap to the position of i1.
     ///
-    /// If the first IngredientType matches the IngredientType of i1, i1 is not
-    /// deleted and IngredientType is not spawned.
+    /// If the first output IngredientType matches the IngredientType of i1, i1
+    /// is not deleted and the output IngredientType is not spawned.
     ///
-    /// If the second IngredientType matches the IngredientType of i2, i2 is not
-    /// deleted and IngredientType is not spawned.
+    /// If the second output IngredientType matches the IngredientType of i2, i2
+    /// is not deleted and the output IngredientType is not spawned.
     ///
     /// \param i1 the ID of the first Ingredient to combine
     /// \param i2 the ID of the second Ingredient to combine, if it is -1, the
