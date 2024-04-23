@@ -448,30 +448,30 @@ bool Model::combine(int i1, int i2) {
 void Model::createWorld(int level) {
     // Define the ground body.
     b2BodyDef groundBodyDef;
-    groundBodyDef.position.Set(0.0f, 1.1f);
+    groundBodyDef.position.Set(0, 1.36);
     b2Body* groundBody = this->world.CreateBody(&groundBodyDef);
     b2PolygonShape groundBox;
-    groundBox.SetAsBox(2.0f, 0.1f);
-    groundBody->CreateFixture(&groundBox, 0.0f);
+    groundBox.SetAsBox(3, 0.1);
+    groundBody->CreateFixture(&groundBox, 0);
 
     // Define static walls
     b2BodyDef leftWallBodyDef;
-    leftWallBodyDef.position.Set(-0.1f, 0.5f);
+    leftWallBodyDef.position.Set(-0.11, 0.5);
     b2Body* leftBody = this->world.CreateBody(&leftWallBodyDef);
     b2PolygonShape leftWallBox;
-    leftWallBox.SetAsBox(0.1f, 1.0f);
-    leftBody->CreateFixture(&leftWallBox, 0.0f);
+    leftWallBox.SetAsBox(0.1, 1);
+    leftBody->CreateFixture(&leftWallBox, 0);
 
     b2BodyDef rightWallBodyDef;
-    rightWallBodyDef.position.Set(1.7f, 0.5f);
+    rightWallBodyDef.position.Set(2.09, 0.5);
     b2Body* rightBody = this->world.CreateBody(&rightWallBodyDef);
     b2PolygonShape rightWallBox;
-    rightWallBox.SetAsBox(0.1f, 1.0f);
-    rightBody->CreateFixture(&rightWallBox, 0.0f);
+    rightWallBox.SetAsBox(0.1, 1);
+    rightBody->CreateFixture(&rightWallBox, 0);
 
     // Add Ingredients.
     if (level == 1) {
-        addIngredient(StoveOff, QPointF(1, 0.86875));
+        addIngredient(StoveOff, QPointF(1, 1.1));
         addIngredient(EmptyPot, QPointF(0.2, 0));
         addIngredient(OatPacket, QPointF(0.4, 0));
         addIngredient(WaterPitcher, QPointF(0.6, 0));
