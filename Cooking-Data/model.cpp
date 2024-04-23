@@ -64,25 +64,31 @@ Model::Model()
         qMakePair(QVector<IngredientType> { OatPacket, Ember, Ember }, 1000));
     combinations.insert(
         qMakePair(OatPacket, Fire),
-        qMakePair(QVector<IngredientType> { }, 1900)); // has to be shorter than fire decay
+        qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay
     combinations.insert(
         qMakePair(WaterPitcher, Fire),
-        qMakePair(QVector<IngredientType> { WaterPitcher, Ember }, 500));
+        qMakePair(QVector<IngredientType> { WaterPitcher, Ember }, 0));
     combinations.insert(
         qMakePair(WaterPitcher, Ember),
-        qMakePair(QVector<IngredientType> { WaterPitcher }, 500));
+        qMakePair(QVector<IngredientType> { WaterPitcher }, 0));
     combinations.insert(
         qMakePair(WaterPot, Fire),
-        qMakePair(QVector<IngredientType> { EmptyPot, Ember }, 500));
+        qMakePair(QVector<IngredientType> { EmptyPot, Ember }, 0));
     combinations.insert(
         qMakePair(WaterPot, Ember),
-        qMakePair(QVector<IngredientType> { EmptyPot }, 500));
+        qMakePair(QVector<IngredientType> { EmptyPot }, 0));
     combinations.insert(
         qMakePair(BoilingWaterPot, Fire),
-        qMakePair(QVector<IngredientType> { EmptyPot, Ember }, 500));
+        qMakePair(QVector<IngredientType> { EmptyPot, Ember }, 0));
     combinations.insert(
         qMakePair(BoilingWaterPot, Ember),
-        qMakePair(QVector<IngredientType> { EmptyPot }, 500));
+        qMakePair(QVector<IngredientType> { EmptyPot }, 0));
+    combinations.insert(
+        qMakePair(WaterLadel, Fire),
+        qMakePair(QVector<IngredientType> { Ladel, Ember }, 0));
+    combinations.insert(
+        qMakePair(WaterLadel, Ember),
+        qMakePair(QVector<IngredientType> { Ladel }, 0));
     combinations.insert(
         qMakePair(Fire, None),
         qMakePair(QVector<IngredientType> { Ember }, 2000));
