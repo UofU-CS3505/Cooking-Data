@@ -102,7 +102,7 @@ Model::Model()
 
 Model::~Model() {
     // How to delete maps?
-    // qDeleteAll(ingredients);
+    qDeleteAll(ingredients);
     // qDeleteAll(combinations);
     // qDeleteAll(ingredientToBody);
 }
