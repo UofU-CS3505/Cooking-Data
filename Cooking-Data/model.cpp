@@ -35,9 +35,6 @@ Model::Model()
     combinations.insert(
         qMakePair(WaterPitcher, EmptyPot),
         qMakePair(QVector<IngredientType> { WaterPitcher, WaterPot }, 0));
-    // combinations.insert(
-    //     qMakePair(WaterPot, Fire),
-    //     qMakePair(QVector<IngredientType> { BoilingWaterPot, Fire }, 0));
     combinations.insert(
         qMakePair(StoveOn, WaterPot),
         qMakePair(QVector<IngredientType> { StoveOn, BoilingWaterPot }, 5000));
@@ -63,11 +60,11 @@ Model::Model()
         qMakePair(OatsBowl, WaterLadel),
         qMakePair(QVector<IngredientType> { OatmealBowl, Ladel }, 0));
     combinations.insert(
-        qMakePair(OatPacket, Fire),
-        qMakePair(QVector<IngredientType> { OatPacket, Fire, Ember }, 500));
-    combinations.insert(
         qMakePair(OatPacket, Ember),
         qMakePair(QVector<IngredientType> { OatPacket, Ember, Ember }, 1000));
+    combinations.insert(
+        qMakePair(OatPacket, Fire),
+        qMakePair(QVector<IngredientType> { }, 1000));
     combinations.insert(
         qMakePair(WaterPitcher, Fire),
         qMakePair(QVector<IngredientType> { WaterPitcher, Ember }, 500));
@@ -90,11 +87,11 @@ Model::Model()
         qMakePair(Fire, None),
         qMakePair(QVector<IngredientType> { Ember }, 2000));
     combinations.insert(
-        qMakePair(Ember, None),
-        qMakePair(QVector<IngredientType> { None }, 5000));
-    combinations.insert(
         qMakePair(Ember, Ember),
         qMakePair(QVector<IngredientType> { Fire }, 0));
+    combinations.insert(
+        qMakePair(Ember, None),
+        qMakePair(QVector<IngredientType> { }, 5000));
 }
 
 Model::~Model() {
@@ -294,7 +291,7 @@ bool Model::tryCombine(int i1, int i2) {
     if (!combinations.contains(typePair))
         return false;
 
-    qDebug() << "Trying to combine" << i1 << "and" << i2;
+    // qDebug() << "Trying to combine" << i1 << "and" << i2;
 
     // Check if the combination requires a waiting time.
     if (combinations[typePair].second == 0)
@@ -347,61 +344,99 @@ bool Model::combine(int i1, int i2) {
     if (i2 != -1)
         // Is a combination, make a typePair with both IngredientTypes.
         typePair = qMakePair(ingredients[i1]->getIngredientType(),
-                    ingredients[i2]->getIngredientType());
+                             ingredients[i2]->getIngredientType());
     else
         // Is a transformation, make a typePair with the IngredientType of the
-        // first Ingredient and None as the second.
+        // first input Ingredient and None as the second.
         typePair = qMakePair(ingredients[i1]->getIngredientType(),
-                    None);
+                             None);
 
-    // Check if anything needs spawning.
+    // Check if there is any output Ingredient to spawn.
     if (combinations[typePair].first.empty()) {
         // Nothing needs to be spawned.
         if (i2 != -1)
-            // Is a combination, remove both Ingredients.
+            // Is a combination, remove both input Ingredients.
             return removeIngredient(i1) && removeIngredient(i2);
         else
-            // Is a transformation, remove the only Ingredient.
+            // Is a transformation, remove the only input Ingredient.
             return removeIngredient(i1);
     }
 
-    if (combinations[typePair].first[0] != None) {
-        // Spawn the first Ingredient.
+    // Decide where to spawn extra output Ingredients and which index extra
+    // output Ingredients begin at.
+    QPointF spawnPosition;
+    double spawnAngle;
+    int indexOfRemaingingOutput;
+    if (i2 != -1) {
+        // Is a combination, set spawn position and angle to that of i2.
+        spawnPosition = ingredients[i2]->getPosition();
+        spawnAngle = ingredients[i2]->getAngle();
+        // Because the first two output Ingredients' spawn will be managed
+        // later, set the index of the remaining output to 2.
+        indexOfRemaingingOutput = 2;
+    } else {
+        // Is a transformation, set spawn position and angle to that of i1.
+        spawnPosition = ingredients[i1]->getPosition();
+        spawnAngle = ingredients[i1]->getAngle();
+        // Because only the first output Ingredient's spawn will be managed
+        // later, set the index of the remaining output to 1;
+        indexOfRemaingingOutput = 1;
+    }
+
+    // Spawn the extra output Ingredients.
+    for (int i = indexOfRemaingingOutput; i < combinations[typePair].first.size(); i++) {
+        addIngredient(combinations[typePair].first[i], spawnPosition, spawnAngle);
+
+        // Check if any extra Ingredients are win condition.
+        if (combinations[typePair].first[i] == winCondition)
+            qDebug() << "VICTORY ROYALE";
+    }
+
+    bool removeSuccessful = true;
+
+    // Check if the type of the first output is different from the type of the
+    // first input.
+    if (combinations[typePair].first[0] != typePair.first) {
+        // The types are different, replace the frst input Ingredient.
+        // Spawn the first output Ingredient.
         addIngredient(combinations[typePair].first[0],
                       ingredients[i1]->getPosition(),
                       ingredients[i1]->getAngle());
+        // Remove the first input Ingredient.
+        removeSuccessful = removeIngredient(i1);
+
         // Check if the first Ingredient is a win condition.
         if (combinations[typePair].first[0] == winCondition)
             qDebug() << "VICTORY ROYALE";
     }
 
-    // Spawn the remaining Ingredients.
-    QPointF spawnPosition;
-    double spawnAngle;
-    if (i2 != -1) {
-        // Is a combination, set spawn point to postion of i2.
-        spawnPosition = ingredients[i2]->getPosition();
-        spawnAngle = ingredients[i2]->getAngle();
-    } else {
-        // Is a transformation, set spawn point to position of i1.
-        spawnPosition = ingredients[i1]->getPosition();
-        spawnAngle = ingredients[i1]->getAngle();
-    }
+    // If it is a combination, and there are at least two outputs, and the
+    // second output is a different type from the second input, replace the
+    // second input with the second output.
+    bool replaceSecondIngredient = i2 != -1
+                                   && combinations[typePair].first.size() > 1;
+    replaceSecondIngredient = // C++ lacks lazy evaluation
+        replaceSecondIngredient
+        && combinations[typePair].first[1] != typePair.second;
 
-    for (int i = 1; i < combinations[typePair].first.size(); i++) {
-        addIngredient(combinations[typePair].first[i], spawnPosition, spawnAngle);
+    // Check if second input Ingredient should be replaced or removed.
+    if (replaceSecondIngredient) {
+        // Spawn the second Ingredient.
+        addIngredient(combinations[typePair].first[1],
+                      ingredients[i2]->getPosition(),
+                      ingredients[i2]->getAngle());
+        removeSuccessful = removeSuccessful && removeIngredient(i2);
 
-        if (combinations[typePair].first[i] == winCondition)
+        // Check if the second Ingredient is a win condition.
+        if (combinations[typePair].first[1] == winCondition)
             qDebug() << "VICTORY ROYALE";
-    }
+    } else if (i2 != -1 && combinations[typePair].first.size() == 1)
+        // Is a combination but there is only one output.
+        removeSuccessful = removeSuccessful && removeIngredient(i2);
 
-    qDebug() << "Combined" << i1 << "and" << i2 << ", removing them.";
-    if (i2 != -1)
-        // Is a combination, remove both Ingredients.
-        return removeIngredient(i1) && removeIngredient(i2);
-    else
-        // Is a transformation, remove the only Ingredient.
-        return removeIngredient(i1);
+
+    qDebug() << "Combined and removal" << removeSuccessful;
+    return removeSuccessful;
 }
 
 void Model::createWorld(int level) {

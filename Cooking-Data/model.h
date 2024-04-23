@@ -35,8 +35,7 @@ private:
     ///                     milliseconds between initial contact and combining.
     ///                     If the second IngredientType is None, it means it
     ///                     is a transformation involving only one input and
-    ///                     usually a delay. If the output contains nothing or
-    ///                     a singular None, nothing will be spawned.
+    ///                     usually a delay. If the output contains nothing, nothing will be spawned.
     ///
     QHash<QPair<IngredientType, IngredientType>,
           QPair<QVector<IngredientType>, int>> combinations;
@@ -86,6 +85,12 @@ private:
     /// transformation instead, where there is only one input Ingredient and all
     /// outputs snap to the position of i1.
     ///
+    /// If the first IngredientType matches the IngredientType of i1, i1 is not
+    /// deleted and IngredientType is not spawned.
+    ///
+    /// If the second IngredientType matches the IngredientType of i2, i2 is not
+    /// deleted and IngredientType is not spawned.
+    ///
     /// \param i1 the ID of the first Ingredient to combine
     /// \param i2 the ID of the second Ingredient to combine, if it is -1, the
     ///           function will perform a transformation instead (combination
@@ -105,6 +110,12 @@ private:
     /// If the ID of the second Ingredient is -1, it tries to perform a
     /// transformation instead, where there is only one input Ingredient and
     /// all outputs snap to the position of i1.
+    ///
+    /// If the first IngredientType matches the IngredientType of i1, i1 is not
+    /// deleted and IngredientType is not spawned.
+    ///
+    /// If the second IngredientType matches the IngredientType of i2, i2 is not
+    /// deleted and IngredientType is not spawned.
     ///
     /// \param i1 the ID of the first Ingredient to combine
     /// \param i2 the ID of the second Ingredient to combine, if it is -1, the
