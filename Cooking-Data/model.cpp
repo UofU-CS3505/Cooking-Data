@@ -63,6 +63,30 @@ Model::Model()
         qMakePair(OatsBowl, WaterLadel),
         qMakePair(QVector<IngredientType> { OatmealBowl, Ladel }, 0));
     combinations.insert(
+        qMakePair(OatPacket, Fire),
+        qMakePair(QVector<IngredientType> { OatPacket, Fire, Ember }, 500));
+    combinations.insert(
+        qMakePair(OatPacket, Ember),
+        qMakePair(QVector<IngredientType> { OatPacket, Ember, Ember }, 1000));
+    combinations.insert(
+        qMakePair(WaterPitcher, Fire),
+        qMakePair(QVector<IngredientType> { WaterPitcher, Ember }, 500));
+    combinations.insert(
+        qMakePair(WaterPitcher, Ember),
+        qMakePair(QVector<IngredientType> { WaterPitcher }, 500));
+    combinations.insert(
+        qMakePair(WaterPot, Fire),
+        qMakePair(QVector<IngredientType> { EmptyPot, Ember }, 500));
+    combinations.insert(
+        qMakePair(WaterPot, Ember),
+        qMakePair(QVector<IngredientType> { EmptyPot }, 500));
+    combinations.insert(
+        qMakePair(BoilingWaterPot, Fire),
+        qMakePair(QVector<IngredientType> { EmptyPot, Ember }, 500));
+    combinations.insert(
+        qMakePair(BoilingWaterPot, Ember),
+        qMakePair(QVector<IngredientType> { EmptyPot }, 500));
+    combinations.insert(
         qMakePair(Fire, None),
         qMakePair(QVector<IngredientType> { Ember }, 2000));
     combinations.insert(
@@ -80,13 +104,17 @@ Model::~Model() {
     // qDeleteAll(ingredientToBody);
 }
 
-void Model::addIngredient(IngredientType type, QPointF position) {
-    Ingredient* ingredient = createIngredient(type, position, 0);
+void Model::addIngredient(IngredientType type, QPointF position, double angle) {
+    Ingredient* ingredient = createIngredient(type, position, angle);
     qDebug() << "Ingredient made with ID" << ingredient->getID();
     ingredients.insert(ingredient->getID(), ingredient);
     qDebug() << "Inserted ingredient with ID" << ingredients[ingredient->getID()]->getID() << "into map with key" << ingredient->getID();
     addIngredientToWorld(*ingredient);
     qDebug() << "box2d made";
+}
+
+void Model::addIngredient(IngredientType type, QPointF position) {
+    addIngredient(type, position, 0);
 }
 
 Ingredient* Model::createIngredient(IngredientType type, QPointF position, double angle) {
@@ -156,7 +184,7 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
     if (type == Fire)
         return new Ingredient(Fire, QSizeF(0.1, 0.15), 0.2,
                               QPixmap(":/ingredients/assets/images/sprites/Fire.png"),
-                              position, angle);
+                              position, 0);
 
     if (type == Ember)
         return new Ingredient(Ember, QSizeF(0.0375, 0.0375), 0.1,
@@ -171,7 +199,7 @@ b2Body* Model::addIngredientToWorld(const Ingredient& ingredient) {
     b2BodyDef bodyDef;
     bodyDef.position.Set(ingredient.getPosition().x(),
                          ingredient.getPosition().y());
-    bodyDef.angle = ingredient.getAngle();
+    bodyDef.angle = qDegreesToRadians(ingredient.getAngle());
     b2Body* body = this->world.CreateBody(&bodyDef);
 
     // Define another box shape for our dynamic body.
@@ -340,7 +368,8 @@ bool Model::combine(int i1, int i2) {
     if (combinations[typePair].first[0] != None) {
         // Spawn the first Ingredient.
         addIngredient(combinations[typePair].first[0],
-                      ingredients[i1]->getPosition());
+                      ingredients[i1]->getPosition(),
+                      ingredients[i1]->getAngle());
         // Check if the first Ingredient is a win condition.
         if (combinations[typePair].first[0] == winCondition)
             qDebug() << "VICTORY ROYALE";
@@ -348,15 +377,19 @@ bool Model::combine(int i1, int i2) {
 
     // Spawn the remaining Ingredients.
     QPointF spawnPosition;
-    if (i2 != -1)
+    double spawnAngle;
+    if (i2 != -1) {
         // Is a combination, set spawn point to postion of i2.
         spawnPosition = ingredients[i2]->getPosition();
-    else
+        spawnAngle = ingredients[i2]->getAngle();
+    } else {
         // Is a transformation, set spawn point to position of i1.
         spawnPosition = ingredients[i1]->getPosition();
+        spawnAngle = ingredients[i1]->getAngle();
+    }
 
     for (int i = 1; i < combinations[typePair].first.size(); i++) {
-        addIngredient(combinations[typePair].first[i], spawnPosition);
+        addIngredient(combinations[typePair].first[i], spawnPosition, spawnAngle);
 
         if (combinations[typePair].first[i] == winCondition)
             qDebug() << "VICTORY ROYALE";
@@ -398,13 +431,13 @@ void Model::createWorld(int level) {
     // Add Ingredients.
     if (level == 1) {
         addIngredient(StoveOn, QPointF(1, 0.86875));
-        addIngredient(WaterPitcher, QPointF(0.2, 0));
+        addIngredient(EmptyPot, QPointF(0.2, 0));
         addIngredient(OatPacket, QPointF(0.4, 0));
-        addIngredient(EmptyPot, QPointF(0.6, 0));
+        addIngredient(WaterPitcher, QPointF(0.6, 0));
         addIngredient(Ladel, QPointF(0.8, 0));
 
-        for (int i = 0; i < 4; i++)
-            addIngredient(EmptyBowl, QPointF((std::rand() % 100) / 100.0 + 0.1, 0));
+        addIngredient(EmptyBowl, QPointF(1.2, 0));
+        addIngredient(EmptyBowl, QPointF(1.4, 0));
     } else if (level == 2) {
 
     } else if (level == 3) {
