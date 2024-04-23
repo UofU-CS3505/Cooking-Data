@@ -64,8 +64,8 @@ Model::Model()
                         QVector<IngredientType> { BoilingWaterPot, Fire });
     combinations.insert(qMakePair(BoilingWaterPot, Ladel),
                         QVector<IngredientType> { BoilingWaterPot, WaterLadel });
-    combinations.insert(qMakePair(EmptyBowl, EmptyBowl),
-                        QVector<IngredientType> { EmptyBowl, EmptyBowl, Fire }); // don't question it
+    // combinations.insert(qMakePair(EmptyBowl, EmptyBowl),
+    //                     QVector<IngredientType> { EmptyBowl, EmptyBowl, Fire }); // don't question it
     combinations.insert(qMakePair(EmptyBowl, OatPacket),
                         QVector<IngredientType> { OatsBowl, OatPacket });
     combinations.insert(qMakePair(OatsBowl, WaterLadel),
@@ -153,8 +153,8 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
                               position, angle);
 
     if (type == OatPacket)
-        return new Ingredient(OatPacket, QSizeF(3.5, 3.5), 20,
-                              QPixmap(":/ingredients/assets/images/sprites/OatPacket.png"),
+        return new Ingredient(OatPacket, QSizeF(7.5, 7.5), 20,
+                              QPixmap(":/ingredients/assets/images/sprites/Oatmeal.png"),
                               position, angle);
 
     if (type == OatmealBowl)
@@ -242,9 +242,10 @@ bool Model::combine(const Ingredient& i1, const Ingredient& i2) {
 
 void Model::createWorld(int level) {
     addIngredient(WaterPitcher, QPointF(5, 0));
-    addIngredient(EmptyPot, QPointF(15, 10));
-    addIngredient(OatPacket, QPointF(35, 0));
-    addIngredient(Ladel, QPointF(35, 0));
+    addIngredient(OatPacket, QPointF(15, 0));
+    addIngredient(EmptyPot, QPointF(25, 10));
+    addIngredient(Ladel, QPointF(30, 0));
+    addIngredient(Fire, QPointF(35, 0));
     for (int i = 0; i < 4; i++)
         addIngredient(EmptyBowl, QPointF(std::rand() % 50, 0));
 
