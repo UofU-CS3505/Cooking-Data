@@ -400,7 +400,7 @@ bool Model::combine(int i1, int i2) {
 
         // Check if any extra Ingredients are win condition.
         if (combinations[typePair].first[i] == winCondition)
-            qDebug() << "VICTORY ROYALE";
+            QTimer::singleShot(1000, this, [&](){emit winConditionMet();});
     }
 
     bool removeSuccessful = true;
@@ -418,7 +418,7 @@ bool Model::combine(int i1, int i2) {
 
         // Check if the first Ingredient is a win condition.
         if (combinations[typePair].first[0] == winCondition)
-            qDebug() << "VICTORY ROYALE";
+            QTimer::singleShot(1000, this, [&](){emit winConditionMet();});
     }
 
     // If it is a combination, and there are at least two outputs, and the
@@ -440,7 +440,7 @@ bool Model::combine(int i1, int i2) {
 
         // Check if the second Ingredient is a win condition.
         if (combinations[typePair].first[1] == winCondition)
-            qDebug() << "VICTORY ROYALE";
+            QTimer::singleShot(1000, this, [&](){emit winConditionMet();});
     } else if (i2 != -1 && combinations[typePair].first.size() == 1)
         // Is a combination but there is only one output.
         removeSuccessful = removeSuccessful && removeIngredient(i2);
@@ -493,6 +493,7 @@ void Model::createWorld(int level) {
         addIngredient(Ladel, QPointF(1.6, 0));
         addIngredient(EmptyBowl, QPointF(1.8, 0));
         addIngredient(EmptyBowl, QPointF(1.9, 0));
+        winCondition = OatmealBowl;
     } else if (level == 2) {
 
     } else if (level == 3) {

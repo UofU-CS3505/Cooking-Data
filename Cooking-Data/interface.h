@@ -31,6 +31,8 @@ private:
     bool isGamePaused = false;
     bool isStartMenu = true;
     int currentLevel = 0;
+    bool level1Done = false;
+    bool level2Done = false;
 
 public:
     Interface(QWidget *parent = nullptr);
@@ -47,6 +49,7 @@ public slots:
     // WE WILL CHANGE THIS LATER
     void startLevel();
     void openStartMenu();
+    void completeLevel();
 
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;

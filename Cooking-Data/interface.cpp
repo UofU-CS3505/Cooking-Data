@@ -13,8 +13,10 @@ Interface::Interface(QWidget *parent)
     ui->setupUi(this);
 
     ui->pauseLabel->setStyleSheet("background-color : rgba(200, 200, 200, 150); color : black;");
+    ui->winLabel->setStyleSheet("background-color : rgba(200, 200, 200, 150); color : green;");
     ui->escLabel->setStyleSheet("color : black;");
     ui->pauseLabel->setVisible(false);
+    ui->winLabel->setVisible(false);
     ui->quitButton->setVisible(false);
     ui->controlsButton->setVisible(false);
 
@@ -33,6 +35,8 @@ Interface::Interface(QWidget *parent)
             this, &Interface::addIngredientToFrame);
     connect(&model, &Model::frameEnded,
             this, &Interface::endFrame);
+    connect(&model, &Model::winConditionMet,
+            this, &Interface::completeLevel);
 
     // Connect mouse updates to model
     connect(this, &Interface::mousePressed,
@@ -53,6 +57,12 @@ Interface::Interface(QWidget *parent)
             this, &Interface::displayHelpPopup);
     connect(ui->level1, &QPushButton::clicked,
             this, [&](){currentLevel = 1;
+                        startLevel();});
+    connect(ui->level2, &QPushButton::clicked,
+            this, [&](){currentLevel = 2;
+                        startLevel();});
+    connect(ui->level3, &QPushButton::clicked,
+            this, [&](){currentLevel = 3;
                         startLevel();});
     connect(ui->quitButton, &QPushButton::clicked,
             this, &Interface::openStartMenu);
@@ -108,12 +118,14 @@ void Interface::beginFrame() {
 
     QPixmap table = QPixmap(
         ":/ingredients/assets/images/sprites/Table.png");
-    QGraphicsPixmapItem* floor = graphicsScene.addPixmap(table);
-    // 3/5 of the screen
-    float tableWidth = graphicsScene.width() / 5 * 3;
-    floor->setPos(graphicsScene.width() - tableWidth, 500);
-    floor->setScale(tableWidth / table.width());
-    floor->setRotation(0);
+    // 1/5 of the screen
+    float tableWidth = graphicsScene.width() / 5;
+    for (int i = 1; i <= 5; i++) {
+        QGraphicsPixmapItem* floor = graphicsScene.addPixmap(table);
+        floor->setPos(graphicsScene.width() - tableWidth * i, 500);
+        floor->setScale(tableWidth / table.width());
+        floor->setRotation(0);
+    }
 
     QPixmap windowSprite = QPixmap(
         ":/ingredients/assets/images/sprites/Window.png");
@@ -171,8 +183,27 @@ void Interface::startLevel() {
     emit createWorld(currentLevel);
 }
 
+void Interface::completeLevel() {
+    ui->escLabel->setVisible(false);
+    ui->escLabel->raise();
+    ui->winLabel->setVisible(true);
+    ui->winLabel->raise();
+
+    // Grab mouse to consume all mouse events, as otherwise the
+    // qGraphicsView/Scene takes all of it.
+    this->grabMouse();
+
+    if (currentLevel == 1)
+        level1Done = true;
+    if (currentLevel == 2)
+        level2Done = true;
+
+    QTimer::singleShot(1500, this, &Interface::openStartMenu);
+}
+
 void Interface::openStartMenu() {
-    isGamePaused = !isGamePaused;
+    if (isGamePaused)
+        isGamePaused = !isGamePaused;
     ui->pauseLabel->setVisible(isGamePaused);
     ui->quitButton->setVisible(isGamePaused);
     ui->quitButton->setEnabled(isGamePaused);
@@ -180,10 +211,14 @@ void Interface::openStartMenu() {
     ui->controlsButton->setEnabled(isGamePaused);
     ui->escLabel->setVisible(!isGamePaused);
     ui->escLabel->raise();
+    ui->winLabel->setVisible(false);
 
     emit deleteWorld();
 
     isStartMenu = true;
+
+    ui->level2->setEnabled(level1Done);
+    ui->level3->setEnabled(level2Done);
 
     // Release mouse to stop consume all mouse events.
     this->releaseMouse();

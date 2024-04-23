@@ -147,7 +147,7 @@ signals:
     void ingredientUpdated(const Ingredient& ingredient);
     void frameEnded();
     void makeGroundInView(b2Vec2 loc, int width, int height);
-
+    void winConditionMet();
 };
 
 #endif // MODEL_H
