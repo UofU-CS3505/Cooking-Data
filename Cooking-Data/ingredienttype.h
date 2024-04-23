@@ -3,9 +3,11 @@
 
 enum IngredientType {
     None,
+    // Put stationary things at the front, alphabetically.
     Plank,
     StoveOff,
     StoveOn,
+    // Alphabetically sort actual Ingredients.
     BoilingWaterPot,
     EmptyBowl,
     EmptyPot,
@@ -16,8 +18,9 @@ enum IngredientType {
     WaterLadel,
     WaterPitcher,
     WaterPot,
-    Fire,
+    // Put fire-related things at the end, alphabetically.
     Ember,
+    Fire,
 };
 
 #endif // INGREDIENTTYPE_H
