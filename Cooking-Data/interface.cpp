@@ -136,8 +136,9 @@ void Interface::addIngredientToFrame(const Ingredient &ingredient) {
         -ingredient.getTexture().width() / 2,
         -ingredient.getTexture().height() / 2);
     item->setPos(x, y);
-    item->setScale(SCALE / 2); // for some reason using full scale looks way
-                               // too large
+    // The Pixmaps are in the scale of 2 pixels per inch, but b2Body uses
+    // meters as units.
+    item->setScale(SCALE / 70);
     item->setRotation(angle);
 }
 

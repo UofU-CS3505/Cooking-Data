@@ -21,7 +21,7 @@ QT_END_NAMESPACE
 class Interface : public QMainWindow {
     Q_OBJECT
 private:
-    const float SCALE = 10.0f;
+    const float SCALE = 500.0f;
 
     Ui::Interface *ui;
     Model model;

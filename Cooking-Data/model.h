@@ -45,9 +45,6 @@ private:
     ///
     QMap<QPair<int, int>, QPair<long, int>> combinationTimers;
 
-    float oldVX;
-    float oldVY;
-
     void addIngredient(IngredientType type, QPointF position);
 
     Ingredient* createIngredient(IngredientType type, QPointF position, double angle);

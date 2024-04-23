@@ -6,41 +6,36 @@
 
 Model::Model()
     : timer(),
-    world(b2World(b2Vec2(0.0f, 15.0f))){
+    world(b2World(b2Vec2(0.0f, 9.8f))){
 
     // THIS IS TEST CODE, WE WILL EDIT THIS LATER AS NEEDED
     ////////////////////////////
 
     // Define the ground body.
     b2BodyDef groundBodyDef;
-    groundBodyDef.position.Set(0.0f, 60.0f);
-
-    b2Vec2 gravity(0.0f, 20.0f);
-    this->world.SetGravity(gravity);
-
-    // Define static walls
+    groundBodyDef.position.Set(0.0f, 1.1f);
     b2Body* groundBody = this->world.CreateBody(&groundBodyDef);
     b2PolygonShape groundBox;
-    groundBox.SetAsBox(100.0f, 10.0f);
+    groundBox.SetAsBox(2.0f, 0.1f);
     groundBody->CreateFixture(&groundBox, 0.0f);
 
+    // Define static walls
     b2BodyDef leftWallBodyDef;
-    leftWallBodyDef.position.Set(-10.0f, 30.0f);
+    leftWallBodyDef.position.Set(-0.1f, 0.5f);
     b2Body* leftBody = this->world.CreateBody(&leftWallBodyDef);
     b2PolygonShape leftWallBox;
-    leftWallBox.SetAsBox(10.0f, 100.0f);
+    leftWallBox.SetAsBox(0.1f, 1.0f);
     leftBody->CreateFixture(&leftWallBox, 0.0f);
 
     b2BodyDef rightWallBodyDef;
-    rightWallBodyDef.position.Set(90.0f, 30.0f);
+    rightWallBodyDef.position.Set(1.7f, 0.5f);
     b2Body* rightBody = this->world.CreateBody(&rightWallBodyDef);
     b2PolygonShape rightWallBox;
-    rightWallBox.SetAsBox(10.0f, 100.0f);
+    rightWallBox.SetAsBox(0.1f, 1.0f);
     rightBody->CreateFixture(&rightWallBox, 0.0f);
 
     // Start the timer.
     connect(&timer, &QTimer::timeout, this, &Model::updateWorld);
-    timer.start(FRAME_TIME);
 
     // Let view create the ground
 
@@ -92,58 +87,61 @@ void Model::addIngredient(IngredientType type, QPointF position) {
 }
 
 Ingredient* Model::createIngredient(IngredientType type, QPointF position, double angle) {
+    // Note: the size should be 0.0125x (divide by 80) the dimension of the texture (convert
+    // from a scale of 0.5 in. per pixel to meter).
+
     if (type == BoilingWaterPot)
-        return new Ingredient(BoilingWaterPot, QSizeF(8, 7), 8,
+        return new Ingredient(BoilingWaterPot, QSizeF(0.2, 0.175), 4,
                               QPixmap(":/ingredients/assets/images/sprites/BoilingWaterPot.png"),
                               position, angle);
 
     if (type == EmptyBowl)
-        return new Ingredient(EmptyBowl, QSizeF(6, 4), 1,
+        return new Ingredient(EmptyBowl, QSizeF(0.15, 0.1), 0.5,
                               QPixmap(":/ingredients/assets/images/sprites/EmptyBowl.png"),
                               position, angle);
 
     if (type == EmptyPot)
-        return new Ingredient(EmptyPot, QSizeF(8, 5), 4,
+        return new Ingredient(EmptyPot, QSizeF(0.2, 0.125), 2,
                               QPixmap(":/ingredients/assets/images/sprites/EmptyPot.png"),
                               position, angle);
 
     if (type == Ladel)
-        return new Ingredient(Ladel, QSizeF(4, 6.5), 0.5,
+        return new Ingredient(Ladel, QSizeF(0.1, 0.1625), 0.25,
                               QPixmap(":/ingredients/assets/images/sprites/Ladel.png"),
                               position, angle);
 
     if (type == OatPacket)
-        return new Ingredient(OatPacket, QSizeF(7.5, 7.5), 20,
+        return new Ingredient(OatPacket, QSizeF(0.175, 0.175), 2,
                               QPixmap(":/ingredients/assets/images/sprites/Oatmeal.png"),
                               position, angle);
 
     if (type == OatmealBowl)
-        return new Ingredient(OatmealBowl, QSizeF(6, 8.5), 5,
+        return new Ingredient(OatmealBowl, QSizeF(0.15, 0.2125), 3,
                               QPixmap(":/ingredients/assets/images/sprites/OatmealBowl.png"),
                               position, angle);
 
     if (type == OatsBowl)
-        return new Ingredient(OatsBowl, QSizeF(6, 4), 3,
+        return new Ingredient(OatsBowl, QSizeF(0.15, 0.1), 2,
                               QPixmap(":/ingredients/assets/images/sprites/OatsBowl.png"),
                               position, angle);
 
     if (type == WaterLadel)
-        return new Ingredient(WaterLadel, QSizeF(4, 6.5), 1,
+        return new Ingredient(WaterLadel, QSizeF(0.1, 0.1625), 0.5,
                               QPixmap(":/ingredients/assets/images/sprites/WaterLadel.png"),
                               position, angle);
 
     if (type == WaterPitcher)
-        return new Ingredient(WaterPitcher, QSizeF(7.5, 8.5), 10,
+        return new Ingredient(WaterPitcher, QSizeF(0.1875, 0.2125), 5,
                               QPixmap(":/ingredients/assets/images/sprites/WaterPitcher.png"),
                               position, angle);
 
     if (type == WaterPot)
-        return new Ingredient(WaterPot, QSizeF(8, 5), 8,
+        return new Ingredient(WaterPot, QSizeF(0.2, 0.125), 4,
                               QPixmap(":/ingredients/assets/images/sprites/WaterPot.png"),
                               position, angle);
 
     if (type == Fire)
-        return new Ingredient(Fire, QSizeF(4, 6), 0.1,
+        return new Ingredient(Fire, QSizeF(0.1, 0.15), 0.1,
                               QPixmap(":/ingredients/assets/images/sprites/Fire.png"),
                               position, angle);
 
@@ -264,13 +262,13 @@ bool Model::combine(int i1, int i2) {
 }
 
 void Model::createWorld(int level) {
-    addIngredient(WaterPitcher, QPointF(5, 0));
-    addIngredient(OatPacket, QPointF(15, 0));
-    addIngredient(EmptyPot, QPointF(25, 10));
-    addIngredient(Ladel, QPointF(30, 0));
-    addIngredient(Fire, QPointF(35, 0));
+    addIngredient(WaterPitcher, QPointF(0.2, 0));
+    addIngredient(OatPacket, QPointF(0.4, 0));
+    addIngredient(EmptyPot, QPointF(0.6, 0));
+    addIngredient(Ladel, QPointF(0.8, 0));
+    addIngredient(Fire, QPointF(1.0, 0));
     for (int i = 0; i < 4; i++)
-        addIngredient(EmptyBowl, QPointF(std::rand() % 50, 0));
+        addIngredient(EmptyBowl, QPointF((std::rand() % 200) / 100.0, 0));
 
     if (level == 2) {
 
@@ -281,6 +279,7 @@ void Model::createWorld(int level) {
         winCondition = OatmealBowl;
     }
 
+    timer.start(FRAME_TIME);
     qDebug() << "World created";
 }
 
@@ -294,10 +293,20 @@ void Model::updateWorld() {
     // It is generally best to keep the time step and iterations fixed.
     if (selected != nullptr) {
         // SPRING
+        // float distanceX = recentMouseLoc.x() - selected->GetPosition().x;
+        // float distanceY = recentMouseLoc.y() - selected->GetPosition().y;
+        // float velocityX = distanceX * 50;
+        // float velocityY = distanceY * 50;
+        // b2Vec2 force = b2Vec2(velocityX, velocityY);
+        // selected->ApplyForceToCenter(force, true);
+
+        // Gravity
         float distanceX = recentMouseLoc.x() - selected->GetPosition().x;
         float distanceY = recentMouseLoc.y() - selected->GetPosition().y;
-        float velocityX = distanceX * 50;
-        float velocityY = distanceY * 50;
+        float velocityX = (std::abs(distanceX) / distanceX) // figure out the sign
+                          * distanceX * distanceX * 200;
+        float velocityY = (std::abs(distanceY) / distanceY) // figure out the sign
+                          * distanceY * distanceY * 200;
         b2Vec2 force = b2Vec2(velocityX, velocityY);
         selected->ApplyForceToCenter(force, true);
     }
@@ -311,10 +320,10 @@ void Model::updateWorld() {
         // This horrible piece of code converts the void pointer from
         // b2Body::GetUserData() to an int
         // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
-        int i1ID = static_cast<int>(
-            reinterpret_cast<intptr_t>(collision->GetFixtureA()->GetBody()->GetUserData()));
-        int i2ID = static_cast<int>(
-            reinterpret_cast<intptr_t>(collision->GetFixtureB()->GetBody()->GetUserData()));
+        int i1ID = static_cast<int>(reinterpret_cast<intptr_t>(
+            collision->GetFixtureA()->GetBody()->GetUserData()));
+        int i2ID = static_cast<int>(reinterpret_cast<intptr_t>(
+            collision->GetFixtureB()->GetBody()->GetUserData()));
 
         // If the ingredient was not found in the map, continue the loop.
         if (!(ingredients.contains(i1ID) && ingredients.contains(i2ID)))
@@ -381,14 +390,14 @@ void Model::pointPressed(QPointF position) {
         double y2 = value->getPosition().y()
                     + value->getDimensions().height() / 2;
         
-        qDebug() << "mouse x " << position.x() << " | mouse y " << position.y();
-        qDebug() << "x1 " << x1 << " | x2 " << x2;
-        qDebug() << "y1 " << y1 << " | y2 " << y2;
+        // qDebug() << "mouse x " << position.x() << " | mouse y " << position.y();
+        // qDebug() << "x1 " << x1 << " | x2 " << x2;
+        // qDebug() << "y1 " << y1 << " | y2 " << y2;
         if (x1 <= position.x() && x2 >= position.x()
             && y1 <= position.y() && y2 >= position.y()) {
-            qDebug() << "ID" << key << "; actual ID" << value->getID();
+            // qDebug() << "ID" << key << "; actual ID" << value->getID();
             selectedIngredientID = value->getID();
-            qDebug() << "Selected Ingredient ID:" << selectedIngredientID;
+            // qDebug() << "Selected Ingredient ID:" << selectedIngredientID;
             break;
         }
     }

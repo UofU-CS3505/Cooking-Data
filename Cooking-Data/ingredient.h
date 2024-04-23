@@ -22,13 +22,13 @@ private:
     IngredientType INGREDIENT_TYPE;
 
     ///
-    /// \brief dimensions The dimension of the ingredient in inches. Should be
-    ///                   half of the dimension of the texture.
+    /// \brief dimensions The dimension of the ingredient in meters. Should be
+    ///                   0.0125 times (divide by 80) the dimension of the texture.
     ///
     QSizeF dimensions;
 
     ///
-    /// \brief weight The weight of the Ingredient in... ?
+    /// \brief weight The weight of the Ingredient in kg
     ///
     double weight;
 
@@ -42,7 +42,6 @@ private:
     /// \brief position The position of the Ingredient in meters.
     ///
     QPointF position;
-
 
     ///
     /// \brief angle The angle of the ingredient in degrees.
