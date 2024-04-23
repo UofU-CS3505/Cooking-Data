@@ -98,9 +98,6 @@ Model::Model()
     combinations.insert(
         qMakePair(Ember, None),
         qMakePair(QVector<IngredientType> { }, 5000));
-    combinations.insert(
-        qMakePair(StoveOn, None),
-        qMakePair(QVector<IngredientType> { StoveOn, Ember }, 10));
 }
 
 Model::~Model() {
@@ -202,7 +199,7 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
                               QPixmap(":/ingredients/assets/images/sprites/Ember.png"),
                               position, angle);
 
-    return new Ingredient();
+    return new Ingredient(position);
 }
 
 b2Body* Model::addIngredientToWorld(const Ingredient& ingredient) {

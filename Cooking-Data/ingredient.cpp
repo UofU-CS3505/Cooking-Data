@@ -6,9 +6,21 @@ int Ingredient::globalLatestID = 0;
 Ingredient::Ingredient():
     ID(++globalLatestID),
     INGREDIENT_TYPE(None),
-    dimensions(QSize(10,10)),
-    weight(10),
+    dimensions(QSizeF(0.5,0.5)),
+    weight(1),
+    texture(QPixmap(":/ingredients/assets/images/sprites/Error.png")),
     position(QPointF(0,0)),
+    angle(0) {
+
+}
+
+Ingredient::Ingredient(QPointF position):
+    ID(++globalLatestID),
+    INGREDIENT_TYPE(None),
+    dimensions(QSizeF(0.5,0.5)),
+    weight(1),
+    texture(QPixmap(":/ingredients/assets/images/sprites/Error.png")),
+    position(position),
     angle(0) {
 
 }
@@ -58,4 +70,11 @@ Ingredient& Ingredient::operator=(const Ingredient& other) {
 
 bool Ingredient::operator==(const Ingredient& rhs) const {
     return ID == rhs.ID;
+}
+
+QPixmap Ingredient::getTexture() const {
+    if (texture.isNull())
+        return QPixmap(":/ingredients/assets/images/sprites/Error.png");
+
+    return texture;
 }

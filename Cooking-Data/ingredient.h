@@ -51,6 +51,7 @@ private:
 public:
 
     Ingredient();
+    Ingredient(QPointF positon);
     Ingredient(IngredientType type, QSizeF dimension, double weight,
                QPixmap texture, QPointF position, double angle);
     ~Ingredient();
@@ -81,7 +82,7 @@ public:
     IngredientType getIngredientType() const { return INGREDIENT_TYPE; }
     QSizeF getDimensions() const { return dimensions; }
     double getWeight() const { return weight; }
-    QPixmap getTexture() const { return texture; }
+    QPixmap getTexture() const;
     QPointF getPosition() const { return position; }
 
     ///
