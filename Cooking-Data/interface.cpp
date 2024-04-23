@@ -56,7 +56,7 @@ Interface::Interface(QWidget *parent)
     connect(ui->quitButton, &QPushButton::clicked,
             this, &Interface::openStartMenu);
 
-    // Put the QGraphicsScene into the QGraphicsView.
+    // Put the QGraphicsScene into* the QGraphicsView.
     ui->graphicsView->setScene(&graphicsScene);
 
     // Set up the start screen.
@@ -96,6 +96,26 @@ void Interface::displayHelpPopup() {
 
 void Interface::beginFrame() {
     graphicsScene.clear();
+
+    // Rebuild background at frame reset
+    QPixmap wood = QPixmap(
+        ":/ingredients/assets/images/sprites/Background.png");
+    QGraphicsPixmapItem* bg = graphicsScene.addPixmap(wood);
+    bg->setPos(0, 0);
+    bg->setScale(13);
+    bg->setRotation(0);
+
+    QPixmap table = QPixmap(
+        ":/ingredients/assets/images/sprites/Table.png");
+    QGraphicsPixmapItem* floor = graphicsScene.addPixmap(table);
+    // 3/5 of the screen
+    float tableWidth = graphicsScene.width() / 5 * 3;
+    floor->setPos(graphicsScene.width() - tableWidth, 500);
+    floor->setScale(tableWidth / table.width());
+    floor->setRotation(0);
+
+    QPixmap window = QPixmap(
+        ":/ingredients/assets/images/sprites/Table.png");
 }
 
 void Interface::addIngredientToFrame(Ingredient& ingredient) {
