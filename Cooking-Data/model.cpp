@@ -153,7 +153,7 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
                               position, angle);
 
     if (type == OatPacket)
-        return new Ingredient(OatPacket, QSizeF(7, 7), 20,
+        return new Ingredient(OatPacket, QSizeF(3.5, 3.5), 20,
                               QPixmap(":/ingredients/assets/images/sprites/OatPacket.png"),
                               position, angle);
 
