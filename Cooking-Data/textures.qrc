@@ -27,5 +27,6 @@
         <file>assets/images/sprites/Fire.png</file>
         <file>assets/images/sprites/Oatmeal.png</file>
         <file>assets/images/sprites/OatPacket.png</file>
+        <file>assets/images/sprites/Ember.png</file>
     </qresource>
 </RCC>

@@ -28,19 +28,24 @@ private:
     QMap<int, Ingredient*> ingredients;
 
     ///
-    /// \brief combinations The valid combinations where the first QPair holds
-    ///                     the two source IngredientTypes, the second QPair
-    ///                     holds a QVector of all the output IngredientTypes
-    ///                     and an int for the delay in milliseconds between
-    ///                     initial contact and combining.
+    /// \brief combinations The valid combinations where the key is a QPair
+    ///                     that holds the two source IngredientTypes and the
+    ///                     value is a QPair that holds a QVector of all the
+    ///                     output IngredientTypes and an int for the delay in
+    ///                     milliseconds between initial contact and combining.
+    ///                     If the second IngredientType is None, it means it
+    ///                     is a transformation involving only one input and
+    ///                     usually a delay. If the output contains nothing or
+    ///                     a singular None, nothing will be spawned.
     ///
     QHash<QPair<IngredientType, IngredientType>,
           QPair<QVector<IngredientType>, int>> combinations;
 
     ///
-    /// \brief combinationTimers The timers for combinations where the QPair
-    ///                          holds the IDs of the two Ingredients and the
-    ///                          long holds the system epoch time in ms when the
+    /// \brief combinationTimers The timers for combinations where the key is
+    ///                          a QPair that holds the IDs of the two
+    ///                          Ingredients and the value is a long long that
+    ///                          holds the system epoch time in ms when the
     ///                          combination should complete if they are still
     ///                          in contact.
     ///
@@ -58,36 +63,53 @@ private:
     b2Body* addIngredientToWorld(const Ingredient& ingredient);
 
     ///
-    /// \brief removeIngredient Remove the Ingredient with the ID. Returns true of successful,
-    ///                         false otherwise.
+    /// \brief removeIngredient Remove the Ingredient with the ID. Returns true
+    ///                         if successful, false otherwise.
     /// \param ingredientID the ID of the Ingredient to remove
     /// \return is removal successful
     ///
     bool removeIngredient(int ingredientID);
 
     ///
-    /// \brief tryCombine Combines the two input Ingredients, if possible. This
-    ///                   function deletes the two inputs and replaces them with
-    ///                   their associated outputs if the Ingredients can be
-    ///                   combined. When combined, the first Ingredient will
-    ///                   always snap to the position of i1 and every subsequent
-    ///                   one will snap to the position of i2. This function
-    ///                   DOES NOT check if the reverse order can be combined!
+    /// \brief tryCombine Tries to ombines the two input Ingredients, if
+    ///                   possible.
+    ///
+    /// This function deletes the two inputs and replaces them with their
+    /// associated outputs if the Ingredients can be combined. When
+    /// combined, the first Ingredient will always snap to the position of i1
+    /// and every subsequent one will snap to the position of i2.
+    ///
+    /// This function DOES NOT check if the reverse order can be combined!
+    ///
+    /// If the ID of the second Ingredient is -1, it tries to perform a
+    /// transformation instead, where there is only one input Ingredient and all
+    /// outputs snap to the position of i1.
+    ///
     /// \param i1 the ID of the first Ingredient to combine
-    /// \param i2 the ID of the second Ingredient to combine
+    /// \param i2 the ID of the second Ingredient to combine, if it is -1, the
+    ///           function will perform a transformation instead (combination
+    ///           with only one input)
     /// \return true if the Ingredients successfully combined, false otherwise
     ///
     bool tryCombine(int i1, int i2);
 
     ///
-    /// \brief combine Combines the two input Ingredients. This function deletes
-    ///                the two inputs and replaces with their associated
-    ///                outputs. When combined, the first Ingredient will always
-    ///                snap to the position of i1 and every subsequent one will
-    ///                will snap to the position of i2.
+    /// \brief combine Combines the two input Ingredients.
+    ///
+    /// This function deletes the two inputs and replaces with their associated
+    /// outputs. When combined, the first Ingredient will always snap to the
+    /// position of i1 and every subsequent one will snap to the position of
+    /// i2.
+    ///
+    /// If the ID of the second Ingredient is -1, it tries to perform a
+    /// transformation instead, where there is only one input Ingredient and
+    /// all outputs snap to the position of i1.
+    ///
     /// \param i1 the ID of the first Ingredient to combine
-    /// \param i2 the ID of the second Ingredient to combine
-    /// \return true if the existing Ingredients were successfully deleted.
+    /// \param i2 the ID of the second Ingredient to combine, if it is -1, the
+    ///           function will perform a transformation instead (combination
+    ///           with only one input)
+    /// \return true if the existing Ingredients were successfully deleted
     ///
     bool combine(int i1, int i2);
 

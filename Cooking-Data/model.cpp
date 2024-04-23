@@ -39,8 +39,20 @@ Model::Model()
     //     qMakePair(WaterPot, Fire),
     //     qMakePair(QVector<IngredientType> { BoilingWaterPot, Fire }, 0));
     combinations.insert(
-        qMakePair(WaterPot, StoveOn),
-        qMakePair(QVector<IngredientType> { BoilingWaterPot, StoveOn }, 5000));
+        qMakePair(StoveOn, WaterPot),
+        qMakePair(QVector<IngredientType> { StoveOn, BoilingWaterPot }, 5000));
+    combinations.insert(
+        qMakePair(StoveOn, BoilingWaterPot),
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyPot  }, 5000));
+    combinations.insert(
+        qMakePair(StoveOn, EmptyPot),
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyPot, Ember }, 2000));
+    combinations.insert(
+        qMakePair(StoveOn, OatPacket),
+        qMakePair(QVector<IngredientType> { StoveOn, OatPacket, Ember }, 1000));
+    combinations.insert(
+        qMakePair(BoilingWaterPot, None),
+        qMakePair(QVector<IngredientType> { WaterPot }, 10000));
     combinations.insert(
         qMakePair(BoilingWaterPot, Ladel),
         qMakePair(QVector<IngredientType> { BoilingWaterPot, WaterLadel }, 0));
@@ -50,6 +62,15 @@ Model::Model()
     combinations.insert(
         qMakePair(OatsBowl, WaterLadel),
         qMakePair(QVector<IngredientType> { OatmealBowl, Ladel }, 0));
+    combinations.insert(
+        qMakePair(Fire, None),
+        qMakePair(QVector<IngredientType> { Ember }, 2000));
+    combinations.insert(
+        qMakePair(Ember, None),
+        qMakePair(QVector<IngredientType> { None }, 5000));
+    combinations.insert(
+        qMakePair(Ember, Ember),
+        qMakePair(QVector<IngredientType> { Fire }, 0));
 }
 
 Model::~Model() {
@@ -133,8 +154,13 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
                               position, angle);
 
     if (type == Fire)
-        return new Ingredient(Fire, QSizeF(0.1, 0.15), 0.1,
+        return new Ingredient(Fire, QSizeF(0.1, 0.15), 0.2,
                               QPixmap(":/ingredients/assets/images/sprites/Fire.png"),
+                              position, angle);
+
+    if (type == Ember)
+        return new Ingredient(Ember, QSizeF(0.0375, 0.0375), 0.1,
+                              QPixmap(":/ingredients/assets/images/sprites/Ember.png"),
                               position, angle);
 
     return new Ingredient();
@@ -217,17 +243,30 @@ bool Model::removeIngredient(int ingredientID) {
 }
 
 bool Model::tryCombine(int i1, int i2) {
-    // Check if both Ingredients are in the map of ingredients.
-    if (!(ingredients.contains(i1) && ingredients.contains(i2)))
+    // Check if both Ingredients (combination) are in the map of ingredients.
+    // If only one Ingredient (transformation), only check if that one is in the
+    // map.
+    if (!(ingredients.contains(i1) && ingredients.contains(i2))
+        && (i2 == -1 && !ingredients.contains(i1)))
         return false;
 
-    QPair<IngredientType, IngredientType> typePair
-        = qMakePair(ingredients[i1]->getIngredientType(),
+    QPair<IngredientType, IngredientType> typePair;
+    // Check if it is a combination or transformation.
+    if (i2 != -1)
+        // Is a combination, make a typePair with both IngredientTypes.
+        typePair = qMakePair(ingredients[i1]->getIngredientType(),
                     ingredients[i2]->getIngredientType());
+    else
+        // Is a transformation, make a typePair with the IngredientType of the
+        // first Ingredient and None as the second.
+        typePair = qMakePair(ingredients[i1]->getIngredientType(),
+                    None);
 
     // Check if the combination is valid.
     if (!combinations.contains(typePair))
         return false;
+
+    qDebug() << "Trying to combine" << i1 << "and" << i2;
 
     // Check if the combination requires a waiting time.
     if (combinations[typePair].second == 0)
@@ -275,28 +314,61 @@ bool Model::tryCombine(int i1, int i2) {
 }
 
 bool Model::combine(int i1, int i2) {
-    QPair<IngredientType, IngredientType> typePair
-        = qMakePair(ingredients[i1]->getIngredientType(),
+    QPair<IngredientType, IngredientType> typePair;
+    // Check if it is a combination or transformation.
+    if (i2 != -1)
+        // Is a combination, make a typePair with both IngredientTypes.
+        typePair = qMakePair(ingredients[i1]->getIngredientType(),
                     ingredients[i2]->getIngredientType());
+    else
+        // Is a transformation, make a typePair with the IngredientType of the
+        // first Ingredient and None as the second.
+        typePair = qMakePair(ingredients[i1]->getIngredientType(),
+                    None);
 
-    // Spawn the first Ingredient.
-    addIngredient(combinations[typePair].first[0],
-                  ingredients[i1]->getPosition());
-    // Check if the first Ingredient is a win condition.
-    if (combinations[typePair].first[0] == winCondition)
-        qDebug() << "VICTORY ROYALE";
+    // Check if anything needs spawning.
+    if (combinations[typePair].first.empty()) {
+        // Nothing needs to be spawned.
+        if (i2 != -1)
+            // Is a combination, remove both Ingredients.
+            return removeIngredient(i1) && removeIngredient(i2);
+        else
+            // Is a transformation, remove the only Ingredient.
+            return removeIngredient(i1);
+    }
+
+    if (combinations[typePair].first[0] != None) {
+        // Spawn the first Ingredient.
+        addIngredient(combinations[typePair].first[0],
+                      ingredients[i1]->getPosition());
+        // Check if the first Ingredient is a win condition.
+        if (combinations[typePair].first[0] == winCondition)
+            qDebug() << "VICTORY ROYALE";
+    }
 
     // Spawn the remaining Ingredients.
+    QPointF spawnPosition;
+    if (i2 != -1)
+        // Is a combination, set spawn point to postion of i2.
+        spawnPosition = ingredients[i2]->getPosition();
+    else
+        // Is a transformation, set spawn point to position of i1.
+        spawnPosition = ingredients[i1]->getPosition();
+
     for (int i = 1; i < combinations[typePair].first.size(); i++) {
-        addIngredient(combinations[typePair].first[i],
-                      ingredients[i2]->getPosition());
+        addIngredient(combinations[typePair].first[i], spawnPosition);
 
         if (combinations[typePair].first[i] == winCondition)
             qDebug() << "VICTORY ROYALE";
     }
 
     qDebug() << "Combined" << i1 << "and" << i2 << ", removing them.";
-    return removeIngredient(i1) && removeIngredient(i2);
+    if (i2 != -1)
+        // Is a combination, remove both Ingredients.
+        return removeIngredient(i1) && removeIngredient(i2);
+    else
+        // Is a transformation, remove the only Ingredient.
+        return removeIngredient(i1);
 }
 
 void Model::createWorld(int level) {
@@ -330,10 +402,9 @@ void Model::createWorld(int level) {
         addIngredient(OatPacket, QPointF(0.4, 0));
         addIngredient(EmptyPot, QPointF(0.6, 0));
         addIngredient(Ladel, QPointF(0.8, 0));
-        addIngredient(Fire, QPointF(1.0, 0));
 
         for (int i = 0; i < 4; i++)
-            addIngredient(EmptyBowl, QPointF((std::rand() % 200) / 100.0, 0));
+            addIngredient(EmptyBowl, QPointF((std::rand() % 100) / 100.0 + 0.1, 0));
     } else if (level == 2) {
 
     } else if (level == 3) {
@@ -423,6 +494,12 @@ void Model::updateWorld() {
         if (!ingredients.contains(ingredientID))
             continue;
 
+        // Try to transform the Ingredient.
+        if (tryCombine(ingredientID, -1))
+            // Transformed. The Ingredient is gone. Continue the loop to avoid
+            // trying to send a nonexistent Ingredient.
+            continue;
+
         Ingredient& ingredient = *ingredients[ingredientID];
 
         ingredient.setPosition(QPointF(body->GetPosition().x,
@@ -459,9 +536,9 @@ void Model::pointPressed(QPointF position) {
         double y2 = value->getPosition().y()
                     + value->getDimensions().height() / 2;
         
-        qDebug() << "mouse x " << position.x() << " | mouse y " << position.y();
-        qDebug() << "x1 " << x1 << " | x2 " << x2;
-        qDebug() << "y1 " << y1 << " | y2 " << y2;
+        // qDebug() << "mouse x " << position.x() << " | mouse y " << position.y();
+        // qDebug() << "x1 " << x1 << " | x2 " << x2;
+        // qDebug() << "y1 " << y1 << " | y2 " << y2;
         if (x1 <= position.x() && x2 >= position.x()
             && y1 <= position.y() && y2 >= position.y()) {
             // qDebug() << "ID" << key << "; actual ID" << value->getID();

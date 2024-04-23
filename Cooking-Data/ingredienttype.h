@@ -16,6 +16,7 @@ enum IngredientType {
     StoveOff,
     StoveOn,
     Fire,
+    Ember,
 };
 
 #endif // INGREDIENTTYPE_H
