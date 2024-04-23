@@ -236,43 +236,6 @@ b2Body* Model::addIngredientToWorld(const Ingredient& ingredient) {
     return body;
 }
 
-bool Model::removeIngredient(int ingredientID) {
-    // Ingredient not found!
-    if (!ingredients.contains(ingredientID))
-        return false;
-
-    // Destroy the body.
-    bool isBodyDestroyed = false;
-    for (b2Body* body = world.GetBodyList();
-         body != nullptr;
-         body = body->GetNext()) {
-        // This horrible piece of code converts the void pointer from
-        // b2Body::GetUserData() to an int
-        // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
-        int ingredientIDofBody = static_cast<int>(
-            reinterpret_cast<intptr_t>(body->GetUserData()));
-
-        if (ingredientIDofBody != ingredientID)
-            continue;
-
-        world.DestroyBody(body);
-        isBodyDestroyed = true;
-        break;
-    }
-
-    // b2Body not found!
-    if (!isBodyDestroyed)
-        return false;
-
-    // Remove the Ingredient from the list of Ingredients and delete the
-    // Ingredient object.
-    Ingredient* ingredientToRemove = ingredients[ingredientID];
-    ingredients.remove(ingredientID);
-    delete ingredientToRemove;
-
-    return true;
-}
-
 bool Model::tryCombine(int i1, int i2) {
     // Check if both Ingredients (combination) are in the map of ingredients.
     // If only one Ingredient (transformation), only check if that one is in the
@@ -395,7 +358,7 @@ bool Model::combine(int i1, int i2) {
 
         // Check if any extra Ingredients are win condition.
         if (combinations[typePair].first[i] == winCondition)
-            qDebug() << "VICTORY ROYALE";
+            QTimer::singleShot(1000, this, [&](){emit winConditionMet();});
     }
 
     bool removeSuccessful = true;
@@ -413,7 +376,7 @@ bool Model::combine(int i1, int i2) {
 
         // Check if the first Ingredient is a win condition.
         if (combinations[typePair].first[0] == winCondition)
-            qDebug() << "VICTORY ROYALE";
+            QTimer::singleShot(1000, this, [&](){emit winConditionMet();});
     }
 
     // If it is a combination, and there are at least two outputs, and the
@@ -435,7 +398,7 @@ bool Model::combine(int i1, int i2) {
 
         // Check if the second Ingredient is a win condition.
         if (combinations[typePair].first[1] == winCondition)
-            qDebug() << "VICTORY ROYALE";
+            QTimer::singleShot(1000, this, [&](){emit winConditionMet();});
     } else if (i2 != -1 && combinations[typePair].first.size() == 1)
         // Is a combination but there is only one output.
         removeSuccessful = removeSuccessful && removeIngredient(i2);
@@ -443,6 +406,43 @@ bool Model::combine(int i1, int i2) {
 
     qDebug() << "Combined and removal" << removeSuccessful;
     return removeSuccessful;
+}
+
+bool Model::removeIngredient(int ingredientID) {
+    // Ingredient not found!
+    if (!ingredients.contains(ingredientID))
+        return false;
+
+    // Destroy the body.
+    bool isBodyDestroyed = false;
+    for (b2Body* body = world.GetBodyList();
+         body != nullptr;
+         body = body->GetNext()) {
+        // This horrible piece of code converts the void pointer from
+        // b2Body::GetUserData() to an int
+        // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
+        int ingredientIDofBody = static_cast<int>(
+            reinterpret_cast<intptr_t>(body->GetUserData()));
+
+        if (ingredientIDofBody != ingredientID)
+            continue;
+
+        world.DestroyBody(body);
+        isBodyDestroyed = true;
+        break;
+    }
+
+    // b2Body not found!
+    if (!isBodyDestroyed)
+        return false;
+
+    // Remove the Ingredient from the list of Ingredients and delete the
+    // Ingredient object.
+    Ingredient* ingredientToRemove = ingredients[ingredientID];
+    ingredients.remove(ingredientID);
+    delete ingredientToRemove;
+
+    return true;
 }
 
 void Model::updateWorld() {
@@ -582,6 +582,7 @@ void Model::createWorld(int level) {
         addIngredient(Ladel, QPointF(1.6, 0));
         addIngredient(EmptyBowl, QPointF(1.8, 0));
         addIngredient(EmptyBowl, QPointF(1.9, 0));
+        winCondition = OatmealBowl;
     } else if (level == 2) {
 
     } else if (level == 3) {

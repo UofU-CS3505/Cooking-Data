@@ -13,8 +13,10 @@ Interface::Interface(QWidget *parent)
     ui->setupUi(this);
 
     ui->pauseLabel->setStyleSheet("background-color : rgba(200, 200, 200, 150); color : black;");
+    ui->winLabel->setStyleSheet("background-color : rgba(200, 200, 200, 150); color : green;");
     ui->escLabel->setStyleSheet("color : black;");
     ui->pauseLabel->setVisible(false);
+    ui->winLabel->setVisible(false);
     ui->quitButton->setVisible(false);
     ui->controlsButton->setVisible(false);
 
@@ -31,6 +33,8 @@ Interface::Interface(QWidget *parent)
             this, &Interface::addIngredientToFrame);
     connect(&model, &Model::frameEnded,
             this, &Interface::endFrame);
+    connect(&model, &Model::winConditionMet,
+            this, &Interface::completeLevel);
 
     // Connect mouse updates to model
     connect(this, &Interface::mousePressed,
@@ -51,6 +55,12 @@ Interface::Interface(QWidget *parent)
             this, &Interface::displayHelpPopup);
     connect(ui->level1, &QPushButton::clicked,
             this, [&](){currentLevel = 1;
+                        startLevel();});
+    connect(ui->level2, &QPushButton::clicked,
+            this, [&](){currentLevel = 2;
+                        startLevel();});
+    connect(ui->level3, &QPushButton::clicked,
+            this, [&](){currentLevel = 3;
                         startLevel();});
     connect(ui->quitButton, &QPushButton::clicked,
             this, &Interface::openStartMenu);
@@ -78,6 +88,10 @@ Interface::Interface(QWidget *parent)
     ui->escLabel->setVisible(false);
 }
 
+Interface::~Interface() {
+    delete ui;
+}
+
 void Interface::startLevel() {
     emit escPressed(false);
     isStartMenu = false;
@@ -94,8 +108,27 @@ void Interface::startLevel() {
     emit createWorld(currentLevel);
 }
 
+void Interface::completeLevel() {
+    ui->escLabel->setVisible(false);
+    ui->escLabel->raise();
+    ui->winLabel->setVisible(true);
+    ui->winLabel->raise();
+
+    // Grab mouse to consume all mouse events, as otherwise the
+    // qGraphicsView/Scene takes all of it.
+    this->grabMouse();
+
+    if (currentLevel == 1)
+        level1Done = true;
+    if (currentLevel == 2)
+        level2Done = true;
+
+    QTimer::singleShot(1500, this, &Interface::openStartMenu);
+}
+
 void Interface::openStartMenu() {
-    isGamePaused = !isGamePaused;
+    if (isGamePaused)
+        isGamePaused = !isGamePaused;
     ui->pauseLabel->setVisible(isGamePaused);
     ui->quitButton->setVisible(isGamePaused);
     ui->quitButton->setEnabled(isGamePaused);
@@ -103,10 +136,14 @@ void Interface::openStartMenu() {
     ui->controlsButton->setEnabled(isGamePaused);
     ui->escLabel->setVisible(!isGamePaused);
     ui->escLabel->raise();
+    ui->winLabel->setVisible(false);
 
     emit deleteWorld();
 
     isStartMenu = true;
+
+    ui->level2->setEnabled(level1Done);
+    ui->level3->setEnabled(level2Done);
 
     // Release mouse to stop consume all mouse events.
     this->releaseMouse();
@@ -134,58 +171,6 @@ void Interface::displayHelpPopup() {
     brushHelp.exec();
 }
 
-void Interface::beginFrame() {
-    graphicsScene.clear();
-
-    // Rebuild background at frame reset
-    QPixmap wood = QPixmap(
-        ":/ingredients/assets/images/sprites/Background.png");
-    QGraphicsPixmapItem* bg = graphicsScene.addPixmap(wood);
-    bg->setPos(0, 0);
-    bg->setScale(13);
-    bg->setRotation(0);
-
-    QPixmap table = QPixmap(
-        ":/ingredients/assets/images/sprites/Table.png");
-    QGraphicsPixmapItem* floor = graphicsScene.addPixmap(table);
-    // 3/5 of the screen
-    float tableWidth = graphicsScene.width() / 5 * 3;
-    floor->setPos(graphicsScene.width() - tableWidth, 500);
-    floor->setScale(tableWidth / table.width());
-    floor->setRotation(0);
-
-    QPixmap windowSprite = QPixmap(
-        ":/ingredients/assets/images/sprites/Window.png");
-    QGraphicsPixmapItem* window = graphicsScene.addPixmap(windowSprite);
-    window->setPos(50, 40);
-    window->setScale(8);
-    window->setRotation(0);
-}
-
-void Interface::addIngredientToFrame(const Ingredient &ingredient) {
-    // qDebug() << "Drawing ingredient ID" << ingredient.getID();
-    double x = ingredient.getPosition().x() * SCALE;
-    double y = ingredient.getPosition().y() * SCALE;
-
-    double angle = ingredient.getAngle();
-
-    QGraphicsPixmapItem* item = graphicsScene.addPixmap(ingredient.getTexture());
-    // Assumes the size of the Ingredient is half of its texture size.
-    item->setOffset(
-        -ingredient.getTexture().width() / 2,
-        -ingredient.getTexture().height() / 2);
-    item->setPos(x, y);
-    // The Pixmaps are in the scale of 2 pixels per inch, but b2Body uses
-    // meters as units.
-    // I have no idea why this specific number works. It just does.
-    item->setScale(SCALE / 72);
-    item->setRotation(angle);
-}
-
-void Interface::endFrame() {
-    ui->graphicsView->show();
-}
-
 void Interface::mouseMoveEvent(QMouseEvent* event) {
     // qDebug() << event->pos().x() << " | " << event->pos().y();
 
@@ -200,7 +185,6 @@ void Interface::mousePressEvent(QMouseEvent* event) {
     mouseIsDown = true;
     emit mousePressed(QPointF(event->pos().x() * 1.0 / SCALE,
                               event->pos().y() * 1.0 / SCALE));
-
 }
 
 void Interface::mouseReleaseEvent(QMouseEvent* event) {
@@ -236,6 +220,56 @@ void Interface::keyPressEvent(QKeyEvent *event){
     }
 }
 
-Interface::~Interface() {
-    delete ui;
+void Interface::beginFrame() {
+    graphicsScene.clear();
+
+    // Rebuild background at frame reset
+    QPixmap wood = QPixmap(
+        ":/ingredients/assets/images/sprites/Background.png");
+    QGraphicsPixmapItem* bg = graphicsScene.addPixmap(wood);
+    bg->setPos(0, 0);
+    bg->setScale(13);
+    bg->setRotation(0);
+
+    QPixmap table = QPixmap(
+        ":/ingredients/assets/images/sprites/Table.png");
+    // 1/5 of the screen
+    float tableWidth = graphicsScene.width() / 5;
+    for (int i = 1; i <= 5; i++) {
+        QGraphicsPixmapItem* floor = graphicsScene.addPixmap(table);
+        floor->setPos(graphicsScene.width() - tableWidth * i, 500);
+        floor->setScale(tableWidth / table.width());
+        floor->setRotation(0);
+    }
+
+    QPixmap windowSprite = QPixmap(
+        ":/ingredients/assets/images/sprites/Window.png");
+    QGraphicsPixmapItem* window = graphicsScene.addPixmap(windowSprite);
+    window->setPos(50, 40);
+    window->setScale(8);
+    window->setRotation(0);
+}
+
+void Interface::addIngredientToFrame(const Ingredient &ingredient) {
+    // qDebug() << "Drawing ingredient ID" << ingredient.getID();
+    double x = ingredient.getPosition().x() * SCALE;
+    double y = ingredient.getPosition().y() * SCALE;
+
+    double angle = ingredient.getAngle();
+
+    QGraphicsPixmapItem* item = graphicsScene.addPixmap(ingredient.getTexture());
+    // Assumes the size of the Ingredient is half of its texture size.
+    item->setOffset(
+        -ingredient.getTexture().width() / 2,
+        -ingredient.getTexture().height() / 2);
+    item->setPos(x, y);
+    // The Pixmaps are in the scale of 2 pixels per inch, but b2Body uses
+    // meters as units.
+    // I have no idea why this specific number works. It just does.
+    item->setScale(SCALE / 72);
+    item->setRotation(angle);
+}
+
+void Interface::endFrame() {
+    ui->graphicsView->show();
 }

@@ -91,14 +91,6 @@ private:
     b2Body* addIngredientToWorld(const Ingredient& ingredient);
 
     ///
-    /// \brief removeIngredient Remove the Ingredient with the ID. Returns true
-    ///                         if successful, false otherwise.
-    /// \param ingredientID the ID of the Ingredient to remove
-    /// \return is removal successful
-    ///
-    bool removeIngredient(int ingredientID);
-
-    ///
     /// \brief tryCombine Tries to combine the two input Ingredients, if
     ///                   possible.
     ///
@@ -153,6 +145,14 @@ private:
     ///
     bool combine(int i1, int i2);
 
+    ///
+    /// \brief removeIngredient Remove the Ingredient with the ID. Returns true
+    ///                         if successful, false otherwise.
+    /// \param ingredientID the ID of the Ingredient to remove
+    /// \return is removal successful
+    ///
+    bool removeIngredient(int ingredientID);
+
 public:
     ///
     /// \brief Model Create a new model to store a new world and new objects
@@ -175,7 +175,7 @@ signals:
     void frameBegan();
     void ingredientUpdated(const Ingredient& ingredient);
     void frameEnded();
-
+    void winConditionMet();
 };
 
 #endif // MODEL_H

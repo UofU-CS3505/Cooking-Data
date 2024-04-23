@@ -31,6 +31,8 @@ private:
     bool isGamePaused = false;
     bool isStartMenu = true;
     int currentLevel = 0;
+    bool level1Done = false;
+    bool level2Done = false;
 
 public:
     Interface(QWidget *parent = nullptr);
@@ -38,6 +40,7 @@ public:
 
 private slots:
     void startLevel();
+    void completeLevel();
     void openStartMenu();
     void displayHelpPopup();
 
