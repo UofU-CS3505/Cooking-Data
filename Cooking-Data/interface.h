@@ -37,21 +37,20 @@ public:
     ~Interface();
 
 private slots:
-    void displayHelpPopup();
-
-public slots:
-    void beginFrame();
-    void addIngredientToFrame(const Ingredient& ingredient);
-    void endFrame();
-    void createGround(b2Vec2 loc, int width, int height);
-    // WE WILL CHANGE THIS LATER
     void startLevel();
     void openStartMenu();
+    void displayHelpPopup();
 
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     void keyPressEvent(QKeyEvent *event) override;
+
+public slots:
+    void beginFrame();
+    void addIngredientToFrame(const Ingredient& ingredient);
+    void endFrame();
+
 signals:
     void createWorld(int level);
     void deleteWorld();

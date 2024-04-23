@@ -25,8 +25,6 @@ Interface::Interface(QWidget *parent)
             &model, &Model::deleteWorld);
 
     // Connect game updates to the view
-    connect(&model, &Model::makeGroundInView,
-            this, &Interface::createGround);
     connect(&model, &Model::frameBegan,
             this, &Interface::beginFrame);
     connect(&model, &Model::ingredientUpdated,
@@ -77,6 +75,47 @@ Interface::Interface(QWidget *parent)
                                    "QAbstractButton:pressed {background-color: #d07000;}"
                                    "QAbstractButton:disabled {background-color: #303030; color: #808080}");
     emit escPressed(true);
+    ui->escLabel->setVisible(false);
+}
+
+void Interface::startLevel() {
+    emit escPressed(false);
+    isStartMenu = false;
+    ui->stackedWidget->setCurrentIndex(1);
+    ui->escLabel->setVisible(true);
+    ui->escLabel->raise();
+    ui->startWidget->setEnabled(false);
+    ui->startWidget->setVisible(false);
+
+    // Grab mouse to consume all mouse events, as otherwise the
+    // qGraphicsView/Scene takes all of it.
+    this->grabMouse();
+
+    emit createWorld(currentLevel);
+}
+
+void Interface::openStartMenu() {
+    isGamePaused = !isGamePaused;
+    ui->pauseLabel->setVisible(isGamePaused);
+    ui->quitButton->setVisible(isGamePaused);
+    ui->quitButton->setEnabled(isGamePaused);
+    ui->controlsButton->setVisible(isGamePaused);
+    ui->controlsButton->setEnabled(isGamePaused);
+    ui->escLabel->setVisible(!isGamePaused);
+    ui->escLabel->raise();
+
+    emit deleteWorld();
+
+    isStartMenu = true;
+
+    // Release mouse to stop consume all mouse events.
+    this->releaseMouse();
+
+    ui->stackedWidget->setCurrentIndex(0);
+    ui->startWidget->setEnabled(true);
+    ui->startWidget->setVisible(true);
+    ui->startWidget->raise();
+    ui->startWidget->raise();
     ui->escLabel->setVisible(false);
 }
 
@@ -145,55 +184,6 @@ void Interface::addIngredientToFrame(const Ingredient &ingredient) {
 
 void Interface::endFrame() {
     ui->graphicsView->show();
-}
-
-void Interface::createGround(b2Vec2 loc, int width, int height) {
-    // Temp until we store other objects
-    // ui->ground->setGeometry(loc.x * SCALE, loc.y * SCALE - height * SCALE/2,
-    //                         width * SCALE, height * SCALE);
-    // ui->ground->setStyleSheet(
-    //     "QLabel { background-color : brown; color : black; }");
-}
-
-void Interface::startLevel() {
-    emit escPressed(false);
-    isStartMenu = false;
-    ui->stackedWidget->setCurrentIndex(1);
-    ui->escLabel->setVisible(true);
-    ui->escLabel->raise();
-    ui->startWidget->setEnabled(false);
-    ui->startWidget->setVisible(false);
-
-    // Grab mouse to consume all mouse events, as otherwise the
-    // qGraphicsView/Scene takes all of it.
-    this->grabMouse();
-
-    emit createWorld(currentLevel);
-}
-
-void Interface::openStartMenu() {
-    isGamePaused = !isGamePaused;
-    ui->pauseLabel->setVisible(isGamePaused);
-    ui->quitButton->setVisible(isGamePaused);
-    ui->quitButton->setEnabled(isGamePaused);
-    ui->controlsButton->setVisible(isGamePaused);
-    ui->controlsButton->setEnabled(isGamePaused);
-    ui->escLabel->setVisible(!isGamePaused);
-    ui->escLabel->raise();
-
-    emit deleteWorld();
-
-    isStartMenu = true;
-
-    // Release mouse to stop consume all mouse events.
-    this->releaseMouse();
-
-    ui->stackedWidget->setCurrentIndex(0);
-    ui->startWidget->setEnabled(true);
-    ui->startWidget->setVisible(true);
-    ui->startWidget->raise();
-    ui->startWidget->raise();
-    ui->escLabel->setVisible(false);
 }
 
 void Interface::mouseMoveEvent(QMouseEvent* event) {

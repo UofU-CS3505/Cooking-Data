@@ -9,32 +9,12 @@ Model::Model()
     : timer(),
     world(b2World(b2Vec2(0.0f, 9.8f))){
 
-    // THIS IS TEST CODE, WE WILL EDIT THIS LATER AS NEEDED
-    ////////////////////////////
-
-
     // Start the timer.
     connect(&timer, &QTimer::timeout, this, &Model::updateWorld);
 
-    // Let view create the ground
-
-    QTimer::singleShot(50, this, [&] () {
-        emit makeGroundInView(b2Vec2(0.0f, 60.0f), 100, 20);
-    });
-    // makeGroundInView isn't complete, rn we are only storing 1 static object
-    // named ground, change this so all walls paint
-    QTimer::singleShot(40, this, [&] () {
-        emit makeGroundInView(b2Vec2(-10.0f, 30.0f), 10, 100);
-    });
-    QTimer::singleShot(40, this, [&] () {
-        emit makeGroundInView(b2Vec2(90.0f, 30.0f), 10, 100);
-    });
-
+    // Let view create the ground and background.
 
     // Define all valid combinations.
-    combinations.insert(
-        qMakePair(WaterPitcher, EmptyPot),
-        qMakePair(QVector<IngredientType> { WaterPitcher, WaterPot }, 0));
     combinations.insert(
         qMakePair(StoveOn, WaterPot),
         qMakePair(QVector<IngredientType> { StoveOn, BoilingWaterPot }, 5000));
@@ -48,29 +28,20 @@ Model::Model()
         qMakePair(StoveOn, EmptyBowl),
         qMakePair(QVector<IngredientType> { StoveOn, EmptyBowl, Ember }, 2000));
     combinations.insert(
+        qMakePair(StoveOn, Ladel),
+        qMakePair(QVector<IngredientType> { StoveOn, Ladel, Ember }, 2000));
+    combinations.insert(
         qMakePair(StoveOn, OatsBowl),
         qMakePair(QVector<IngredientType> { StoveOn, EmptyBowl, Ember }, 1000));
     combinations.insert(
         qMakePair(StoveOn, OatPacket),
         qMakePair(QVector<IngredientType> { StoveOn, OatPacket, Ember }, 1000));
     combinations.insert(
-        qMakePair(BoilingWaterPot, None),
-        qMakePair(QVector<IngredientType> { WaterPot }, 10000));
-    combinations.insert(
-        qMakePair(BoilingWaterPot, Ladel),
-        qMakePair(QVector<IngredientType> { BoilingWaterPot, WaterLadel }, 0));
-    combinations.insert(
         qMakePair(EmptyBowl, OatPacket),
         qMakePair(QVector<IngredientType> { OatsBowl, OatPacket }, 0));
     combinations.insert(
-        qMakePair(OatsBowl, WaterLadel),
-        qMakePair(QVector<IngredientType> { OatmealBowl, Ladel }, 0));
-    combinations.insert(
-        qMakePair(OatPacket, Ember),
-        qMakePair(QVector<IngredientType> { OatPacket, Ember, Ember }, 1000));
-    combinations.insert(
-        qMakePair(OatPacket, Fire),
-        qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay
+        qMakePair(WaterPitcher, EmptyPot),
+        qMakePair(QVector<IngredientType> { WaterPitcher, WaterPot }, 0));
     combinations.insert(
         qMakePair(WaterPitcher, Fire),
         qMakePair(QVector<IngredientType> { WaterPitcher, Ember }, 0));
@@ -89,6 +60,24 @@ Model::Model()
     combinations.insert(
         qMakePair(BoilingWaterPot, Ember),
         qMakePair(QVector<IngredientType> { EmptyPot }, 0));
+    combinations.insert(
+        qMakePair(BoilingWaterPot, None),
+        qMakePair(QVector<IngredientType> { WaterPot }, 10000));
+    combinations.insert(
+        qMakePair(BoilingWaterPot, Ladel),
+        qMakePair(QVector<IngredientType> { BoilingWaterPot, WaterLadel }, 0));
+    combinations.insert(
+        qMakePair(OatsBowl, WaterLadel),
+        qMakePair(QVector<IngredientType> { OatmealBowl, Ladel }, 0));
+    combinations.insert(
+        qMakePair(OatsBowl, Fire),
+        qMakePair(QVector<IngredientType> { EmptyBowl, Ember }, 1000));
+    combinations.insert(
+        qMakePair(OatPacket, Fire),
+        qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay
+    combinations.insert(
+        qMakePair(OatPacket, Ember),
+        qMakePair(QVector<IngredientType> { OatPacket, Ember, Ember }, 1000));
     combinations.insert(
         qMakePair(WaterLadel, Fire),
         qMakePair(QVector<IngredientType> { Ladel, Ember }, 0));
@@ -456,62 +445,6 @@ bool Model::combine(int i1, int i2) {
     return removeSuccessful;
 }
 
-void Model::createWorld(int level) {
-    // Define the ground body.
-    b2BodyDef groundBodyDef;
-    groundBodyDef.position.Set(0, 1.36);
-    b2Body* groundBody = this->world.CreateBody(&groundBodyDef);
-    b2PolygonShape groundBox;
-    groundBox.SetAsBox(3, 0.1);
-    groundBody->CreateFixture(&groundBox, 0);
-
-    // Define static walls
-    b2BodyDef leftWallBodyDef;
-    leftWallBodyDef.position.Set(-0.11, 0.5);
-    b2Body* leftBody = this->world.CreateBody(&leftWallBodyDef);
-    b2PolygonShape leftWallBox;
-    leftWallBox.SetAsBox(0.1, 1);
-    leftBody->CreateFixture(&leftWallBox, 0);
-
-    b2BodyDef rightWallBodyDef;
-    rightWallBodyDef.position.Set(2.09, 0.5);
-    b2Body* rightBody = this->world.CreateBody(&rightWallBodyDef);
-    b2PolygonShape rightWallBox;
-    rightWallBox.SetAsBox(0.1, 1);
-    rightBody->CreateFixture(&rightWallBox, 0);
-
-    // Add shelf.
-    addIngredient(Plank, QPointF(0.1, 0.5));
-    addIngredient(Plank, QPointF(0.3, 0.5));
-    addIngredient(Plank, QPointF(0.5, 0.5));
-    addIngredient(Plank, QPointF(1.47, 0.5));
-    addIngredient(Plank, QPointF(1.67, 0.5));
-    addIngredient(Plank, QPointF(1.87, 0.5));
-
-    // Add Ingredients.
-    if (level == 1) {
-        addIngredient(StoveOff, QPointF(1, 1.1));
-
-        addIngredient(OatPacket, QPointF(0.2, 0));
-        addIngredient(WaterPitcher, QPointF(0.4, 0));
-
-        addIngredient(EmptyPot, QPointF(1.4, 0));
-        addIngredient(Ladel, QPointF(1.6, 0));
-        addIngredient(EmptyBowl, QPointF(1.8, 0));
-        addIngredient(EmptyBowl, QPointF(1.9, 0));
-    } else if (level == 2) {
-
-    } else if (level == 3) {
-
-    } else {
-        // Just else makes this a fail safe is something went wrong
-        winCondition = OatmealBowl;
-    }
-
-    timer.start(FRAME_TIME);
-    qDebug() << "World created";
-}
-
 void Model::updateWorld() {
     // About 60fps, 10 iterations per collision check
     float32 timeStep = FRAME_TIME / 1000;
@@ -604,6 +537,62 @@ void Model::updateWorld() {
     }
 
     emit frameEnded();
+}
+
+void Model::createWorld(int level) {
+    // Define the ground body.
+    b2BodyDef groundBodyDef;
+    groundBodyDef.position.Set(0, 1.36);
+    b2Body* groundBody = this->world.CreateBody(&groundBodyDef);
+    b2PolygonShape groundBox;
+    groundBox.SetAsBox(3, 0.1);
+    groundBody->CreateFixture(&groundBox, 0);
+
+    // Define static walls
+    b2BodyDef leftWallBodyDef;
+    leftWallBodyDef.position.Set(-0.11, 0.5);
+    b2Body* leftBody = this->world.CreateBody(&leftWallBodyDef);
+    b2PolygonShape leftWallBox;
+    leftWallBox.SetAsBox(0.1, 1);
+    leftBody->CreateFixture(&leftWallBox, 0);
+
+    b2BodyDef rightWallBodyDef;
+    rightWallBodyDef.position.Set(2.09, 0.5);
+    b2Body* rightBody = this->world.CreateBody(&rightWallBodyDef);
+    b2PolygonShape rightWallBox;
+    rightWallBox.SetAsBox(0.1, 1);
+    rightBody->CreateFixture(&rightWallBox, 0);
+
+    // Add shelf.
+    addIngredient(Plank, QPointF(0.1, 0.5));
+    addIngredient(Plank, QPointF(0.3, 0.5));
+    addIngredient(Plank, QPointF(0.5, 0.5));
+    addIngredient(Plank, QPointF(1.47, 0.5));
+    addIngredient(Plank, QPointF(1.67, 0.5));
+    addIngredient(Plank, QPointF(1.87, 0.5));
+
+    // Add Ingredients.
+    if (level == 1) {
+        addIngredient(StoveOff, QPointF(1, 1.1));
+
+        addIngredient(OatPacket, QPointF(0.2, 0));
+        addIngredient(WaterPitcher, QPointF(0.4, 0));
+
+        addIngredient(EmptyPot, QPointF(1.4, 0));
+        addIngredient(Ladel, QPointF(1.6, 0));
+        addIngredient(EmptyBowl, QPointF(1.8, 0));
+        addIngredient(EmptyBowl, QPointF(1.9, 0));
+    } else if (level == 2) {
+
+    } else if (level == 3) {
+
+    } else {
+        // Just else makes this a fail safe is something went wrong
+        winCondition = OatmealBowl;
+    }
+
+    timer.start(FRAME_TIME);
+    qDebug() << "World created";
 }
 
 void Model::deleteWorld(){
