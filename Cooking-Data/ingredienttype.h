@@ -13,8 +13,9 @@ enum IngredientType {
     WaterLadel,
     WaterPitcher,
     WaterPot,
+    StoveOn,
+    StoveOff,
     Fire,
-    Stove
 };
 
 #endif // INGREDIENTTYPE_H

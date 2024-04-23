@@ -38,6 +38,9 @@ private:
     ///
     QPixmap texture;
 
+    ///
+    /// \brief position The position of the Ingredient in meters.
+    ///
     QPointF position;
 
 

@@ -123,13 +123,7 @@ void Interface::beginFrame() {
     window->setRotation(0);
 }
 
-void Interface::addIngredientToFrame(Ingredient& ingredient) {
-    // BELOW IS TEMP FOR A TEST, BUT MAY WORK AS A BASE
-    // Ok, so right now the box doesn't have the acurate size because it is
-    // impossibly complicated to get a bodies size for some reason
-    // So, we are making a different class to store a sprite's info right?
-    // Put the size in there
-
+void Interface::addIngredientToFrame(const Ingredient &ingredient) {
     // qDebug() << "Drawing ingredient ID" << ingredient.getID();
     double x = ingredient.getPosition().x() * SCALE;
     double y = ingredient.getPosition().y() * SCALE;
@@ -137,11 +131,13 @@ void Interface::addIngredientToFrame(Ingredient& ingredient) {
     double angle = ingredient.getAngle();
 
     QGraphicsPixmapItem* item = graphicsScene.addPixmap(ingredient.getTexture());
+    // Assumes the size of the Ingredient is half of its texture size.
     item->setOffset(
-        -ingredient.getDimensions().width(),
-        -ingredient.getDimensions().height());
+        -ingredient.getTexture().width() / 2,
+        -ingredient.getTexture().height() / 2);
     item->setPos(x, y);
-    item->setScale(SCALE / 2);
+    item->setScale(SCALE / 2); // for some reason using full scale looks way
+                               // too large
     item->setRotation(angle);
 }
 

@@ -21,6 +21,8 @@ QT_END_NAMESPACE
 class Interface : public QMainWindow {
     Q_OBJECT
 private:
+    const float SCALE = 10.0f;
+
     Ui::Interface *ui;
     Model model;
     QGraphicsScene graphicsScene = QGraphicsScene(0, 0, 790, 550);
@@ -29,18 +31,6 @@ private:
     bool isGamePaused = false;
     bool isStartMenu = true;
     int currentLevel = 0;
-
-    const float SCALE = 10.0f;
-
-    ///
-    /// \brief createBody
-    /// \param x the x position, 0 is left and positive is right
-    /// \param y the y position, 0 is top and positive is down
-    /// \param width the width
-    /// \param height the height
-    /// \param angle the angle in degrees
-    ///
-    // void createBody(float x, float y, float width, float height, float angle);
 
 public:
     Interface(QWidget *parent = nullptr);
@@ -51,7 +41,7 @@ private slots:
 
 public slots:
     void beginFrame();
-    void addIngredientToFrame(Ingredient& ingredient);
+    void addIngredientToFrame(const Ingredient& ingredient);
     void endFrame();
     void createGround(b2Vec2 loc, int width, int height);
     // WE WILL CHANGE THIS LATER
