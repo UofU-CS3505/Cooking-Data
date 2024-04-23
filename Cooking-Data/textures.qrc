@@ -28,5 +28,6 @@
         <file>assets/images/sprites/Oatmeal.png</file>
         <file>assets/images/sprites/OatPacket.png</file>
         <file>assets/images/sprites/Ember.png</file>
+        <file>assets/images/sprites/Plank.png</file>
     </qresource>
 </RCC>

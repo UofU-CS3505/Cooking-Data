@@ -3,6 +3,9 @@
 
 enum IngredientType {
     None,
+    Plank,
+    StoveOff,
+    StoveOn,
     BoilingWaterPot,
     EmptyBowl,
     EmptyPot,
@@ -13,8 +16,6 @@ enum IngredientType {
     WaterLadel,
     WaterPitcher,
     WaterPot,
-    StoveOff,
-    StoveOn,
     Fire,
     Ember,
 };

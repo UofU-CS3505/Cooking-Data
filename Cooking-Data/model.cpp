@@ -98,6 +98,9 @@ Model::Model()
     combinations.insert(
         qMakePair(Ember, None),
         qMakePair(QVector<IngredientType> { }, 5000));
+    combinations.insert(
+        qMakePair(StoveOn, None),
+        qMakePair(QVector<IngredientType> { StoveOn, Ember }, 10));
 }
 
 Model::~Model() {
@@ -123,6 +126,21 @@ void Model::addIngredient(IngredientType type, QPointF position) {
 Ingredient* Model::createIngredient(IngredientType type, QPointF position, double angle) {
     // Note: the size should be 0.0125x (divide by 80) the dimension of the texture (convert
     // from a scale of 0.5 in. per pixel to meter).
+
+    if (type == Plank)
+        return new Ingredient(Plank, QSizeF(0.2, 0.05), 0,
+                              QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
+                              position, angle);
+
+    if (type == StoveOff)
+        return new Ingredient(StoveOff, QSizeF(0.4, 0.2625), 0,
+                              QPixmap(":/ingredients/assets/images/sprites/StoveOff.png"),
+                              position, angle);
+
+    if (type == StoveOn)
+        return new Ingredient(StoveOn, QSizeF(0.4, 0.2625), 0,
+                              QPixmap(":/ingredients/assets/images/sprites/StoveOn.png"),
+                              position, angle);
 
     if (type == BoilingWaterPot)
         return new Ingredient(BoilingWaterPot, QSizeF(0.2, 0.175), 4,
@@ -172,16 +190,6 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
     if (type == WaterPot)
         return new Ingredient(WaterPot, QSizeF(0.2, 0.125), 4,
                               QPixmap(":/ingredients/assets/images/sprites/WaterPot.png"),
-                              position, angle);
-
-    if (type == StoveOff)
-        return new Ingredient(StoveOff, QSizeF(0.4, 0.2625), 0,
-                              QPixmap(":/ingredients/assets/images/sprites/StoveOff.png"),
-                              position, angle);
-
-    if (type == StoveOn)
-        return new Ingredient(StoveOn, QSizeF(0.4, 0.2625), 0,
-                              QPixmap(":/ingredients/assets/images/sprites/StoveOn.png"),
                               position, angle);
 
     if (type == Fire)
@@ -469,16 +477,25 @@ void Model::createWorld(int level) {
     rightWallBox.SetAsBox(0.1, 1);
     rightBody->CreateFixture(&rightWallBox, 0);
 
+    // Add shelf.
+    addIngredient(Plank, QPointF(0.1, 0.5));
+    addIngredient(Plank, QPointF(0.3, 0.5));
+    addIngredient(Plank, QPointF(0.5, 0.5));
+    addIngredient(Plank, QPointF(1.47, 0.5));
+    addIngredient(Plank, QPointF(1.67, 0.5));
+    addIngredient(Plank, QPointF(1.87, 0.5));
+
     // Add Ingredients.
     if (level == 1) {
         addIngredient(StoveOff, QPointF(1, 1.1));
-        addIngredient(EmptyPot, QPointF(0.2, 0));
-        addIngredient(OatPacket, QPointF(0.4, 0));
-        addIngredient(WaterPitcher, QPointF(0.6, 0));
-        addIngredient(Ladel, QPointF(0.8, 0));
 
-        addIngredient(EmptyBowl, QPointF(1.2, 0));
-        addIngredient(EmptyBowl, QPointF(1.4, 0));
+        addIngredient(OatPacket, QPointF(0.2, 0));
+        addIngredient(WaterPitcher, QPointF(0.4, 0));
+
+        addIngredient(EmptyPot, QPointF(1.4, 0));
+        addIngredient(Ladel, QPointF(1.6, 0));
+        addIngredient(EmptyBowl, QPointF(1.8, 0));
+        addIngredient(EmptyBowl, QPointF(1.9, 0));
     } else if (level == 2) {
 
     } else if (level == 3) {

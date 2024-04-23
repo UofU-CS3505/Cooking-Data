@@ -118,7 +118,7 @@ void Interface::beginFrame() {
     QPixmap windowSprite = QPixmap(
         ":/ingredients/assets/images/sprites/Window.png");
     QGraphicsPixmapItem* window = graphicsScene.addPixmap(windowSprite);
-    window->setPos(50, 50);
+    window->setPos(50, 40);
     window->setScale(8);
     window->setRotation(0);
 }
