@@ -45,6 +45,12 @@ Model::Model()
         qMakePair(StoveOn, EmptyPot),
         qMakePair(QVector<IngredientType> { StoveOn, EmptyPot, Ember }, 2000));
     combinations.insert(
+        qMakePair(StoveOn, EmptyBowl),
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyBowl, Ember }, 2000));
+    combinations.insert(
+        qMakePair(StoveOn, OatsBowl),
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyBowl, Ember }, 1000));
+    combinations.insert(
         qMakePair(StoveOn, OatPacket),
         qMakePair(QVector<IngredientType> { StoveOn, OatPacket, Ember }, 1000));
     combinations.insert(
