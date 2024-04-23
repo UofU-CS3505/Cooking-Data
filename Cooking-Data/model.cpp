@@ -64,7 +64,7 @@ Model::Model()
         qMakePair(QVector<IngredientType> { OatPacket, Ember, Ember }, 1000));
     combinations.insert(
         qMakePair(OatPacket, Fire),
-        qMakePair(QVector<IngredientType> { }, 1000));
+        qMakePair(QVector<IngredientType> { }, 1900)); // has to be shorter than fire decay
     combinations.insert(
         qMakePair(WaterPitcher, Fire),
         qMakePair(QVector<IngredientType> { WaterPitcher, Ember }, 500));
@@ -465,7 +465,7 @@ void Model::createWorld(int level) {
 
     // Add Ingredients.
     if (level == 1) {
-        addIngredient(StoveOn, QPointF(1, 0.86875));
+        addIngredient(StoveOff, QPointF(1, 0.86875));
         addIngredient(EmptyPot, QPointF(0.2, 0));
         addIngredient(OatPacket, QPointF(0.4, 0));
         addIngredient(WaterPitcher, QPointF(0.6, 0));
@@ -622,6 +622,19 @@ void Model::pointPressed(QPointF position) {
         return;
     }
 
+    // Special handling for stoves.
+    if (ingredients[selectedIngredientID]->getIngredientType() == StoveOff) {
+        addIngredient(StoveOn, ingredients[selectedIngredientID]->getPosition());
+        removeIngredient(selectedIngredientID);
+        return;
+    }
+    if (ingredients[selectedIngredientID]->getIngredientType() == StoveOn) {
+        addIngredient(StoveOff, ingredients[selectedIngredientID]->getPosition());
+        removeIngredient(selectedIngredientID);
+        return;
+    }
+
+
     // Put the selected body into the selected variable.
     for (b2Body* body = world.GetBodyList();
          body != nullptr;
@@ -634,7 +647,7 @@ void Model::pointPressed(QPointF position) {
 
         // qDebug() << "Comparing selected ingredient" << selectedIngredientID << "against" << ingredientID;
 
-        if (ingredientID == selectedIngredientID && body->GetType() == b2_dynamicBody) {
+        if (ingredientID == selectedIngredientID) {
             selected = body;
             qDebug() << "Selected b2Body of Ingredient ID:" << selectedIngredientID;
             // Call pointMoved to set recent mouse location.
