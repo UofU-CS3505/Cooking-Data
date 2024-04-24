@@ -714,11 +714,12 @@ void Model::updateWorld() {
 
             int selectedID = static_cast<int>(
                 reinterpret_cast<intptr_t>(selected->GetUserData()));
-            // Check if selected is an Ingredient (it should be)?
+            // Check if selected is an Ingredient in the world (it should be)?
             if (!ingredients.contains(selectedID))
                 continue;
 
-            IngredientType selectedType = ingredients[selectedID]->getIngredientType();
+            IngredientType selectedType =
+                ingredients[selectedID]->getIngredientType();
             // Check if selected is one of the Ingredient in the collision.
             if (selectedType != ingredients[i1ID]->getIngredientType()
                 && selectedType != ingredients[i2ID]->getIngredientType())
