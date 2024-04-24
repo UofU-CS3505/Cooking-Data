@@ -158,6 +158,51 @@ Model::Model()
     combinations.insert(
         qMakePair(RiceChickenPlate, BroccoliChopped),
         qMakePair(QVector<IngredientType> { RiceChickenBroccoliPlate }, 0));
+    combinations.insert(
+        qMakePair(Broccoli, Fire),
+        qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay
+    combinations.insert(
+        qMakePair(Broccoli, Ember),
+        qMakePair(QVector<IngredientType> { Broccoli, Ember, Ember }, 1000));
+    combinations.insert(
+        qMakePair(BroccoliChopped, Fire),
+        qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay
+    combinations.insert(
+        qMakePair(BroccoliChopped, Ember),
+        qMakePair(QVector<IngredientType> { BroccoliChopped, Ember, Ember }, 1000));
+    combinations.insert(
+        qMakePair(Chicken, Fire),
+        qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay
+    combinations.insert(
+        qMakePair(Chicken, Ember),
+        qMakePair(QVector<IngredientType> { Chicken, Ember, Ember }, 1000));
+    combinations.insert(
+        qMakePair(ChickenChopped, Fire),
+        qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay
+    combinations.insert(
+        qMakePair(ChickenChopped, Ember),
+        qMakePair(QVector<IngredientType> { ChickenChopped, Ember, Ember }, 1000));
+    combinations.insert(
+        qMakePair(Rice, Fire),
+        qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay
+    combinations.insert(
+        qMakePair(Rice, Ember),
+        qMakePair(QVector<IngredientType> { Rice, Ember, Ember }, 1000));
+    combinations.insert(
+        qMakePair(StoveOn, Rice),
+        qMakePair(QVector<IngredientType> { StoveOn, Rice, Ember }, 1000));
+    combinations.insert(
+        qMakePair(StoveOn, Broccoli),
+        qMakePair(QVector<IngredientType> { StoveOn, Broccoli, Ember }, 1000));
+    combinations.insert(
+        qMakePair(StoveOn, BroccoliChopped),
+        qMakePair(QVector<IngredientType> { StoveOn, BroccoliChopped, Ember }, 1000));
+    combinations.insert(
+        qMakePair(StoveOn, Chicken),
+        qMakePair(QVector<IngredientType> { StoveOn, Chicken, Ember }, 1000));
+    combinations.insert(
+        qMakePair(StoveOn, ChickenChopped),
+        qMakePair(QVector<IngredientType> { StoveOn, ChickenChopped, Ember }, 1000));
 
     // Add all the active tools.
     tools.append(Ladel);
