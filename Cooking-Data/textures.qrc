@@ -54,5 +54,8 @@
         <file>assets/images/sprites/Plate.png</file>
         <file>assets/images/sprites/RiceBag.png</file>
         <file>assets/images/sprites/RicePot.png</file>
+        <file>assets/images/sprites/RiceChickenBroccoliPlate.png</file>
+        <file>assets/images/sprites/RiceChickenPlate.png</file>
+        <file>assets/images/sprites/RicePlate.png</file>
     </qresource>
 </RCC>

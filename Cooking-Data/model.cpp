@@ -435,22 +435,22 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
                               position, angle);
 
     if (type == EmptyPlate)
-        return new Ingredient(EmptyPlate, QSizeF(10*.0125, 6*.0125), 0.5,
+        return new Ingredient(EmptyPlate, QSizeF(11*.0125, 6*.0125), 0.5,
                               QPixmap(":/ingredients/assets/images/sprites/Plate.png"),
                               position, angle);
 
     if (type == RicePlate)
-        return new Ingredient(RicePlate, QSizeF(0.1, 0.08), 1,
+        return new Ingredient(RicePlate, QSizeF(11*.0125, 6*.0125), 1,
                               QPixmap(":/ingredients/assets/images/sprites/RicePlate.png"),
                               position, angle);
 
     if (type == RiceChickenPlate)
-        return new Ingredient(RiceChickenPlate, QSizeF(0.1, 0.08), 1.2,
+        return new Ingredient(RiceChickenPlate, QSizeF(11*.0125, 6*.0125), 1.2,
                               QPixmap(":/ingredients/assets/images/sprites/RiceChickenPlate.png"),
                               position, angle);
 
     if (type == RiceChickenBroccoliPlate)
-        return new Ingredient(RiceChickenBroccoliPlate, QSizeF(0.2, 0.15), 1.4,
+        return new Ingredient(RiceChickenBroccoliPlate, QSizeF(11*.0125, 6*.0125), 1.4,
                               QPixmap(":/ingredients/assets/images/sprites/RiceChickenBroccoliPlate.png"),
                               position, angle);
 
