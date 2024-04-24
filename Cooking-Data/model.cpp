@@ -120,6 +120,44 @@ Model::Model()
     combinations.insert(
         qMakePair(BreadTomatoHamLettuce, BreadSlice),
         qMakePair(QVector<IngredientType> { BreadTomatoHamLettuceBread }, 100));
+
+    // LEVEL 3 COMBOS
+    combinations.insert(
+        qMakePair(Knife, Broccoli),
+        qMakePair(QVector<IngredientType> { Knife, BroccoliChopped }, 750));
+    combinations.insert(
+        qMakePair(Knife, Chicken),
+        qMakePair(QVector<IngredientType> { Knife, ChickenChopped }, 750));
+    combinations.insert(
+        qMakePair(WaterPot, Rice),
+        qMakePair(QVector<IngredientType> { WaterRicePot }, 0));
+    combinations.insert(
+        qMakePair(StoveOn, WaterRicePot),
+        qMakePair(QVector<IngredientType> { StoveOn, BoilingWaterRicePot }, 5000));
+    combinations.insert(
+        qMakePair(StoveOn, BoilingWaterRicePot),
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyPot, Fire, Fire  }, 5000));
+    combinations.insert(
+        qMakePair(EmptyPan, ChickenChopped),
+        qMakePair(QVector<IngredientType> { ChickenPan }, 0));
+    combinations.insert(
+        qMakePair(StoveOn, ChickenPan),
+        qMakePair(QVector<IngredientType> { ChickenCookedPan }, 5000));
+    combinations.insert(
+        qMakePair(StoveOn, ChickenCookedPan),
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyPan, Fire, Fire  }, 5000));
+    combinations.insert(
+        qMakePair(EmptyPan, ChickenChopped),
+        qMakePair(QVector<IngredientType> { ChickenPan }, 0));
+    combinations.insert(
+        qMakePair(EmptyPlate, BoilingWaterRicePot),
+        qMakePair(QVector<IngredientType> { RicePlate, EmptyPot }, 0));
+    combinations.insert(
+        qMakePair(RicePlate, ChickenCookedPan),
+        qMakePair(QVector<IngredientType> { RiceChickenPlate, EmptyPan }, 0));
+    combinations.insert(
+        qMakePair(RiceChickenPlate, BroccoliChopped),
+        qMakePair(QVector<IngredientType> { RiceChickenBroccoliPlate }, 0));
 }
 
 Model::~Model() {
@@ -290,6 +328,75 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
                               position, angle);
 
     //Level 3
+    if (type == EmptyPan)
+        return new Ingredient(EmptyPan, QSizeF(0.2, 0.15), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/EmptyBowl.png"),
+                              position, angle);
+
+    if (type == Chicken)
+        return new Ingredient(Chicken, QSizeF(0.1125, 0.0625), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Ham.png"),
+                              position, angle);
+
+    if (type == Broccoli)
+        return new Ingredient(Broccoli, QSizeF(0.1125, 0.0625), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Lettuce.png"),
+                              position, angle);
+
+    if (type == Rice)
+        return new Ingredient(Rice, QSizeF(0.1125, 0.0625), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/OatPacket.png"),
+                              position, angle);
+
+    if (type == ChickenChopped)
+        return new Ingredient(ChickenChopped, QSizeF(0.2, 0.15), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/HamSlice.png"),
+                              position, angle);
+
+    if (type == ChickenPan)
+        return new Ingredient(ChickenPan, QSizeF(0.2, 0.15), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/OatsBowl.png"),
+                              position, angle);
+
+    if (type == ChickenCookedPan)
+        return new Ingredient(ChickenCookedPan, QSizeF(0.2, 0.15), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/OatmealBowl.png"),
+                              position, angle);
+
+    if (type == BroccoliChopped)
+        return new Ingredient(BroccoliChopped, QSizeF(0.2, 0.15), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/LettuceSlice.png"),
+                              position, angle);
+
+    if (type == WaterRicePot)
+        return new Ingredient(WaterRicePot, QSizeF(0.2, 0.15), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/WaterPot.png"),
+                              position, angle);
+
+    if (type == BoilingWaterRicePot)
+        return new Ingredient(BoilingWaterRicePot, QSizeF(0.2, 0.15), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/BoilingWaterPot.png"),
+                              position, angle);
+
+    if (type == EmptyPlate)
+        return new Ingredient(EmptyPlate, QSizeF(0.1, 0.08), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
+                              position, angle);
+
+    if (type == RicePlate)
+        return new Ingredient(RicePlate, QSizeF(0.1, 0.08), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
+                              position, angle);
+
+    if (type == RiceChickenPlate)
+        return new Ingredient(RiceChickenPlate, QSizeF(0.1, 0.08), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
+                              position, angle);
+
+    if (type == RiceChickenBroccoliPlate)
+        return new Ingredient(RiceChickenBroccoliPlate, QSizeF(0.2, 0.15), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
+                              position, angle);
 
     return new Ingredient(position);
 }
@@ -707,7 +814,19 @@ void Model::createWorld(int level) {
         qDebug() << "LEVEL 2 LOADED";
 
     } else if (level == 3) {
+        addIngredient(StoveOff, QPointF(1, 1.1));
+        addIngredient(WaterPitcher, QPointF(0.4, 0));
+        addIngredient(EmptyPot, QPointF(1.4, 0));
+        addIngredient(Knife, QPointF(1.5, 1.1));
+        addIngredient(EmptyPan, QPointF(1.6, 0));
+        addIngredient(EmptyPlate, QPointF(1.8, 0));
 
+        addIngredient(Chicken, QPointF(0.2, 1.1));
+        addIngredient(Broccoli, QPointF(0.5, 1.1));
+        addIngredient(Rice, QPointF(0.8, 1.1));
+
+        winCondition = RiceChickenBroccoliPlate;
+        qDebug() << "LEVEL 3 LOADED";
     } else {
         // Just else makes this a fail safe is something went wrong
         winCondition = OatmealBowl;

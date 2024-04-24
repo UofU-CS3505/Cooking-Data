@@ -141,7 +141,8 @@ void Interface::startLevel() {
                                  "4 - Cut and prepare some broccoli.\n"
                                  "5 - Add the rice and chicken to a plate.\n"
                                  "6 - Finish the dish by adding the broccoli. \n"
-                                 "6 - Congrats! You made some Chicken, Broccoli, and Rice!\n\n"
+                                 "7 - Congrats! You made some Chicken, Broccoli, \n"
+                                     "and Rice!\n\n"
                                  "WARNING: Leaving the stove on may cause fires! \n"
                                  "WARNING: Knives can be dangerous. Be careful! \n"
                                  "Press \"R\" at anytime to Show/Hide the recipe.");
