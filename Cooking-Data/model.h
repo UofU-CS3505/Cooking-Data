@@ -42,6 +42,12 @@ private:
           QPair<QVector<IngredientType>, int>> combinations;
 
     ///
+    /// \brief tools The Ingredients that must be selected before they can be
+    ///              combined or transformed.
+    ///
+    QVector<IngredientType> tools;
+
+    ///
     /// \brief combinationTimers The timers for combinations where the key is
     ///                          a QPair that holds the IDs of the two
     ///                          Ingredients and the value is a long long that

@@ -158,6 +158,12 @@ Model::Model()
     combinations.insert(
         qMakePair(RiceChickenPlate, BroccoliChopped),
         qMakePair(QVector<IngredientType> { RiceChickenBroccoliPlate }, 0));
+
+    // Add all the active tools.
+    tools.append(Ladel);
+    tools.append(WaterLadel);
+    tools.append(WaterPitcher);
+    tools.append(Knife);
 }
 
 Model::~Model() {
@@ -263,138 +269,138 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
 
     //Level 2
     if (type == BreadLoaf)
-        return new Ingredient(BreadLoaf, QSizeF(0.1125, 0.1125), 4,
+        return new Ingredient(BreadLoaf, QSizeF(0.1125, 0.1125), 1,
                               QPixmap(":/ingredients/assets/images/sprites/BreadLoaf.png"),
                               position, angle);
 
     if (type == BreadSlice)
-        return new Ingredient(BreadSlice, QSizeF(0.1125, 0.075), 4,
+        return new Ingredient(BreadSlice, QSizeF(0.1125, 0.075), 0.2,
                               QPixmap(":/ingredients/assets/images/sprites/BreadSlice.png"),
                               position, angle);
 
     if (type == BreadTomato)
-        return new Ingredient(BreadTomato, QSizeF(0.1125, 0.1), 4,
+        return new Ingredient(BreadTomato, QSizeF(0.1125, 0.1), 0.4,
                               QPixmap(":/ingredients/assets/images/sprites/BreadTomato.png"),
                               position, angle);
 
     if (type == BreadTomatoHam)
-        return new Ingredient(BreadTomatoHam, QSizeF(0.1125, 0.1375), 4,
+        return new Ingredient(BreadTomatoHam, QSizeF(0.1125, 0.1375), 0.6,
                               QPixmap(":/ingredients/assets/images/sprites/BreadTomatoHam.png"),
                               position, angle);
 
     if (type == BreadTomatoHamLettuce)
-        return new Ingredient(BreadTomatoHamLettuce, QSizeF(0.1125, 0.175), 4,
+        return new Ingredient(BreadTomatoHamLettuce, QSizeF(0.1125, 0.175), 0.8,
                               QPixmap(":/ingredients/assets/images/sprites/BreadTomatoHamLettuce.png"),
                               position, angle);
 
     if (type == BreadTomatoHamLettuceBread)
-        return new Ingredient(BreadTomatoHamLettuceBread, QSizeF(0.1125, 0.2125), 4,
+        return new Ingredient(BreadTomatoHamLettuceBread, QSizeF(0.1125, 0.2125), 1,
                               QPixmap(":/ingredients/assets/images/sprites/BreadTomatoHamLettuceBread.png"),
                               position, angle);
 
     if (type == Ham)
-        return new Ingredient(Ham, QSizeF(0.2, 0.15), 4,
+        return new Ingredient(Ham, QSizeF(0.2, 0.15), 1,
                               QPixmap(":/ingredients/assets/images/sprites/Ham.png"),
                               position, angle);
 
     if (type == HamSlice)
-        return new Ingredient(HamSlice, QSizeF(0.1125, 0.0625), 4,
+        return new Ingredient(HamSlice, QSizeF(0.1125, 0.0625), 0.2,
                               QPixmap(":/ingredients/assets/images/sprites/HamSlice.png"),
                               position, angle);
 
     if (type == Knife)
-        return new Ingredient(Knife, QSizeF(0.05, 0.1625), 4,
+        return new Ingredient(Knife, QSizeF(0.05, 0.1625), 0.2,
                               QPixmap(":/ingredients/assets/images/sprites/Knife.png"),
                               position, angle);
 
     if (type == Lettuce)
-        return new Ingredient(Lettuce, QSizeF(0.125, 0.125), 4,
+        return new Ingredient(Lettuce, QSizeF(0.125, 0.125), 0.5,
                               QPixmap(":/ingredients/assets/images/sprites/Lettuce.png"),
                               position, angle);
 
     if (type == LettuceSlice)
-        return new Ingredient(LettuceSlice, QSizeF(0.1125, 0.075), 4,
+        return new Ingredient(LettuceSlice, QSizeF(0.1125, 0.075), 0.2,
                               QPixmap(":/ingredients/assets/images/sprites/LettuceSlice.png"),
                               position, angle);
 
     if (type == Tomato)
-        return new Ingredient(Tomato, QSizeF(0.0875, 0.0875), 4,
+        return new Ingredient(Tomato, QSizeF(0.0875, 0.0875), 0.5,
                               QPixmap(":/ingredients/assets/images/sprites/Tomato.png"),
                               position, angle);
 
     if (type == TomatoSlice)
-        return new Ingredient(TomatoSlice, QSizeF(0.1125, 0.0625), 4,
+        return new Ingredient(TomatoSlice, QSizeF(0.1125, 0.0625), 0.2,
                               QPixmap(":/ingredients/assets/images/sprites/TomatoSlice.png"),
                               position, angle);
 
     //Level 3
     if (type == EmptyPan)
-        return new Ingredient(EmptyPan, QSizeF(0.2, 0.15), 4,
+        return new Ingredient(EmptyPan, QSizeF(0.2, 0.15), 1,
                               QPixmap(":/ingredients/assets/images/sprites/EmptyBowl.png"),
                               position, angle);
 
     if (type == Chicken)
-        return new Ingredient(Chicken, QSizeF(0.1125, 0.0625), 4,
+        return new Ingredient(Chicken, QSizeF(0.1125, 0.0625), 1,
                               QPixmap(":/ingredients/assets/images/sprites/Ham.png"),
                               position, angle);
 
     if (type == Broccoli)
-        return new Ingredient(Broccoli, QSizeF(0.1125, 0.0625), 4,
+        return new Ingredient(Broccoli, QSizeF(0.1125, 0.0625), 0.5,
                               QPixmap(":/ingredients/assets/images/sprites/Lettuce.png"),
                               position, angle);
 
     if (type == Rice)
-        return new Ingredient(Rice, QSizeF(0.1125, 0.0625), 4,
+        return new Ingredient(Rice, QSizeF(0.1125, 0.0625), 0.5,
                               QPixmap(":/ingredients/assets/images/sprites/OatPacket.png"),
                               position, angle);
 
     if (type == ChickenChopped)
-        return new Ingredient(ChickenChopped, QSizeF(0.2, 0.15), 4,
+        return new Ingredient(ChickenChopped, QSizeF(0.2, 0.15), 0.2,
                               QPixmap(":/ingredients/assets/images/sprites/HamSlice.png"),
                               position, angle);
 
     if (type == ChickenPan)
-        return new Ingredient(ChickenPan, QSizeF(0.2, 0.15), 4,
+        return new Ingredient(ChickenPan, QSizeF(0.2, 0.15), 1.2,
                               QPixmap(":/ingredients/assets/images/sprites/OatsBowl.png"),
                               position, angle);
 
     if (type == ChickenCookedPan)
-        return new Ingredient(ChickenCookedPan, QSizeF(0.2, 0.15), 4,
+        return new Ingredient(ChickenCookedPan, QSizeF(0.2, 0.15), 1.2,
                               QPixmap(":/ingredients/assets/images/sprites/OatmealBowl.png"),
                               position, angle);
 
     if (type == BroccoliChopped)
-        return new Ingredient(BroccoliChopped, QSizeF(0.2, 0.15), 4,
+        return new Ingredient(BroccoliChopped, QSizeF(0.2, 0.15), 0.2,
                               QPixmap(":/ingredients/assets/images/sprites/LettuceSlice.png"),
                               position, angle);
 
     if (type == WaterRicePot)
-        return new Ingredient(WaterRicePot, QSizeF(0.2, 0.15), 4,
+        return new Ingredient(WaterRicePot, QSizeF(0.2, 0.15), 4.5,
                               QPixmap(":/ingredients/assets/images/sprites/WaterPot.png"),
                               position, angle);
 
     if (type == BoilingWaterRicePot)
-        return new Ingredient(BoilingWaterRicePot, QSizeF(0.2, 0.15), 4,
+        return new Ingredient(BoilingWaterRicePot, QSizeF(0.2, 0.15), 4.5,
                               QPixmap(":/ingredients/assets/images/sprites/BoilingWaterPot.png"),
                               position, angle);
 
     if (type == EmptyPlate)
-        return new Ingredient(EmptyPlate, QSizeF(0.1, 0.08), 4,
+        return new Ingredient(EmptyPlate, QSizeF(0.1, 0.08), 0.5,
                               QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
                               position, angle);
 
     if (type == RicePlate)
-        return new Ingredient(RicePlate, QSizeF(0.1, 0.08), 4,
+        return new Ingredient(RicePlate, QSizeF(0.1, 0.08), 0.7,
                               QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
                               position, angle);
 
     if (type == RiceChickenPlate)
-        return new Ingredient(RiceChickenPlate, QSizeF(0.1, 0.08), 4,
+        return new Ingredient(RiceChickenPlate, QSizeF(0.1, 0.08), 0.9,
                               QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
                               position, angle);
 
     if (type == RiceChickenBroccoliPlate)
-        return new Ingredient(RiceChickenBroccoliPlate, QSizeF(0.2, 0.15), 4,
+        return new Ingredient(RiceChickenBroccoliPlate, QSizeF(0.2, 0.15), 1.1,
                               QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
                               position, angle);
 
@@ -453,12 +459,12 @@ bool Model::tryCombine(int i1, int i2) {
     if (i2 != -1)
         // Is a combination, make a typePair with both IngredientTypes.
         typePair = qMakePair(ingredients[i1]->getIngredientType(),
-                    ingredients[i2]->getIngredientType());
+                             ingredients[i2]->getIngredientType());
     else
         // Is a transformation, make a typePair with the IngredientType of the
         // first Ingredient and None as the second.
         typePair = qMakePair(ingredients[i1]->getIngredientType(),
-                    None);
+                             None);
 
     // Check if the combination is valid.
     if (!combinations.contains(typePair))
@@ -695,23 +701,31 @@ void Model::updateWorld() {
         int i2ID = static_cast<int>(reinterpret_cast<intptr_t>(
             collision->GetFixtureB()->GetBody()->GetUserData()));
 
-
         // If the ingredient was not found in the map, continue the loop.
         if (!(ingredients.contains(i1ID) && ingredients.contains(i2ID)))
             continue;
 
-        // Knife only combines if selected
-        if (ingredients.value(i1ID)->getIngredientType() == Knife ||
-            ingredients.value(i2ID)->getIngredientType() == Knife) {
+        // Tools only combine if selected.
+        if (tools.contains(ingredients[i1ID]->getIngredientType())
+            || tools.contains(ingredients[i2ID]->getIngredientType())) {
+            // Check if anything is selected.
             if (!selected)
                 continue;
+
             int selectedID = static_cast<int>(
                 reinterpret_cast<intptr_t>(selected->GetUserData()));
+            // Check if selected is an Ingredient (it should be)?
             if (!ingredients.contains(selectedID))
                 continue;
-            if (ingredients.value(selectedID)->getIngredientType() != Knife)
+
+            IngredientType selectedType = ingredients[selectedID]->getIngredientType();
+            // Check if selected is one of the Ingredient in the collision.
+            if (selectedType != ingredients[i1ID]->getIngredientType()
+                && selectedType != ingredients[i2ID]->getIngredientType())
                 continue;
-            qDebug() << selected->GetLinearVelocity().x;
+            // Check if selected is a Tool.
+            if (!tools.contains(selectedType))
+                continue;
         }
 
         // Try both possible order of combinations in case the collision was
@@ -876,7 +890,6 @@ void Model::pointPressed(QPointF position) {
         removeIngredient(selectedIngredientID);
         return;
     }
-
 
     // Put the selected body into the selected variable.
     for (b2Body* body = world.GetBodyList();
