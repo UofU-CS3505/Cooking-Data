@@ -14,7 +14,7 @@ Interface::Interface(QWidget *parent)
 
     ui->pauseLabel->setStyleSheet("background-color : rgba(200, 200, 200, 150); color : black;");
     ui->winLabel->setStyleSheet("background-color : rgba(200, 200, 200, 150); color : green;");
-    ui->recipeLabel->setStyleSheet("background-color : rgba(100, 100, 0, 150); color : black;");
+    ui->recipeLabel->setStyleSheet("background-color : rgba(80, 80, 20, 150); color : white;");
     ui->escLabel->setStyleSheet("color : black;");
     ui->pauseLabel->setVisible(false);
     ui->recipeLabel->setVisible(false);
@@ -119,17 +119,31 @@ void Interface::startLevel() {
                                  "1 - Boil water in a pot on  the stove. \n"
                                  "2 - Add a packet of oatmeal into a bowl. \n"
                                  "3 - After water is boiling, add it to the bowl using a ladle. \n"
-                                 "4 - Congrats! You made oatmeal! \n"
+                                 "4 - Congrats! You made oatmeal! \n\n"
+                                 "WARNING: Leaving the stove on may cause fires! \n"
                                  "Press \"R\" at anytime to Show/Hide the recipe.");
     if (currentLevel == 2)
         ui->recipeLabel->setText("SANDWICH RECIPE \n"
                                  "1 - Cut some slices of bread.\n"
                                  "2 - Cut a tomato and add it to a piece of bread.\n"
-                                 "3 - Cut some lettuce and add it to the sandwich.\n"
-                                 "4 - Cut some ham and add that as well.\n"
+                                 "3 - Cut some ham and add it to the sandwich.\n"
+                                 "4 - Cut some lettuce and add that as well.\n"
                                  "5 - Finally, top off the sandwich with another piece of \n "
                                      "bread. \n"
-                                 "6 - Congrats! You made a ham sandwich! \n"
+                                 "6 - Congrats! You made a ham sandwich! \n\n"
+                                 "WARNING: Knives can be dangerous. Be careful! \n"
+                                 "Press \"R\" at anytime to Show/Hide the recipe.");
+    if (currentLevel == 3)
+        ui->recipeLabel->setText("CHICKEN, BROCCOLI, AND RICE RECIPE \n"
+                                 "1 - Prepare and cut some chicken.\n"
+                                 "2 - Put chicken on the stove in a pan to cook.\n"
+                                 "3 - Boil some rice in a pot.\n"
+                                 "4 - Cut and prepare some broccoli.\n"
+                                 "5 - Add the rice and chicken to a plate.\n"
+                                 "6 - Finish the dish by adding the broccoli. \n"
+                                 "6 - Congrats! You made some Chicken, Broccoli, and Rice!\n\n"
+                                 "WARNING: Leaving the stove on may cause fires! \n"
+                                 "WARNING: Knives can be dangerous. Be careful! \n"
                                  "Press \"R\" at anytime to Show/Hide the recipe.");
 
     // Grab mouse to consume all mouse events, as otherwise the
