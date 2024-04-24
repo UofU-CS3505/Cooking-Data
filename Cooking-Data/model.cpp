@@ -15,6 +15,17 @@ Model::Model()
     // Let view create the ground and background.
 
     // Define all valid combinations.
+    // Fire decay and merging.
+    combinations.insert(
+        qMakePair(Fire, None),
+        qMakePair(QVector<IngredientType> { Ember }, 2000));
+    combinations.insert(
+        qMakePair(Ember, Ember),
+        qMakePair(QVector<IngredientType> { Fire }, 0));
+    combinations.insert(
+        qMakePair(Ember, None),
+        qMakePair(QVector<IngredientType> { }, 5000));
+
     // LEVEL 1 COMBOS
     combinations.insert(
         qMakePair(StoveOn, WaterPot),
@@ -28,7 +39,7 @@ Model::Model()
     combinations.insert(
         qMakePair(StoveOn, EmptyBowl),
         qMakePair(QVector<IngredientType> { StoveOn, EmptyBowl, Ember }, 2000));
-    combinations.insert(
+    combinations.insert( // this wouldn't do anything unless ladel is selected
         qMakePair(StoveOn, Ladel),
         qMakePair(QVector<IngredientType> { StoveOn, Ladel, Ember }, 2000));
     combinations.insert(
@@ -85,15 +96,6 @@ Model::Model()
     combinations.insert(
         qMakePair(WaterLadel, Ember),
         qMakePair(QVector<IngredientType> { Ladel }, 0));
-    combinations.insert(
-        qMakePair(Fire, None),
-        qMakePair(QVector<IngredientType> { Ember }, 2000));
-    combinations.insert(
-        qMakePair(Ember, Ember),
-        qMakePair(QVector<IngredientType> { Fire }, 0));
-    combinations.insert(
-        qMakePair(Ember, None),
-        qMakePair(QVector<IngredientType> { }, 5000));
 
     // LEVEL 2 COMBOS
     combinations.insert(
@@ -139,13 +141,16 @@ Model::Model()
         qMakePair(QVector<IngredientType> { StoveOn, BoilingWaterRicePot }, 5000));
     combinations.insert(
         qMakePair(StoveOn, BoilingWaterRicePot),
-        qMakePair(QVector<IngredientType> { StoveOn, EmptyPot, Fire, Fire  }, 5000));
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyPot, Fire  }, 5000));
+    combinations.insert(
+        qMakePair(StoveOn, EmptyPan),
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyPan, Ember }, 2000));
     combinations.insert(
         qMakePair(StoveOn, ChickenPan),
         qMakePair(QVector<IngredientType> { StoveOn, ChickenCookedPan }, 5000));
     combinations.insert(
         qMakePair(StoveOn, ChickenCookedPan),
-        qMakePair(QVector<IngredientType> { StoveOn, EmptyPan, Fire, Fire  }, 5000));
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyPan, Fire  }, 5000));
     combinations.insert(
         qMakePair(StoveOn, Rice),
         qMakePair(QVector<IngredientType> { StoveOn, Rice, Ember }, 1000));
