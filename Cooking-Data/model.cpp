@@ -142,7 +142,7 @@ Model::Model()
         qMakePair(QVector<IngredientType> { ChickenPan }, 0));
     combinations.insert(
         qMakePair(StoveOn, ChickenPan),
-        qMakePair(QVector<IngredientType> { ChickenCookedPan }, 5000));
+        qMakePair(QVector<IngredientType> { StoveOn, ChickenCookedPan }, 5000));
     combinations.insert(
         qMakePair(StoveOn, ChickenCookedPan),
         qMakePair(QVector<IngredientType> { StoveOn, EmptyPan, Fire, Fire  }, 5000));
@@ -335,57 +335,57 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
 
     //Level 3
     if (type == EmptyPan)
-        return new Ingredient(EmptyPan, QSizeF(15, 10), 4,
+        return new Ingredient(EmptyPan, QSizeF(0.1875, 0.125), 4,
                               QPixmap(":/ingredients/assets/images/sprites/Pan.png"),
                               position, angle);
 
     if (type == Chicken)
-        return new Ingredient(Chicken, QSizeF(14, 14), 4,
+        return new Ingredient(Chicken, QSizeF(0.175, 0.175), 4,
                               QPixmap(":/ingredients/assets/images/sprites/Chicken.png"),
                               position, angle);
 
     if (type == Broccoli)
-        return new Ingredient(Broccoli, QSizeF(9,9), 4,
-                              QPixmap(":/ingredients/assets/images/sprites/Broccoli.png"),
+        return new Ingredient(Broccoli, QSizeF(0.1125,0.1125), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Brocoli.png"),
                               position, angle);
 
     if (type == Rice)
-        return new Ingredient(Rice, QSizeF(12, 14), 4,
+        return new Ingredient(Rice, QSizeF(0.15, 0.175), 4,
                               QPixmap(":/ingredients/assets/images/sprites/RiceBag.png"),
                               position, angle);
 
     if (type == ChickenChopped)
-        return new Ingredient(ChickenChopped, QSizeF(12, 7), 4,
+        return new Ingredient(ChickenChopped, QSizeF(12*.0125, 7*.0125), 4,
                               QPixmap(":/ingredients/assets/images/sprites/CutChicken.png"),
                               position, angle);
 
     if (type == ChickenPan)
-        return new Ingredient(ChickenPan, QSizeF(15, 10), 4,
+        return new Ingredient(ChickenPan, QSizeF(15*.0125, 10*.0125), 4,
                               QPixmap(":/ingredients/assets/images/sprites/ChickenPan.png"),
                               position, angle);
 
     if (type == ChickenCookedPan)
-        return new Ingredient(ChickenCookedPan, QSizeF(15, 16), 4,
-                              QPixmap(":/ingredients/assets/images/sprites/FinishedChickenPan.png"),
+        return new Ingredient(ChickenCookedPan, QSizeF(15*.0125, 16*.0125), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/FinsihedChickenPan.png"),
                               position, angle);
 
     if (type == BroccoliChopped)
-        return new Ingredient(BroccoliChopped, QSizeF(7, 7), 4,
+        return new Ingredient(BroccoliChopped, QSizeF(7*.0125, 7*.0125), 4,
                               QPixmap(":/ingredients/assets/images/sprites/CutBrocoli.png"),
                               position, angle);
 
     if (type == WaterRicePot)
-        return new Ingredient(WaterRicePot, QSizeF(16, 10), 4,
+        return new Ingredient(WaterRicePot, QSizeF(16*.0125, 10*.0125), 4,
                               QPixmap(":/ingredients/assets/images/sprites/RicePot.png"),
                               position, angle);
 
     if (type == BoilingWaterRicePot)
-        return new Ingredient(BoilingWaterRicePot, QSizeF(16, 16), 4,
-                              QPixmap(":/ingredients/assets/images/sprites/FinsihedRicePot.png"),
+        return new Ingredient(BoilingWaterRicePot, QSizeF(16*.0125, 16*.0125), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/FinishedRicePot.png"),
                               position, angle);
 
     if (type == EmptyPlate)
-        return new Ingredient(EmptyPlate, QSizeF(10, 6), 4,
+        return new Ingredient(EmptyPlate, QSizeF(10*.0125, 6*.0125), 4,
                               QPixmap(":/ingredients/assets/images/sprites/Plate.png"),
                               position, angle);
 
