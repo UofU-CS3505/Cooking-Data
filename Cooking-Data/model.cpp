@@ -499,6 +499,10 @@ bool Model::tryCombine(int i1, int i2) {
         && (i2 == -1 && !ingredients.contains(i1)))
         return false;
 
+    // If either Ingredient is a tool, check if the they are selected.
+    if (i2 != -1 && !areIngredientsNotToolsOrSelectedTool(i1, i2))
+        return false;
+
     QPair<IngredientType, IngredientType> typePair;
     // Check if it is a combination or transformation.
     if (i2 != -1)
@@ -777,10 +781,6 @@ void Model::updateWorld() {
 
         // If either Ingredient is not in the map, continue the loop.
         if (!(ingredients.contains(i1) && ingredients.contains(i2)))
-            continue;
-
-        // If either Ingredient is a tool, check if the they are selected.
-        if (!areIngredientsNotToolsOrSelectedTool(i1, i2))
             continue;
 
         // Try both possible order of combinations in case the collision was
