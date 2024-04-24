@@ -130,7 +130,10 @@ Model::Model()
         qMakePair(QVector<IngredientType> { Knife, ChickenChopped }, 750));
     combinations.insert(
         qMakePair(WaterPot, Rice),
-        qMakePair(QVector<IngredientType> { WaterRicePot }, 0));
+        qMakePair(QVector<IngredientType> { WaterRicePot, Rice }, 0));
+    combinations.insert(
+        qMakePair(BoilingWaterPot, Rice),
+        qMakePair(QVector<IngredientType> { WaterRicePot, Rice }, 0));
     combinations.insert(
         qMakePair(StoveOn, WaterRicePot),
         qMakePair(QVector<IngredientType> { StoveOn, BoilingWaterRicePot }, 5000));
@@ -138,14 +141,26 @@ Model::Model()
         qMakePair(StoveOn, BoilingWaterRicePot),
         qMakePair(QVector<IngredientType> { StoveOn, EmptyPot, Fire, Fire  }, 5000));
     combinations.insert(
-        qMakePair(EmptyPan, ChickenChopped),
-        qMakePair(QVector<IngredientType> { ChickenPan }, 0));
-    combinations.insert(
         qMakePair(StoveOn, ChickenPan),
         qMakePair(QVector<IngredientType> { StoveOn, ChickenCookedPan }, 5000));
     combinations.insert(
         qMakePair(StoveOn, ChickenCookedPan),
         qMakePair(QVector<IngredientType> { StoveOn, EmptyPan, Fire, Fire  }, 5000));
+    combinations.insert(
+        qMakePair(StoveOn, Rice),
+        qMakePair(QVector<IngredientType> { StoveOn, Rice, Ember }, 1000));
+    combinations.insert(
+        qMakePair(StoveOn, Broccoli),
+        qMakePair(QVector<IngredientType> { StoveOn, Broccoli, Ember }, 1000));
+    combinations.insert(
+        qMakePair(StoveOn, BroccoliChopped),
+        qMakePair(QVector<IngredientType> { StoveOn, BroccoliChopped, Ember }, 1000));
+    combinations.insert(
+        qMakePair(StoveOn, Chicken),
+        qMakePair(QVector<IngredientType> { StoveOn, Chicken, Ember }, 1000));
+    combinations.insert(
+        qMakePair(StoveOn, ChickenChopped),
+        qMakePair(QVector<IngredientType> { StoveOn, ChickenChopped, Ember }, 1000));
     combinations.insert(
         qMakePair(EmptyPan, ChickenChopped),
         qMakePair(QVector<IngredientType> { ChickenPan }, 0));
@@ -188,21 +203,6 @@ Model::Model()
     combinations.insert(
         qMakePair(Rice, Ember),
         qMakePair(QVector<IngredientType> { Rice, Ember, Ember }, 1000));
-    combinations.insert(
-        qMakePair(StoveOn, Rice),
-        qMakePair(QVector<IngredientType> { StoveOn, Rice, Ember }, 1000));
-    combinations.insert(
-        qMakePair(StoveOn, Broccoli),
-        qMakePair(QVector<IngredientType> { StoveOn, Broccoli, Ember }, 1000));
-    combinations.insert(
-        qMakePair(StoveOn, BroccoliChopped),
-        qMakePair(QVector<IngredientType> { StoveOn, BroccoliChopped, Ember }, 1000));
-    combinations.insert(
-        qMakePair(StoveOn, Chicken),
-        qMakePair(QVector<IngredientType> { StoveOn, Chicken, Ember }, 1000));
-    combinations.insert(
-        qMakePair(StoveOn, ChickenChopped),
-        qMakePair(QVector<IngredientType> { StoveOn, ChickenChopped, Ember }, 1000));
 
     // Add all the active tools.
     tools.append(Ladel);
@@ -380,17 +380,17 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
 
     //Level 3
     if (type == EmptyPan)
-        return new Ingredient(EmptyPan, QSizeF(0.1875, 0.125), 4,
+        return new Ingredient(EmptyPan, QSizeF(0.1875, 0.125), 2,
                               QPixmap(":/ingredients/assets/images/sprites/Pan.png"),
                               position, angle);
 
     if (type == Chicken)
-        return new Ingredient(Chicken, QSizeF(0.175, 0.175), 4,
+        return new Ingredient(Chicken, QSizeF(0.175, 0.175), 0.5,
                               QPixmap(":/ingredients/assets/images/sprites/Chicken.png"),
                               position, angle);
 
     if (type == Broccoli)
-        return new Ingredient(Broccoli, QSizeF(0.1125,0.1125), 4,
+        return new Ingredient(Broccoli, QSizeF(0.1125,0.1125), 0.5,
                               QPixmap(":/ingredients/assets/images/sprites/Brocoli.png"),
                               position, angle);
 
@@ -400,52 +400,52 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
                               position, angle);
 
     if (type == ChickenChopped)
-        return new Ingredient(ChickenChopped, QSizeF(12*.0125, 7*.0125), 4,
+        return new Ingredient(ChickenChopped, QSizeF(12*.0125, 7*.0125), 0.2,
                               QPixmap(":/ingredients/assets/images/sprites/CutChicken.png"),
                               position, angle);
 
     if (type == ChickenPan)
-        return new Ingredient(ChickenPan, QSizeF(15*.0125, 10*.0125), 4,
+        return new Ingredient(ChickenPan, QSizeF(15*.0125, 10*.0125), 2.2,
                               QPixmap(":/ingredients/assets/images/sprites/ChickenPan.png"),
                               position, angle);
 
     if (type == ChickenCookedPan)
-        return new Ingredient(ChickenCookedPan, QSizeF(15*.0125, 16*.0125), 4,
+        return new Ingredient(ChickenCookedPan, QSizeF(15*.0125, 16*.0125), 2.2,
                               QPixmap(":/ingredients/assets/images/sprites/FinsihedChickenPan.png"),
                               position, angle);
 
     if (type == BroccoliChopped)
-        return new Ingredient(BroccoliChopped, QSizeF(7*.0125, 7*.0125), 4,
+        return new Ingredient(BroccoliChopped, QSizeF(7*.0125, 7*.0125), 0.2,
                               QPixmap(":/ingredients/assets/images/sprites/CutBrocoli.png"),
                               position, angle);
 
     if (type == WaterRicePot)
-        return new Ingredient(WaterRicePot, QSizeF(16*.0125, 10*.0125), 4,
+        return new Ingredient(WaterRicePot, QSizeF(16*.0125, 10*.0125), 4.5,
                               QPixmap(":/ingredients/assets/images/sprites/RicePot.png"),
                               position, angle);
 
     if (type == BoilingWaterRicePot)
-        return new Ingredient(BoilingWaterRicePot, QSizeF(16*.0125, 16*.0125), 4,
+        return new Ingredient(BoilingWaterRicePot, QSizeF(16*.0125, 16*.0125), 4.5,
                               QPixmap(":/ingredients/assets/images/sprites/FinishedRicePot.png"),
                               position, angle);
 
     if (type == EmptyPlate)
-        return new Ingredient(EmptyPlate, QSizeF(10*.0125, 6*.0125), 4,
+        return new Ingredient(EmptyPlate, QSizeF(10*.0125, 6*.0125), 0.5,
                               QPixmap(":/ingredients/assets/images/sprites/Plate.png"),
                               position, angle);
 
     if (type == RicePlate)
-        return new Ingredient(RicePlate, QSizeF(0.1, 0.08), 4,
+        return new Ingredient(RicePlate, QSizeF(0.1, 0.08), 1,
                               QPixmap(":/ingredients/assets/images/sprites/RicePlate.png"),
                               position, angle);
 
     if (type == RiceChickenPlate)
-        return new Ingredient(RiceChickenPlate, QSizeF(0.1, 0.08), 4,
+        return new Ingredient(RiceChickenPlate, QSizeF(0.1, 0.08), 1.2,
                               QPixmap(":/ingredients/assets/images/sprites/RiceChickenPlate.png"),
                               position, angle);
 
     if (type == RiceChickenBroccoliPlate)
-        return new Ingredient(RiceChickenBroccoliPlate, QSizeF(0.2, 0.15), 4,
+        return new Ingredient(RiceChickenBroccoliPlate, QSizeF(0.2, 0.15), 1.4,
                               QPixmap(":/ingredients/assets/images/sprites/RiceChickenBroccoliPlate.png"),
                               position, angle);
 
