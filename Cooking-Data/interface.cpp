@@ -14,8 +14,10 @@ Interface::Interface(QWidget *parent)
 
     ui->pauseLabel->setStyleSheet("background-color : rgba(200, 200, 200, 150); color : black;");
     ui->winLabel->setStyleSheet("background-color : rgba(200, 200, 200, 150); color : green;");
+    ui->recipeLabel->setStyleSheet("background-color : rgba(100, 100, 0, 150); color : black;");
     ui->escLabel->setStyleSheet("color : black;");
     ui->pauseLabel->setVisible(false);
+    ui->recipeLabel->setVisible(false);
     ui->winLabel->setVisible(false);
     ui->quitButton->setVisible(false);
     ui->controlsButton->setVisible(false);
@@ -92,14 +94,43 @@ Interface::~Interface() {
     delete ui;
 }
 
+void Interface::displayRecipeText() {
+    if (ui->recipeLabel->isVisible()) {
+        ui->recipeLabel->setVisible(false);
+    } else {
+        ui->recipeLabel->setVisible(true);
+        ui->recipeLabel->raise();
+    }
+}
+
 void Interface::startLevel() {
     emit escPressed(false);
     isStartMenu = false;
     ui->stackedWidget->setCurrentIndex(1);
     ui->escLabel->setVisible(true);
     ui->escLabel->raise();
+    ui->recipeLabel->setVisible(true);
+    ui->recipeLabel->raise();
     ui->startWidget->setEnabled(false);
     ui->startWidget->setVisible(false);
+
+    if (currentLevel == 1)
+        ui->recipeLabel->setText("OATMEAL RECIPE \n"
+                                 "1 - Boil water in a pot on  the stove. \n"
+                                 "2 - Add a packet of oatmeal into a bowl. \n"
+                                 "3 - After water is boiling, add it to the bowl using a ladle. \n"
+                                 "4 - Congrats! You made oatmeal! \n"
+                                 "Press \"R\" at anytime to Show/Hide the recipe.");
+    if (currentLevel == 2)
+        ui->recipeLabel->setText("SANDWICH RECIPE \n"
+                                 "1 - Cut some slices of bread.\n"
+                                 "2 - Cut a tomato and add it to a piece of bread.\n"
+                                 "3 - Cut some lettuce and add it to the sandwich.\n"
+                                 "4 - Cut some ham and add that as well.\n"
+                                 "5 - Finally, top off the sandwich with another piece of \n "
+                                     "bread. \n"
+                                 "6 - Congrats! You made a ham sandwich! \n"
+                                 "Press \"R\" at anytime to Show/Hide the recipe.");
 
     // Grab mouse to consume all mouse events, as otherwise the
     // qGraphicsView/Scene takes all of it.
@@ -137,6 +168,7 @@ void Interface::openStartMenu() {
     ui->escLabel->setVisible(!isGamePaused);
     ui->escLabel->raise();
     ui->winLabel->setVisible(false);
+    ui->recipeLabel->setVisible(false);
 
     emit deleteWorld();
 
@@ -195,6 +227,9 @@ void Interface::mouseReleaseEvent(QMouseEvent* event) {
 void Interface::keyPressEvent(QKeyEvent *event){
     if (isStartMenu)
         return;
+    if (event->key() == Qt::Key_R) {
+        displayRecipeText();
+    }
     if (event->key() == Qt::Key_Escape) {
         isGamePaused = !isGamePaused;
         emit escPressed(isGamePaused);

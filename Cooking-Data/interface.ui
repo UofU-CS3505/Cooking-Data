@@ -475,6 +475,22 @@ QInputDialog {
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
+   <widget class="QLabel" name="recipeLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>230</y>
+      <width>301</width>
+      <height>271</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Recipe</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

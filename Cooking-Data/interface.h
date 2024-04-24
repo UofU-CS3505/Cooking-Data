@@ -33,6 +33,7 @@ private:
     int currentLevel = 0;
     bool level1Done = false;
     bool level2Done = false;
+    void displayRecipeText();
 
 public:
     Interface(QWidget *parent = nullptr);
