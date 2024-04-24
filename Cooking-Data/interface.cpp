@@ -12,10 +12,6 @@ Interface::Interface(QWidget *parent)
     model(Model()) {
     ui->setupUi(this);
 
-    ui->pauseLabel->setStyleSheet("background-color : rgba(200, 200, 200, 150); color : black;");
-    ui->winLabel->setStyleSheet("background-color : rgba(200, 200, 200, 150); color : green;");
-    ui->recipeLabel->setStyleSheet("background-color : rgba(80, 80, 20, 150); color : white;");
-    ui->escLabel->setStyleSheet("color : black;");
     ui->pauseLabel->setVisible(false);
     ui->recipeLabel->setVisible(false);
     ui->winLabel->setVisible(false);
@@ -28,7 +24,7 @@ Interface::Interface(QWidget *parent)
     connect(this, &Interface::deleteWorld,
             &model, &Model::deleteWorld);
 
-    // Connect game updates to the view
+    // Connect game updates to the view.
     connect(&model, &Model::frameBegan,
             this, &Interface::beginFrame);
     connect(&model, &Model::ingredientUpdated,
@@ -38,7 +34,7 @@ Interface::Interface(QWidget *parent)
     connect(&model, &Model::winConditionMet,
             this, &Interface::completeLevel);
 
-    // Connect mouse updates to model
+    // Connect mouse updates to model.
     connect(this, &Interface::mousePressed,
             &model, &Model::pointPressed);
     connect(this, &Interface::mouseMoved,
@@ -46,7 +42,7 @@ Interface::Interface(QWidget *parent)
     connect(this, &Interface::mouseReleased,
             &model, &Model::pointReleased);
 
-    // Connect keyboard updates to model
+    // Connect keyboard updates to model.
     connect(this, &Interface::escPressed,
             &model, &Model::pauseGame);
 
@@ -80,12 +76,13 @@ Interface::Interface(QWidget *parent)
     ui->level1->raise();
     // For reasons unknown, the style sheet of the top level widget does not
     // apply to these.
-    ui->startWidget->setStyleSheet("QWidget{background-color : rgba(200, 200, 200, 80); color : black;}"
-                                   "QAbstractButton {"
-                                   "padding: 4px;border-radius: 4px;background-color: #ff8000;}"
-                                   "QAbstractButton:hover {background-color: #ffa010;}"
-                                   "QAbstractButton:pressed {background-color: #d07000;}"
-                                   "QAbstractButton:disabled {background-color: #303030; color: #808080}");
+    ui->startWidget->setStyleSheet(
+        "QWidget{background-color : rgba(200, 200, 200, 80); color : black;}"
+        "QAbstractButton {"
+        "padding: 4px;border-radius: 4px;background-color: #ff8000;}"
+        "QAbstractButton:hover {background-color: #ffa010;}"
+        "QAbstractButton:pressed {background-color: #d07000;}"
+        "QAbstractButton:disabled {background-color: #303030; color: #808080}");
     emit escPressed(true);
     ui->escLabel->setVisible(false);
 }
@@ -115,37 +112,40 @@ void Interface::startLevel() {
     ui->startWidget->setVisible(false);
 
     if (currentLevel == 1)
-        ui->recipeLabel->setText("OATMEAL RECIPE \n"
-                                 "1 - Boil water in a pot on  the stove. \n"
-                                 "2 - Add a packet of oatmeal into a bowl. \n"
-                                 "3 - After water is boiling, add it to the bowl using a ladle. \n"
-                                 "4 - Congrats! You made oatmeal! \n\n"
-                                 "WARNING: Leaving the stove on may cause fires! \n"
-                                 "Press \"R\" at anytime to Show/Hide the recipe.");
+        ui->recipeLabel->setText(
+            "OATMEAL RECIPE \n"
+            "1 - Boil water in a pot on  the stove. \n"
+            "2 - Add a packet of oatmeal into a bowl. \n"
+            "3 - After water is boiling, add it to the bowl using a ladle. \n"
+            "4 - Congrats! You made oatmeal! \n\n"
+            "WARNING: Leaving the stove on may cause fires! \n"
+            "Press \"R\" at anytime to Show/Hide the recipe.");
     if (currentLevel == 2)
-        ui->recipeLabel->setText("SANDWICH RECIPE \n"
-                                 "1 - Cut some slices of bread.\n"
-                                 "2 - Cut a tomato and add it to a piece of bread.\n"
-                                 "3 - Cut some ham and add it to the sandwich.\n"
-                                 "4 - Cut some lettuce and add that as well.\n"
-                                 "5 - Finally, top off the sandwich with another piece of \n "
-                                     "bread. \n"
-                                 "6 - Congrats! You made a ham sandwich! \n\n"
-                                 "WARNING: Knives can be dangerous. Be careful! \n"
-                                 "Press \"R\" at anytime to Show/Hide the recipe.");
+        ui->recipeLabel->setText(
+            "SANDWICH RECIPE \n"
+            "1 - Cut some slices of bread.\n"
+            "2 - Cut a tomato and add it to a piece of bread.\n"
+            "3 - Cut some ham and add it to the sandwich.\n"
+            "4 - Cut some lettuce and add that as well.\n"
+            "5 - Finally, top off the sandwich with another piece of \n "
+            "bread. \n"
+            "6 - Congrats! You made a ham sandwich! \n\n"
+            "WARNING: Knives can be dangerous. Be careful! \n"
+            "Press \"R\" at anytime to Show/Hide the recipe.");
     if (currentLevel == 3)
-        ui->recipeLabel->setText("CHICKEN, BROCCOLI, AND RICE RECIPE \n"
-                                 "1 - Prepare and cut some chicken.\n"
-                                 "2 - Put chicken on the stove in a pan to cook.\n"
-                                 "3 - Boil some rice in a pot.\n"
-                                 "4 - Cut and prepare some broccoli.\n"
-                                 "5 - Add the rice and chicken to a plate.\n"
-                                 "6 - Finish the dish by adding the broccoli. \n"
-                                 "7 - Congrats! You made some Chicken, Broccoli, \n"
-                                     "and Rice!\n\n"
-                                 "WARNING: Leaving the stove on may cause fires! \n"
-                                 "WARNING: Knives can be dangerous. Be careful! \n"
-                                 "Press \"R\" at anytime to Show/Hide the recipe.");
+        ui->recipeLabel->setText(
+            "CHICKEN, BROCCOLI, AND RICE RECIPE \n"
+            "1 - Prepare and cut some chicken.\n"
+            "2 - Put chicken on the stove in a pan to cook.\n"
+            "3 - Boil some rice in a pot.\n"
+            "4 - Cut and prepare some broccoli.\n"
+            "5 - Add the rice and chicken to a plate.\n"
+            "6 - Finish the dish by adding the broccoli. \n"
+            "7 - Congrats! You made some Chicken, Broccoli, \n"
+            "and Rice!\n\n"
+            "WARNING: Leaving the stove on may cause fires! \n"
+            "WARNING: Knives can be dangerous. Be careful! \n"
+            "Press \"R\" at anytime to Show/Hide the recipe.");
 
     // Grab mouse to consume all mouse events, as otherwise the
     // qGraphicsView/Scene takes all of it.
@@ -206,12 +206,15 @@ void Interface::openStartMenu() {
 void Interface::displayHelpPopup() {
     QMessageBox brushHelp;
     brushHelp.setWindowTitle("Tutorials");
-    brushHelp.setText("Drag objects around with your mouse to move them around the screen. \n"
-                      "Follow the recipe given to you to cook the meal and progress. \n"
-                      "Completing a recipe will give you a new recipe to cook. \n"
-                      "Click the pantry button to see available ingredients. \n"
-                      "The pot should go on the stove. Press dial to turn it on. \n"
-                      "You already know this, but press ESC to pause.");
+    brushHelp.setText(
+        "Drag objects around with your mouse to move them around the screen.\n"
+        "Follow the recipe given to you to cook the meal and progress.\n"
+        "Completing a recipe will give you a new recipe to cook.\n"
+        "Click the stove to turn it on and off.\n"
+        "The pot and pan should go on the stove.\n"
+        "The knife, ladel, and pitcher must be being dragged to cut or pour.\n"
+        "Press R to show or hide the recipe.\n"
+        "You already know this, but press ESC to pause.");
     brushHelp.setIcon(QMessageBox::Information);
     brushHelp.setModal(true);
     brushHelp.setDefaultButton(QMessageBox::Ok);

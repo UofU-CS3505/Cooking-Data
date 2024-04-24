@@ -204,6 +204,10 @@ QInputDialog {
       <pointsize>50</pointsize>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color : rgba(200, 200, 200, 150); 
+color : black;</string>
+    </property>
     <property name="text">
      <string>PAUSED</string>
     </property>
@@ -251,6 +255,9 @@ QInputDialog {
       <width>151</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color : black;</string>
     </property>
     <property name="text">
      <string>Press ESC to Pause Game</string>
@@ -540,6 +547,10 @@ QInputDialog {
       <pointsize>50</pointsize>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color : rgba(200, 200, 200, 150); 
+color : green;</string>
+    </property>
     <property name="text">
      <string>-Level Complete!-</string>
     </property>
@@ -555,6 +566,10 @@ QInputDialog {
       <width>301</width>
       <height>271</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color : rgba(80, 80, 80, 150); 
+color : white;</string>
     </property>
     <property name="text">
      <string>Recipe</string>
