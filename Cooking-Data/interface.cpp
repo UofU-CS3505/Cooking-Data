@@ -240,11 +240,21 @@ void Interface::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 void Interface::keyPressEvent(QKeyEvent *event){
+    if (event->key() == Qt::Key_F1) {
+        level1Done = true;
+        level2Done = true;
+        openStartMenu();
+        return;
+    }
+
     if (isStartMenu)
         return;
+
     if (event->key() == Qt::Key_R) {
         displayRecipeText();
+        return;
     }
+
     if (event->key() == Qt::Key_Escape) {
         isGamePaused = !isGamePaused;
         emit escPressed(isGamePaused);
@@ -267,6 +277,7 @@ void Interface::keyPressEvent(QKeyEvent *event){
         ui->controlsButton->raise();
         ui->escLabel->setVisible(!isGamePaused);
         ui->escLabel->raise();
+        return;
     }
 }
 
