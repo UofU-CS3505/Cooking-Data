@@ -136,16 +136,16 @@ Model::Model()
         qMakePair(QVector<IngredientType> { StoveOn, BoilingWaterRicePot }, 5000));
     combinations.insert(
         qMakePair(StoveOn, BoilingWaterRicePot),
-        qMakePair(QVector<IngredientType> { StoveOn, EmptyPot, Fire, Fire  }, 5000));
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyPot, Fire, Fire, Fire  }, 5000));
     combinations.insert(
         qMakePair(EmptyPan, ChickenChopped),
         qMakePair(QVector<IngredientType> { ChickenPan }, 0));
     combinations.insert(
         qMakePair(StoveOn, ChickenPan),
-        qMakePair(QVector<IngredientType> { ChickenCookedPan }, 5000));
+        qMakePair(QVector<IngredientType> { StoveOn, ChickenCookedPan }, 5000));
     combinations.insert(
         qMakePair(StoveOn, ChickenCookedPan),
-        qMakePair(QVector<IngredientType> { StoveOn, EmptyPan, Fire, Fire  }, 5000));
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyPan, Fire, Fire, Fire  }, 5000));
     combinations.insert(
         qMakePair(EmptyPan, ChickenChopped),
         qMakePair(QVector<IngredientType> { ChickenPan }, 0));
@@ -158,6 +158,36 @@ Model::Model()
     combinations.insert(
         qMakePair(RiceChickenPlate, BroccoliChopped),
         qMakePair(QVector<IngredientType> { RiceChickenBroccoliPlate }, 0));
+    combinations.insert(
+        qMakePair(Broccoli, Fire),
+        qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay
+    combinations.insert(
+        qMakePair(Broccoli, Ember),
+        qMakePair(QVector<IngredientType> { Broccoli, Ember, Ember }, 1000));
+    combinations.insert(
+        qMakePair(BroccoliChopped, Fire),
+        qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay
+    combinations.insert(
+        qMakePair(BroccoliChopped, Ember),
+        qMakePair(QVector<IngredientType> { BroccoliChopped, Ember, Ember }, 1000));
+    combinations.insert(
+        qMakePair(Chicken, Fire),
+        qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay
+    combinations.insert(
+        qMakePair(Chicken, Ember),
+        qMakePair(QVector<IngredientType> { Chicken, Ember, Ember }, 1000));
+    combinations.insert(
+        qMakePair(ChickenChopped, Fire),
+        qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay
+    combinations.insert(
+        qMakePair(ChickenChopped, Ember),
+        qMakePair(QVector<IngredientType> { ChickenChopped, Ember, Ember }, 1000));
+    combinations.insert(
+        qMakePair(Rice, Fire),
+        qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay
+    combinations.insert(
+        qMakePair(Rice, Ember),
+        qMakePair(QVector<IngredientType> { Rice, Ember, Ember }, 1000));
 }
 
 Model::~Model() {
@@ -711,7 +741,6 @@ void Model::updateWorld() {
                 continue;
             if (ingredients.value(selectedID)->getIngredientType() != Knife)
                 continue;
-            qDebug() << selected->GetLinearVelocity().x;
         }
 
         // Try both possible order of combinations in case the collision was
