@@ -256,6 +256,14 @@ bool Model::tryCombine(int i1, int i2) {
         typePair = qMakePair(ingredients[i1]->getIngredientType(),
                     None);
 
+    // Knife only combines if selected
+    int ingredientIDofBody = static_cast<int>(
+        reinterpret_cast<intptr_t>(selected->GetUserData()));
+    if ((typePair.first == Knife || typePair.second == Knife)
+        && ingredients.value(ingredientIDofBody)->getIngredientType() != Knife)
+        return false;
+
+
     // Check if the combination is valid.
     if (!combinations.contains(typePair))
         return false;
