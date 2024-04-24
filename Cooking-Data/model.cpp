@@ -257,12 +257,12 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
                               position, angle);
 
     if (type == Fire)
-        return new Ingredient(Fire, QSizeF(0.1, 0.15), 0.2,
+        return new Ingredient(Fire, QSizeF(0.1, 0.15), 0.2, 0.4, 0.4,
                               QPixmap(":/ingredients/assets/images/sprites/Fire.png"),
                               position, 0);
 
     if (type == Ember)
-        return new Ingredient(Ember, QSizeF(0.0375, 0.0375), 0.1,
+        return new Ingredient(Ember, QSizeF(0.0375, 0.0375), 0.1, 0.1, 0.6,
                               QPixmap(":/ingredients/assets/images/sprites/Ember.png"),
                               position, angle);
 
@@ -349,12 +349,12 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
                               position, angle);
 
     if (type == Ham)
-        return new Ingredient(Ham, QSizeF(0.2, 0.15), 1,
+        return new Ingredient(Ham, QSizeF(0.2, 0.15), 1, 0.4, 0.6,
                               QPixmap(":/ingredients/assets/images/sprites/Ham.png"),
                               position, angle);
 
     if (type == HamSlice)
-        return new Ingredient(HamSlice, QSizeF(0.1125, 0.0625), 0.2,
+        return new Ingredient(HamSlice, QSizeF(0.1125, 0.0625), 0.2, 0.4, 0.6,
                               QPixmap(":/ingredients/assets/images/sprites/HamSlice.png"),
                               position, angle);
 
@@ -364,22 +364,22 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
                               position, angle);
 
     if (type == Lettuce)
-        return new Ingredient(Lettuce, QSizeF(0.125, 0.125), 0.5,
+        return new Ingredient(Lettuce, QSizeF(0.125, 0.125), 0.5, 0.6, 0.4,
                               QPixmap(":/ingredients/assets/images/sprites/Lettuce.png"),
                               position, angle);
 
     if (type == LettuceSlice)
-        return new Ingredient(LettuceSlice, QSizeF(0.1125, 0.075), 0.2,
+        return new Ingredient(LettuceSlice, QSizeF(0.1125, 0.075), 0.2, 0.6, 0.4,
                               QPixmap(":/ingredients/assets/images/sprites/LettuceSlice.png"),
                               position, angle);
 
     if (type == Tomato)
-        return new Ingredient(Tomato, QSizeF(0.0875, 0.0875), 0.5,
+        return new Ingredient(Tomato, QSizeF(0.0875, 0.0875), 0.5, 0.6, 0.4,
                               QPixmap(":/ingredients/assets/images/sprites/Tomato.png"),
                               position, angle);
 
     if (type == TomatoSlice)
-        return new Ingredient(TomatoSlice, QSizeF(0.1125, 0.0625), 0.2,
+        return new Ingredient(TomatoSlice, QSizeF(0.1125, 0.0625), 0.2, 0.6, 0.4,
                               QPixmap(":/ingredients/assets/images/sprites/TomatoSlice.png"),
                               position, angle);
 
@@ -480,8 +480,8 @@ b2Body* Model::addIngredientToWorld(const Ingredient& ingredient) {
                          / ingredient.getDimensions().height();
 
     // Override the default friction.
-    fixtureDef.friction = 0.8f;
-    fixtureDef.restitution = 0.1f;
+    fixtureDef.friction = ingredient.getFriction();
+    fixtureDef.restitution = ingredient.getRestitution();
     // Add the shape to the body.
     body->CreateFixture(&fixtureDef);
     // If the weight is 0, don't set as dynamic body.

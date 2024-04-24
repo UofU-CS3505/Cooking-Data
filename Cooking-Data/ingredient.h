@@ -33,6 +33,16 @@ private:
     double weight;
 
     ///
+    /// \brief friction [0, 1]
+    ///
+    double friction = 0.8;
+
+    ///
+    /// \brief restitution Bounciness, [0, 1].
+    ///
+    double restitution = 0.1;
+
+    ///
     /// \brief texture The dimension of the texture should be double that of
     ///                the Ingredient's dimension.
     ///
@@ -54,6 +64,9 @@ public:
     Ingredient(QPointF positon);
     Ingredient(IngredientType type, QSizeF dimension, double weight,
                QPixmap texture, QPointF position, double angle);
+    Ingredient(IngredientType type, QSizeF dimension, double weight,
+               double friction, double restitution, QPixmap texture,
+               QPointF position, double angle);
     ~Ingredient();
 
     ///
@@ -83,6 +96,8 @@ public:
     QSizeF getDimensions() const { return dimensions; }
     double getWeight() const { return weight; }
     QPixmap getTexture() const;
+    double getFriction() const { return friction; }
+    double getRestitution() const { return restitution; }
     QPointF getPosition() const { return position; }
 
     ///

@@ -6,30 +6,46 @@ int Ingredient::globalLatestID = 0;
 Ingredient::Ingredient():
     ID(++globalLatestID),
     INGREDIENT_TYPE(None),
-    dimensions(QSizeF(0.5,0.5)),
+    dimensions(QSizeF(0.2,0.2)),
     weight(1),
     texture(QPixmap(":/ingredients/assets/images/sprites/Error.png")),
     position(QPointF(0,0)),
     angle(0) {
-
+    qDebug() << "Creating Error Ingredient with ID" << ID;
 }
 
 Ingredient::Ingredient(QPointF position):
     ID(++globalLatestID),
     INGREDIENT_TYPE(None),
-    dimensions(QSizeF(0.5,0.5)),
+    dimensions(QSizeF(0.2,0.2)),
     weight(1),
     texture(QPixmap(":/ingredients/assets/images/sprites/Error.png")),
     position(position),
     angle(0) {
-
+    qDebug() << "Creating Error Ingredient with ID" << ID;
 }
 
-Ingredient::Ingredient(IngredientType type, QSizeF dimension, double weight, QPixmap texture, QPointF position, double angle):
+Ingredient::Ingredient(IngredientType type, QSizeF dimension, double weight,
+                       QPixmap texture, QPointF position, double angle):
     ID(++globalLatestID),
     INGREDIENT_TYPE(type),
     dimensions(dimension),
     weight(weight),
+    texture(texture),
+    position(position),
+    angle(angle) {
+    qDebug() << "Creating Ingredient with ID" << ID;
+}
+
+Ingredient::Ingredient(IngredientType type, QSizeF dimension, double weight,
+                       double friction, double restitution, QPixmap texture,
+                       QPointF position, double angle):
+    ID(++globalLatestID),
+    INGREDIENT_TYPE(type),
+    dimensions(dimension),
+    weight(weight),
+    friction(friction),
+    restitution(restitution),
     texture(texture),
     position(position),
     angle(angle) {
@@ -60,6 +76,8 @@ Ingredient& Ingredient::operator=(const Ingredient& other) {
         INGREDIENT_TYPE = other.INGREDIENT_TYPE;
         dimensions = other.dimensions;
         weight = other.weight;
+        friction = other.friction;
+        restitution = other.restitution;
         texture = other.texture; // QPixmap's assignment operator handles deep copy
         position = other.position;
         angle = other.angle;
