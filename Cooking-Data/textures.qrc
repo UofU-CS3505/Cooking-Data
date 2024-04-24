@@ -30,5 +30,18 @@
         <file>assets/images/sprites/Ember.png</file>
         <file>assets/images/sprites/Plank.png</file>
         <file>assets/images/sprites/Error.png</file>
+        <file>assets/images/sprites/BreadLoaf.png</file>
+        <file>assets/images/sprites/BreadSlice.png</file>
+        <file>assets/images/sprites/BreadTomato.png</file>
+        <file>assets/images/sprites/BreadTomatoHam.png</file>
+        <file>assets/images/sprites/BreadTomatoHamLettuce.png</file>
+        <file>assets/images/sprites/BreadTomatoHamLettuceBread.png</file>
+        <file>assets/images/sprites/Ham.png</file>
+        <file>assets/images/sprites/HamSlice.png</file>
+        <file>assets/images/sprites/Knife.png</file>
+        <file>assets/images/sprites/Lettuce.png</file>
+        <file>assets/images/sprites/LettuceSlice.png</file>
+        <file>assets/images/sprites/Tomato.png</file>
+        <file>assets/images/sprites/TomatoSlice.png</file>
     </qresource>
 </RCC>

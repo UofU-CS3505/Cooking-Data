@@ -119,6 +119,7 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
     // Note: the size should be 0.0125x (divide by 80) the dimension of the texture (convert
     // from a scale of 0.5 in. per pixel to meter).
 
+    //Other
     if (type == Plank)
         return new Ingredient(Plank, QSizeF(0.2, 0.05), 0,
                               QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
@@ -134,6 +135,17 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
                               QPixmap(":/ingredients/assets/images/sprites/StoveOn.png"),
                               position, angle);
 
+    if (type == Fire)
+        return new Ingredient(Fire, QSizeF(0.1, 0.15), 0.2,
+                              QPixmap(":/ingredients/assets/images/sprites/Fire.png"),
+                              position, 0);
+
+    if (type == Ember)
+        return new Ingredient(Ember, QSizeF(0.0375, 0.0375), 0.1,
+                              QPixmap(":/ingredients/assets/images/sprites/Ember.png"),
+                              position, angle);
+
+    //Level 1
     if (type == BoilingWaterPot)
         return new Ingredient(BoilingWaterPot, QSizeF(0.2, 0.175), 4,
                               QPixmap(":/ingredients/assets/images/sprites/BoilingWaterPot.png"),
@@ -184,15 +196,73 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
                               QPixmap(":/ingredients/assets/images/sprites/WaterPot.png"),
                               position, angle);
 
-    if (type == Fire)
-        return new Ingredient(Fire, QSizeF(0.1, 0.15), 0.2,
-                              QPixmap(":/ingredients/assets/images/sprites/Fire.png"),
-                              position, 0);
-
-    if (type == Ember)
-        return new Ingredient(Ember, QSizeF(0.0375, 0.0375), 0.1,
-                              QPixmap(":/ingredients/assets/images/sprites/Ember.png"),
+    //Level 2
+    if (type == BreadLoaf)
+        return new Ingredient(BreadLoaf, QSizeF(9, 9), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/BreadLoaf.png"),
                               position, angle);
+
+    if (type == BreadSlice)
+        return new Ingredient(BreadSlice, QSizeF(9, 6), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/BreadSlice.png"),
+                              position, angle);
+
+    if (type == BreadTomato)
+        return new Ingredient(BreadTomato, QSizeF(9, 8), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/BreadTomato.png"),
+                              position, angle);
+
+    if (type == BreadTomatoHam)
+        return new Ingredient(BreadTomatoHam, QSizeF(9, 11), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/BreadTomatoHam.png"),
+                              position, angle);
+
+    if (type == BreadTomatoHamLettuce)
+        return new Ingredient(BreadTomatoHamLettuce, QSizeF(9, 14), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/BreadTomatoHamLettuce.png"),
+                              position, angle);
+
+    if (type == BreadTomatoHamLettuceBread)
+        return new Ingredient(BreadTomatoHamLettuceBread, QSizeF(9, 17), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/BreadTomatoHamLettuceBread.png"),
+                              position, angle);
+
+    if (type == Ham)
+        return new Ingredient(Ham, QSizeF(16, 12), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Ham.png"),
+                              position, angle);
+
+    if (type == HamSlice)
+        return new Ingredient(HamSlice, QSizeF(9, 5), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/HamSlice.png"),
+                              position, angle);
+
+    if (type == Knife)
+        return new Ingredient(Knife, QSizeF(4, 13), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Knife.png"),
+                              position, angle);
+
+    if (type == Lettuce)
+        return new Ingredient(Lettuce, QSizeF(10, 10), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Lettuce.png"),
+                              position, angle);
+
+    if (type == LettuceSlice)
+        return new Ingredient(LettuceSlice, QSizeF(9, 6), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/LettuceSlice.png"),
+                              position, angle);
+
+    if (type == Tomato)
+        return new Ingredient(Tomato, QSizeF(7, 7), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Tomato.png"),
+                              position, angle);
+
+    if (type == TomatoSlice)
+        return new Ingredient(TomatoSlice, QSizeF(9, 5), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/TomatoSlice.png"),
+                              position, angle);
+
+    //Level 3
 
     return new Ingredient(position);
 }
