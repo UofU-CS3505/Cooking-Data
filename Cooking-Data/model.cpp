@@ -335,73 +335,73 @@ Ingredient* Model::createIngredient(IngredientType type, QPointF position, doubl
 
     //Level 3
     if (type == EmptyPan)
-        return new Ingredient(EmptyPan, QSizeF(0.2, 0.15), 1,
-                              QPixmap(":/ingredients/assets/images/sprites/EmptyBowl.png"),
+        return new Ingredient(EmptyPan, QSizeF(15, 10), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Pan.png"),
                               position, angle);
 
     if (type == Chicken)
-        return new Ingredient(Chicken, QSizeF(0.1125, 0.0625), 1,
-                              QPixmap(":/ingredients/assets/images/sprites/Ham.png"),
+        return new Ingredient(Chicken, QSizeF(14, 14), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Chicken.png"),
                               position, angle);
 
     if (type == Broccoli)
-        return new Ingredient(Broccoli, QSizeF(0.1125, 0.0625), 0.5,
-                              QPixmap(":/ingredients/assets/images/sprites/Lettuce.png"),
+        return new Ingredient(Broccoli, QSizeF(9,9), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Broccoli.png"),
                               position, angle);
 
     if (type == Rice)
-        return new Ingredient(Rice, QSizeF(0.1125, 0.0625), 0.5,
-                              QPixmap(":/ingredients/assets/images/sprites/OatPacket.png"),
+        return new Ingredient(Rice, QSizeF(12, 14), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/RiceBag.png"),
                               position, angle);
 
     if (type == ChickenChopped)
-        return new Ingredient(ChickenChopped, QSizeF(0.2, 0.15), 0.2,
-                              QPixmap(":/ingredients/assets/images/sprites/HamSlice.png"),
+        return new Ingredient(ChickenChopped, QSizeF(12, 7), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/CutChicken.png"),
                               position, angle);
 
     if (type == ChickenPan)
-        return new Ingredient(ChickenPan, QSizeF(0.2, 0.15), 1.2,
-                              QPixmap(":/ingredients/assets/images/sprites/OatsBowl.png"),
+        return new Ingredient(ChickenPan, QSizeF(15, 10), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/ChickenPan.png"),
                               position, angle);
 
     if (type == ChickenCookedPan)
-        return new Ingredient(ChickenCookedPan, QSizeF(0.2, 0.15), 1.2,
-                              QPixmap(":/ingredients/assets/images/sprites/OatmealBowl.png"),
+        return new Ingredient(ChickenCookedPan, QSizeF(15, 16), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/FinishedChickenPan.png"),
                               position, angle);
 
     if (type == BroccoliChopped)
-        return new Ingredient(BroccoliChopped, QSizeF(0.2, 0.15), 0.2,
-                              QPixmap(":/ingredients/assets/images/sprites/LettuceSlice.png"),
+        return new Ingredient(BroccoliChopped, QSizeF(7, 7), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/CutBrocoli.png"),
                               position, angle);
 
     if (type == WaterRicePot)
-        return new Ingredient(WaterRicePot, QSizeF(0.2, 0.15), 4.5,
-                              QPixmap(":/ingredients/assets/images/sprites/WaterPot.png"),
+        return new Ingredient(WaterRicePot, QSizeF(16, 10), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/RicePot.png"),
                               position, angle);
 
     if (type == BoilingWaterRicePot)
-        return new Ingredient(BoilingWaterRicePot, QSizeF(0.2, 0.15), 4.5,
-                              QPixmap(":/ingredients/assets/images/sprites/BoilingWaterPot.png"),
+        return new Ingredient(BoilingWaterRicePot, QSizeF(16, 16), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/FinsihedRicePot.png"),
                               position, angle);
 
     if (type == EmptyPlate)
-        return new Ingredient(EmptyPlate, QSizeF(0.1, 0.08), 0.5,
-                              QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
+        return new Ingredient(EmptyPlate, QSizeF(10, 6), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/Plate.png"),
                               position, angle);
 
     if (type == RicePlate)
-        return new Ingredient(RicePlate, QSizeF(0.1, 0.08), 0.7,
-                              QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
+        return new Ingredient(RicePlate, QSizeF(0.1, 0.08), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/RicePlate.png"),
                               position, angle);
 
     if (type == RiceChickenPlate)
-        return new Ingredient(RiceChickenPlate, QSizeF(0.1, 0.08), 0.9,
-                              QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
+        return new Ingredient(RiceChickenPlate, QSizeF(0.1, 0.08), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/RiceChickenPlate.png"),
                               position, angle);
 
     if (type == RiceChickenBroccoliPlate)
-        return new Ingredient(RiceChickenBroccoliPlate, QSizeF(0.2, 0.15), 1.1,
-                              QPixmap(":/ingredients/assets/images/sprites/Plank.png"),
+        return new Ingredient(RiceChickenBroccoliPlate, QSizeF(0.2, 0.15), 4,
+                              QPixmap(":/ingredients/assets/images/sprites/RiceChickenBroccoliPlate.png"),
                               position, angle);
 
     return new Ingredient(position);

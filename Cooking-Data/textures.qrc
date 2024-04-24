@@ -43,5 +43,16 @@
         <file>assets/images/sprites/LettuceSlice.png</file>
         <file>assets/images/sprites/Tomato.png</file>
         <file>assets/images/sprites/TomatoSlice.png</file>
+        <file>assets/images/sprites/Brocoli.png</file>
+        <file>assets/images/sprites/Chicken.png</file>
+        <file>assets/images/sprites/ChickenPan.png</file>
+        <file>assets/images/sprites/CutBrocoli.png</file>
+        <file>assets/images/sprites/CutChicken.png</file>
+        <file>assets/images/sprites/FinishedRicePot.png</file>
+        <file>assets/images/sprites/FinsihedChickenPan.png</file>
+        <file>assets/images/sprites/Pan.png</file>
+        <file>assets/images/sprites/Plate.png</file>
+        <file>assets/images/sprites/RiceBag.png</file>
+        <file>assets/images/sprites/RicePot.png</file>
     </qresource>
 </RCC>

@@ -36,6 +36,8 @@ enum IngredientType {
     OatmealBowl,
     OatsBowl,
     Rice,
+    RicePot,
+    RicePotCooked,
     RicePlate,
     RiceChickenPlate,
     RiceChickenBroccoliPlate,
