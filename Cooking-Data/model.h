@@ -159,6 +159,19 @@ private:
     ///
     bool removeIngredient(int ingredientID);
 
+    ///
+    /// \brief areIngredientsNotToolsOrSelectedTool Return true if neither i1
+    ///                                             nor i2 are tools or if one
+    ///                                             or more of i1 or i2 are
+    ///                                             tools, the selected
+    ///                                             Ingredient is either i1 or
+    ///                                             i2 and is a tool.
+    /// \param i1 the ID of the first Ingredient
+    /// \param i2 the ID of the second Ingredient
+    /// \return see brief
+    ///
+    bool areIngredientsNotToolsOrSelectedTool(int i1, int i2);
+
 public:
     ///
     /// \brief Model Create a new model to store a new world and new objects

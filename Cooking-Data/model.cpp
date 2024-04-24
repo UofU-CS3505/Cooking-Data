@@ -700,6 +700,35 @@ bool Model::removeIngredient(int ingredientID) {
     return true;
 }
 
+bool Model::areIngredientsNotToolsOrSelectedTool(int i1, int i2) {
+    // Check if either Ingredient is a tool.
+    if (!tools.contains(ingredients[i1]->getIngredientType())
+        && !tools.contains(ingredients[i2]->getIngredientType()))
+        return true;
+
+    // Check if anything is selected.
+    if (!selected)
+        return false;
+
+    int selectedID = static_cast<int>(
+        reinterpret_cast<intptr_t>(selected->GetUserData()));
+    // Check if selected is an Ingredient in the world (it should be)?
+    if (!ingredients.contains(selectedID))
+        return false;
+
+    IngredientType selectedType =
+        ingredients[selectedID]->getIngredientType();
+    // Check if selected is one of the Ingredient in the collision.
+    if (selectedType != ingredients[i1]->getIngredientType()
+        && selectedType != ingredients[i2]->getIngredientType())
+        return false;
+    // Check if selected is a Tool.
+    if (!tools.contains(selectedType))
+        return false;
+
+    return true;
+}
+
 void Model::updateWorld() {
     // About 60fps, 10 iterations per collision check
     float32 timeStep = FRAME_TIME / 1000;
@@ -741,43 +770,23 @@ void Model::updateWorld() {
         // This horrible piece of code converts the void pointer from
         // b2Body::GetUserData() to an int
         // https://stackoverflow.com/questions/30768714/properly-casting-a-void-to-an-integer-in-c
-        int i1ID = static_cast<int>(reinterpret_cast<intptr_t>(
+        int i1 = static_cast<int>(reinterpret_cast<intptr_t>(
             collision->GetFixtureA()->GetBody()->GetUserData()));
-        int i2ID = static_cast<int>(reinterpret_cast<intptr_t>(
+        int i2 = static_cast<int>(reinterpret_cast<intptr_t>(
             collision->GetFixtureB()->GetBody()->GetUserData()));
 
-        // If the ingredient was not found in the map, continue the loop.
-        if (!(ingredients.contains(i1ID) && ingredients.contains(i2ID)))
+        // If either Ingredient is not in the map, continue the loop.
+        if (!(ingredients.contains(i1) && ingredients.contains(i2)))
             continue;
 
-        // Tools only combine if selected.
-        if (tools.contains(ingredients[i1ID]->getIngredientType())
-            || tools.contains(ingredients[i2ID]->getIngredientType())) {
-            // Check if anything is selected.
-            if (!selected)
-                continue;
-
-            int selectedID = static_cast<int>(
-                reinterpret_cast<intptr_t>(selected->GetUserData()));
-            // Check if selected is an Ingredient in the world (it should be)?
-            if (!ingredients.contains(selectedID))
-                continue;
-
-            IngredientType selectedType =
-                ingredients[selectedID]->getIngredientType();
-            // Check if selected is one of the Ingredient in the collision.
-            if (selectedType != ingredients[i1ID]->getIngredientType()
-                && selectedType != ingredients[i2ID]->getIngredientType())
-                continue;
-            // Check if selected is a Tool.
-            if (!tools.contains(selectedType))
-                continue;
-        }
+        // If either Ingredient is a tool, check if the they are selected.
+        if (!areIngredientsNotToolsOrSelectedTool(i1, i2))
+            continue;
 
         // Try both possible order of combinations in case the collision was
         // detected in reverse.
         // Limit combines to once per frame... for reasons.
-        if (tryCombine(i1ID, i2ID) || tryCombine(i2ID, i1ID))
+        if (tryCombine(i1, i2) || tryCombine(i2, i1))
             break;
     }
 
