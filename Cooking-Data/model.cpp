@@ -857,50 +857,59 @@ void Model::createWorld(int level) {
     rightBody->CreateFixture(&rightWallBox, 0);
 
     // Add shelf.
-    addIngredient(Plank, QPointF(0.1, 0.5));
-    addIngredient(Plank, QPointF(0.3, 0.5));
-    addIngredient(Plank, QPointF(0.5, 0.5));
-    addIngredient(Plank, QPointF(1.47, 0.5));
-    addIngredient(Plank, QPointF(1.67, 0.5));
-    addIngredient(Plank, QPointF(1.87, 0.5));
+    addIngredient(Plank, QPointF(0.1, 0.6));
+    addIngredient(Plank, QPointF(0.3, 0.6));
+    addIngredient(Plank, QPointF(0.5, 0.6));
+    addIngredient(Plank, QPointF(1.47, 0.6));
+    addIngredient(Plank, QPointF(1.67, 0.6));
+    addIngredient(Plank, QPointF(1.87, 0.6));
 
     // Add Ingredients.
     if (level == 1) {
-        addIngredient(StoveOff, QPointF(1, 1.1));
+        addIngredient(StoveOff, QPointF(0.99, 1.1));
 
         addIngredient(OatPacket, QPointF(0.2, 0));
         addIngredient(WaterPitcher, QPointF(0.4, 0));
 
-        addIngredient(EmptyPot, QPointF(1.4, 0));
-        addIngredient(Ladel, QPointF(1.6, 0));
-        addIngredient(EmptyBowl, QPointF(1.8, 0));
-        addIngredient(EmptyBowl, QPointF(1.9, 0));
+        addIngredient(EmptyPot, QPointF(1.5, 0));
+        addIngredient(EmptyBowl, QPointF(1.7, 0));
+        addIngredient(Ladel, QPointF(1.9, 0));
+
         winCondition = OatmealBowl;
     } else if (level == 2) {
-        addIngredient(Knife, QPointF(1.5, 1.1));
+        addIngredient(Knife, QPointF(1, 1.1));
 
         addIngredient(BreadLoaf, QPointF(0.2, 0));
         addIngredient(Ham, QPointF(0.4, 0));
 
-        addIngredient(Tomato, QPointF(1.4, 0));
+        addIngredient(Tomato, QPointF(1.6, 0));
         addIngredient(Lettuce, QPointF(1.8, 0));
+
         winCondition = BreadTomatoHamLettuceBread;
-        qDebug() << "LEVEL 2 LOADED";
-
     } else if (level == 3) {
-        addIngredient(StoveOff, QPointF(1, 1.1));
-        addIngredient(WaterPitcher, QPointF(0.4, 0));
-        addIngredient(EmptyPot, QPointF(1.4, 0));
-        addIngredient(Knife, QPointF(1.5, 1.1));
-        addIngredient(EmptyPan, QPointF(1.6, 0));
-        addIngredient(EmptyPlate, QPointF(1.8, 0));
+        // More shelf.
+        addIngredient(Plank, QPointF(0.1, 0.3));
+        addIngredient(Plank, QPointF(0.3, 0.3));
+        addIngredient(Plank, QPointF(0.5, 0.3));
+        addIngredient(Plank, QPointF(1.47, 0.3));
+        addIngredient(Plank, QPointF(1.67, 0.3));
+        addIngredient(Plank, QPointF(1.87, 0.3));
 
-        addIngredient(Chicken, QPointF(0.2, 1.1));
-        addIngredient(Broccoli, QPointF(0.5, 1.1));
-        addIngredient(Rice, QPointF(0.8, 1.1));
+        addIngredient(StoveOff, QPointF(0.99, 1.1));
+
+        addIngredient(WaterPitcher, QPointF(0.3, 0));
+
+        addIngredient(EmptyPot, QPointF(1.5, 0));
+        addIngredient(Knife, QPointF(1.7, 0));
+        addIngredient(EmptyPan, QPointF(1.9, 0));
+
+        addIngredient(Chicken, QPointF(0.1, 0.4));
+        addIngredient(Broccoli, QPointF(0.3, 0.4));
+        addIngredient(Rice, QPointF(0.5, 0.4));
+
+        addIngredient(EmptyPlate, QPointF(1.7, 0.4));
 
         winCondition = RiceChickenBroccoliPlate;
-        qDebug() << "LEVEL 3 LOADED";
     } else {
         // Just else makes this a fail safe is something went wrong
         winCondition = OatmealBowl;
@@ -933,8 +942,10 @@ void Model::pointPressed(QPointF position) {
         }
     }
 
-    // If the index is still -1, it means nothing was selected.
-    if (selectedIngredientID == -1) {
+    // If the index is still -1 or somehow not in the list of Ingredients,
+    // it means nothing was selected.
+    if (selectedIngredientID == -1
+        || !ingredients.contains(selectedIngredientID)) {
         selected = nullptr;
         return;
     }

@@ -22,6 +22,7 @@ class Interface : public QMainWindow {
     Q_OBJECT
 private:
     const double SCALE = 400;
+    const double TEXTURE_SCALE = 400.0 / 72;
 
     Ui::Interface *ui;
     Model model;

@@ -208,12 +208,13 @@ void Interface::displayHelpPopup() {
     brushHelp.setWindowTitle("Tutorials");
     brushHelp.setText(
         "Drag objects around with your mouse to move them around the screen.\n"
+        "Press R to show or hide the recipe.\n"
         "Follow the recipe given to you to cook the meal and progress.\n"
         "Completing a recipe will give you a new recipe to cook.\n"
         "Click the stove to turn it on and off.\n"
         "The pot and pan should go on the stove.\n"
         "The knife, ladel, and pitcher must be being dragged to cut or pour.\n"
-        "Press R to show or hide the recipe.\n"
+        "If you burn something out of existence, quit to menu and try again.\n"
         "You already know this, but press ESC to pause.");
     brushHelp.setIcon(QMessageBox::Information);
     brushHelp.setModal(true);
@@ -288,12 +289,18 @@ void Interface::beginFrame() {
     graphicsScene.clear();
 
     // Rebuild background at frame reset
-    QPixmap wood = QPixmap(
+    QPixmap background = QPixmap(
         ":/ingredients/assets/images/sprites/Background.png");
-    QGraphicsPixmapItem* bg = graphicsScene.addPixmap(wood);
-    bg->setPos(0, 0);
-    bg->setScale(13);
-    bg->setRotation(0);
+
+    for (int y = 0; y <= this->height() / TEXTURE_SCALE / background.height(); y++) {
+        for (int x = 0; x <= this->width() / TEXTURE_SCALE / background.width(); x++) {
+            QGraphicsPixmapItem* bg = graphicsScene.addPixmap(background);
+            bg->setPos(x * background.width() * TEXTURE_SCALE,
+                       y * background.height() * TEXTURE_SCALE);
+            bg->setScale(TEXTURE_SCALE);
+            bg->setRotation(0);
+        }
+    }
 
     QPixmap table = QPixmap(
         ":/ingredients/assets/images/sprites/Table.png");
@@ -309,8 +316,8 @@ void Interface::beginFrame() {
     QPixmap windowSprite = QPixmap(
         ":/ingredients/assets/images/sprites/Window.png");
     QGraphicsPixmapItem* window = graphicsScene.addPixmap(windowSprite);
-    window->setPos(50, 40);
-    window->setScale(8);
+    window->setPos(25 * TEXTURE_SCALE, 23 * TEXTURE_SCALE);
+    window->setScale(TEXTURE_SCALE);
     window->setRotation(0);
 }
 
@@ -330,7 +337,7 @@ void Interface::addIngredientToFrame(const Ingredient &ingredient) {
     // The Pixmaps are in the scale of 2 pixels per inch, but b2Body uses
     // meters as units.
     // I have no idea why this specific number works. It just does.
-    item->setScale(SCALE / 72);
+    item->setScale(TEXTURE_SCALE);
     item->setRotation(angle);
 }
 
