@@ -2,7 +2,9 @@ This is Cooking Data, an educational cooking game built with Qt and C++.
 
 ## Demonstration Video
 
-The demonstration video is [here](https://www.youtube.com/watch?v=Mwf7KwWxCkU).
+https://github.com/UofU-CS3505/Cooking-Data/assets/43101126/5c227bb1-79e8-4e97-a7b3-e5c04c12b4b8
+
+The demonstration video is also available on [YouTube](https://www.youtube.com/watch?v=Mwf7KwWxCkU).
 
 ## Compiling
 
