@@ -9,19 +9,6 @@ Model::Model()
     : timer(),
     world(b2World(b2Vec2(0.0f, 9.8f))){
 
-    //Sound effects
-    comboPlayer.setSource(QUrl::fromLocalFile(":/soundEffects/combo.wav"));
-    backgroundPlayer.setSource(QUrl::fromLocalFile(":/songs/Cooking_Data__Background.wav"));
-
-    comboPlayer.setVolume(0.25f);
-    backgroundPlayer.setVolume(0.20f);
-
-    comboPlayer.setLoopCount(0);
-    backgroundPlayer.setLoopCount(QSoundEffect::Infinite);
-
-    backgroundPlayer.play();
-
-
     // Start the timer.
     connect(&timer, &QTimer::timeout, this, &Model::updateWorld);
 
@@ -590,7 +577,6 @@ bool Model::tryCombine(int i1, int i2) {
 }
 
 bool Model::combine(int i1, int i2) {
-    comboPlayer.play();
     QPair<IngredientType, IngredientType> typePair;
     // Check if it is a combination or transformation.
     if (i2 != -1)
@@ -688,6 +674,7 @@ bool Model::combine(int i1, int i2) {
 
 
     qDebug() << "Combined and removal" << removeSuccessful;
+    emit comboCompleted();
     return removeSuccessful;
 }
 

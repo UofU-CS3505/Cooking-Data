@@ -12,6 +12,20 @@ Interface::Interface(QWidget *parent)
     model(Model()) {
     ui->setupUi(this);
 
+    //Sound effects
+    comboPlayer.setSource(QUrl::fromLocalFile(":/soundEffects/combo.wav"));
+    backgroundPlayer.setSource(QUrl::fromLocalFile(":/songs/Cooking_Data__Background.wav"));
+
+    comboPlayer.setVolume(0.25f);
+    backgroundPlayer.setVolume(0.20f);
+
+    comboPlayer.setLoopCount(0);
+    backgroundPlayer.setLoopCount(QSoundEffect::Infinite);
+
+    backgroundPlayer.play();
+    connect(&model, &Model::comboCompleted,
+            this, &Interface::playSound);
+
     ui->pauseLabel->setVisible(false);
     ui->recipeLabel->setVisible(false);
     ui->winLabel->setVisible(false);
@@ -339,6 +353,10 @@ void Interface::addIngredientToFrame(const Ingredient &ingredient) {
     // I have no idea why this specific number works. It just does.
     item->setScale(TEXTURE_SCALE);
     item->setRotation(angle);
+}
+
+void Interface::playSound() {
+    comboPlayer.play();
 }
 
 void Interface::endFrame() {

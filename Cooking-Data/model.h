@@ -6,7 +6,6 @@
 #include <QVector>
 
 #include "ingredient.h"
-#include <QtMultimedia/QtMultimedia>
 
 class Model : public QObject {
     Q_OBJECT
@@ -22,8 +21,6 @@ private:
     QPointF recentMouseLoc;
     IngredientType winCondition;
 
-    QSoundEffect comboPlayer;
-    QSoundEffect backgroundPlayer;
 
     ///
     /// \brief ingredients A map of all Ingredients in the scene from their ID
@@ -199,6 +196,7 @@ signals:
     void ingredientUpdated(const Ingredient& ingredient);
     void frameEnded();
     void winConditionMet();
+    void comboCompleted();
 };
 
 #endif // MODEL_H

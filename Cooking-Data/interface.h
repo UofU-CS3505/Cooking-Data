@@ -11,6 +11,7 @@
 #include "model.h"
 #include "ingredient.h"
 #include "qgraphicsscene.h"
+#include <QtMultimedia/QtMultimedia>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -23,6 +24,9 @@ class Interface : public QMainWindow {
 private:
     const double SCALE = 400;
     const double TEXTURE_SCALE = 400.0 / 72;
+
+    QSoundEffect comboPlayer;
+    QSoundEffect backgroundPlayer;
 
     Ui::Interface *ui;
     Model model;
@@ -55,6 +59,7 @@ public slots:
     void beginFrame();
     void addIngredientToFrame(const Ingredient& ingredient);
     void endFrame();
+    void playSound();
 
 signals:
     void createWorld(int level);
