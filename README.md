@@ -1,5 +1,9 @@
 This is Cooking Data, an educational cooking game built with Qt and C++.
 
+## Demonstration Video
+
+The demonstration video is [here](https://www.youtube.com/watch?v=Mwf7KwWxCkU).
+
 ## Compiling
 
 1. Install Qt Creator version >=12.0.2 with Qt version >=6.6.2.
