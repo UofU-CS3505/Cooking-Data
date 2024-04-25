@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/soundEffects">
-        <file>combo.wav</file>
-        <file>noCombo.wav</file>
+        <file>assets/sounds/Combo.wav</file>
+        <file>assets/sounds/NoCombo.wav</file>
     </qresource>
     <qresource prefix="/songs">
-        <file>Cooking_Data__Background.wav</file>
+        <file>assets/sounds/CookingDataBackground.wav</file>
     </qresource>
 </RCC>
