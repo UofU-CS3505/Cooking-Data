@@ -9,6 +9,22 @@ Model::Model()
     : timer(),
     world(b2World(b2Vec2(0.0f, 9.8f))){
 
+    //Sound effects
+    noComboPlayer.setSource(QUrl::fromLocalFile(":/soundEffects/noCombo.wav"));
+    comboPlayer.setSource(QUrl::fromLocalFile(":/soundEffects/combo.wav"));
+    backgroundPlayer.setSource(QUrl::fromLocalFile(":/songs/Cooking_Data__Background.wav"));
+
+    noComboPlayer.setVolume(0.25f);
+    comboPlayer.setVolume(0.25f);
+    backgroundPlayer.setVolume(0.20f);
+
+    noComboPlayer.setLoopCount(0);
+    comboPlayer.setLoopCount(0);
+    backgroundPlayer.setLoopCount(QSoundEffect::Infinite);
+
+    backgroundPlayer.play();
+
+
     // Start the timer.
     connect(&timer, &QTimer::timeout, this, &Model::updateWorld);
 
@@ -504,9 +520,13 @@ bool Model::tryCombine(int i1, int i2) {
         && (i2 == -1 && !ingredients.contains(i1)))
         return false;
 
+
+
     // If either Ingredient is a tool, check if the they are selected.
     if (i2 != -1 && !areIngredientsNotToolsOrSelectedTool(i1, i2))
         return false;
+
+
 
     QPair<IngredientType, IngredientType> typePair;
     // Check if it is a combination or transformation.
@@ -523,6 +543,7 @@ bool Model::tryCombine(int i1, int i2) {
     // Check if the combination is valid.
     if (!combinations.contains(typePair))
         return false;
+
 
     // qDebug() << "Trying to combine" << i1 << "and" << i2;
 
@@ -572,6 +593,7 @@ bool Model::tryCombine(int i1, int i2) {
 }
 
 bool Model::combine(int i1, int i2) {
+    comboPlayer.play();
     QPair<IngredientType, IngredientType> typePair;
     // Check if it is a combination or transformation.
     if (i2 != -1)

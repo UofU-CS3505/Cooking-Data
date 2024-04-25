@@ -3,4 +3,7 @@
         <file>combo.wav</file>
         <file>noCombo.wav</file>
     </qresource>
+    <qresource prefix="/songs">
+        <file>Cooking_Data__Background.wav</file>
+    </qresource>
 </RCC>

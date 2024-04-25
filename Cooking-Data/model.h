@@ -6,6 +6,7 @@
 #include <QVector>
 
 #include "ingredient.h"
+#include <QtMultimedia/QtMultimedia>
 
 class Model : public QObject {
     Q_OBJECT
@@ -20,6 +21,10 @@ private:
     b2Body* selected;
     QPointF recentMouseLoc;
     IngredientType winCondition;
+
+    QSoundEffect noComboPlayer;
+    QSoundEffect comboPlayer;
+    QSoundEffect backgroundPlayer;
 
     ///
     /// \brief ingredients A map of all Ingredients in the scene from their ID
