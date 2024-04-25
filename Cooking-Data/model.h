@@ -22,7 +22,6 @@ private:
     QPointF recentMouseLoc;
     IngredientType winCondition;
 
-    QSoundEffect noComboPlayer;
     QSoundEffect comboPlayer;
     QSoundEffect backgroundPlayer;
 

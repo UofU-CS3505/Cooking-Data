@@ -10,15 +10,12 @@ Model::Model()
     world(b2World(b2Vec2(0.0f, 9.8f))){
 
     //Sound effects
-    noComboPlayer.setSource(QUrl::fromLocalFile(":/soundEffects/noCombo.wav"));
     comboPlayer.setSource(QUrl::fromLocalFile(":/soundEffects/combo.wav"));
     backgroundPlayer.setSource(QUrl::fromLocalFile(":/songs/Cooking_Data__Background.wav"));
 
-    noComboPlayer.setVolume(0.25f);
     comboPlayer.setVolume(0.25f);
     backgroundPlayer.setVolume(0.20f);
 
-    noComboPlayer.setLoopCount(0);
     comboPlayer.setLoopCount(0);
     backgroundPlayer.setLoopCount(QSoundEffect::Infinite);
 
