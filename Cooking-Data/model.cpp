@@ -18,7 +18,7 @@ Model::Model()
     // Fire decay and merging.
     combinations.insert(
         qMakePair(Fire, None),
-        qMakePair(QVector<IngredientType> { Ember }, 2000));
+        qMakePair(QVector<IngredientType> { Fire, Ember }, 2000));
     combinations.insert(
         qMakePair(Ember, Ember),
         qMakePair(QVector<IngredientType> { Fire }, 0));
