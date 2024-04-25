@@ -16,9 +16,21 @@ private:
     /// \brief timer Used to execute the physics loop
     ///
     QTimer timer;
+    ///
+    /// \brief world Used to hold all Box2D elements
+    ///
     b2World world;
+    ///
+    /// \brief selected The selected body by the mouse
+    ///
     b2Body* selected;
+    ///
+    /// \brief recentMouseLoc The most recent location of the mouse
+    ///
     QPointF recentMouseLoc;
+    ///
+    /// \brief winCondition This ingredient must be made to win the level
+    ///
     IngredientType winCondition;
 
 
@@ -181,21 +193,63 @@ public:
     ~Model();
 
 private slots:
+    ///
+    /// \brief updateWorld Update the bodies and check for any combinations
+    ///
     void updateWorld();
 
 public slots:
+    ///
+    /// \brief createWorld Create the level based on the level input
+    /// \param level The level to load: 1-3
+    ///
     void createWorld(int level);
+    ///
+    /// \brief deleteWorld Delete everything in the world
+    ///
     void deleteWorld();
+    ///
+    /// \brief pointPressed Calculate if the given point is in any body,
+    ///                     make that the selected object.
+    /// \param position The position of the mouse
+    ///
     void pointPressed(QPointF position);
+    ///
+    /// \brief pointMoved Update the saved location of the mouse
+    /// \param position The position of the mouse
+    ///
     void pointMoved(QPointF position);
+    ///
+    /// \brief pointReleased Update the selected object to be nothing
+    ///
     void pointReleased();
+    ///
+    /// \brief pauseGame Pause the game, bodies are not updated
+    /// \param pausedState A bool to either pause or unpause the game
+    ///
     void pauseGame(bool pausedState);
 
 signals:
+    ///
+    /// \brief frameBegan Send everytime the world is updated
+    ///
     void frameBegan();
+    ///
+    /// \brief ingredientUpdated Send when an ingredient is updated
+    /// \param ingredient
+    ///
     void ingredientUpdated(const Ingredient& ingredient);
+    ///
+    /// \brief frameEnded Notify the view when the update to the world is done
+    ///
     void frameEnded();
+    ///
+    /// \brief winConditionMet Notify the view that the level should be complete
+    ///
     void winConditionMet();
+    ///
+    /// \brief comboCompleted Let the view know that a combo was completed
+    ///
     void comboCompleted();
 };
 
