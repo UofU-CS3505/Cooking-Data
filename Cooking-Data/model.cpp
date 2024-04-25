@@ -167,6 +167,18 @@ Model::Model()
         qMakePair(StoveOn, ChickenChopped),
         qMakePair(QVector<IngredientType> { StoveOn, ChickenChopped, Ember }, 1000));
     combinations.insert(
+        qMakePair(StoveOn, EmptyPlate),
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyPlate, Ember }, 1000));
+    combinations.insert(
+        qMakePair(StoveOn, RicePlate),
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyPlate }, 1000));
+    combinations.insert(
+        qMakePair(StoveOn, RiceChickenPlate),
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyPlate }, 1000));
+    combinations.insert(
+        qMakePair(StoveOn, RiceChickenBroccoliPlate),
+        qMakePair(QVector<IngredientType> { StoveOn, EmptyPlate }, 1000));
+    combinations.insert(
         qMakePair(EmptyPan, ChickenChopped),
         qMakePair(QVector<IngredientType> { ChickenPan }, 0));
     combinations.insert(
@@ -176,8 +188,17 @@ Model::Model()
         qMakePair(RicePlate, ChickenCookedPan),
         qMakePair(QVector<IngredientType> { RiceChickenPlate, EmptyPan }, 0));
     combinations.insert(
+        qMakePair(RicePlate, Fire),
+        qMakePair(QVector<IngredientType> { EmptyPlate, Ember }, 1000));
+    combinations.insert(
         qMakePair(RiceChickenPlate, BroccoliChopped),
         qMakePair(QVector<IngredientType> { RiceChickenBroccoliPlate }, 0));
+    combinations.insert(
+        qMakePair(RiceChickenPlate, Fire),
+        qMakePair(QVector<IngredientType> { EmptyPlate, Ember }, 1000));
+    combinations.insert(
+        qMakePair(RiceChickenBroccoliPlate, Fire),
+        qMakePair(QVector<IngredientType> { EmptyPlate, Ember }, 1000));
     combinations.insert(
         qMakePair(Broccoli, Fire),
         qMakePair(QVector<IngredientType> { Fire, Fire }, 1900)); // has to be shorter than fire decay

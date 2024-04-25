@@ -13,22 +13,22 @@ Interface::Interface(QWidget *parent)
     ui->setupUi(this);
 
     // Sound effects.
-    comboPlayer.setSource(QUrl::fromLocalFile(
-        ":/soundEffects/assets/sounds/Combo.wav"));
+    // comboPlayer.setSource(QUrl::fromLocalFile(
+    //     ":/soundEffects/assets/sounds/Combo.wav"));
     backgroundPlayer.setSource(QUrl::fromLocalFile(
         ":/songs/assets/sounds/CookingDataBackground.wav"));
 
-    comboPlayer.setVolume(0.25f);
+    // comboPlayer.setVolume(0.25f);
     backgroundPlayer.setVolume(0.20f);
 
-    comboPlayer.setLoopCount(0);
+    // comboPlayer.setLoopCount(0);
     backgroundPlayer.setLoopCount(QSoundEffect::Infinite);
 
     backgroundPlayer.play();
     // Connect the combo player to the combination completed signal from the
     // model.
-    connect(&model, &Model::comboCompleted,
-            &comboPlayer, &QSoundEffect::play);
+    // connect(&model, &Model::comboCompleted,
+    //         &comboPlayer, &QSoundEffect::play);
 
     ui->pauseLabel->setVisible(false);
     ui->recipeLabel->setVisible(false);
@@ -354,7 +354,6 @@ void Interface::addIngredientToFrame(const Ingredient &ingredient) {
     item->setPos(x, y);
     // The Pixmaps are in the scale of 2 pixels per inch, but b2Body uses
     // meters as units.
-    // I have no idea why this specific number works. It just does.
     item->setScale(TEXTURE_SCALE);
     item->setRotation(angle);
 }

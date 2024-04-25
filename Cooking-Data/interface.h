@@ -39,7 +39,7 @@ private:
     ///
     /// \brief comboPlayer Handles the sound effect player
     ///
-    QSoundEffect comboPlayer;
+    // QSoundEffect comboPlayer;
 
     ///
     /// \brief backgroundPlayer Handles the background music
