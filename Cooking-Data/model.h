@@ -4,6 +4,8 @@
 #include <Box2D/Box2D.h>
 #include <QTimer>
 #include <QVector>
+#include <QMap>
+#include <QPair>
 
 #include "ingredient.h"
 
