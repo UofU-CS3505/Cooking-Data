@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include "ingredient.h"
 #include "ingredienttype.h"
 

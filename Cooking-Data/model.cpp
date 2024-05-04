@@ -1,6 +1,7 @@
 #include <QObject>
 #include <QDateTime>
 #include <QDebug>
+#include <QtMath>
 
 #include "ingredienttype.h"
 #include "model.h"
